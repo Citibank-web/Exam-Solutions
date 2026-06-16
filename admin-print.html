@@ -208,61 +208,107 @@
       });
     }
 
-    // Dynamic Docx Generation Engine Function
+    // Dynamic High-Fidelity Docx Export Compiler
     function exportAllToDocx() {
       if (!fetchedRecordsGlobal || fetchedRecordsGlobal.length === 0) {
         alert("Error: No data available yet to compile into document formatting.");
         return;
       }
 
-      // Build specific CSS to embedded styles inside Word document to handle multi-column & table formatting rules
       let docHtmlBody = "";
 
       fetchedRecordsGlobal.forEach((record, index) => {
         const studentName = record.profiles?.full_name || "Unknown Candidate";
         const subjectName = record.exams?.subject || "Examination Paper Copy";
-        const solutionText = record.unique_solution_text || "<p>No solution text written.</p>";
+        let solutionText = record.unique_solution_text || "<p>No solution text written.</p>";
 
-        // Standard Word Page break wrapper
-        const pageBreakStyle = index > 0 ? 'style="page-break-before: always; border-top: 1px dashed #ccc; padding-top:20px;"' : '';
+        // Pre-processing Step: Force programmatic inline table grid lines for MS Word engine compatibility
+        const parser = new DOMParser();
+        const subDoc = parser.parseFromString(solutionText, 'text/html');
+        
+        subDoc.querySelectorAll('table').forEach(table => {
+          table.setAttribute('border', '1');
+          table.setAttribute('cellspacing', '0');
+          table.setAttribute('cellpadding', '6');
+          table.setAttribute('style', 'border-collapse:collapse; width:100%; border:1px solid #000000; margin:12px 0;');
+          
+          table.querySelectorAll('th, td').forEach(cell => {
+            cell.setAttribute('style', 'border:1px solid #000000; padding:6px 10px; font-family:"Courier New"; font-size:10pt;');
+          });
+          table.querySelectorAll('th').forEach(th => {
+            th.setAttribute('style', 'border:1px solid #000000; padding:6px 10px; background-color:#eaeded; font-weight:bold; font-family:"Courier New"; font-size:10pt;');
+          });
+        });
+        
+        solutionText = subDoc.body.innerHTML;
+
+        // Page break logic insertion
+        const pageBreak = index > 0 ? '<br clear="all" style="page-break-before:always; break-before:page;"/>' : '';
 
         docHtmlBody += `
-          <div ${pageBreakStyle}>
-            <table width="100%" style="border-bottom: 2px solid #000000; margin-bottom: 20px; padding-bottom: 10px; font-family:'Courier New'; font-size:11pt;">
-              <tr>
-                <td align="left" style="border:none;">
-                  <strong>CANDIDATE NAME:</strong> ${studentName}<br/>
-                  <strong>SUBJECT CONTEXT:</strong> ${subjectName}
-                </td>
-                <td align="right" style="border:none; text-align:right;">
-                  <strong>EXAMINATION ARCHITECTURE STATUS</strong><br/>
-                  <span style="font-size:9pt; color:#555555;">SYS REGISTERED CODE: EXM-${examId}</span>
-                </td>
-              </tr>
-            </table>
-            <div style="font-family:'Courier New'; font-size:10.5pt; line-height:1.4;">
-              ${solutionText}
-            </div>
+          ${pageBreak}
+          <table width="100%" cellspacing="0" cellpadding="0" style="border-collapse:collapse; border-bottom:2.5pt solid #000000; margin-bottom:20px; padding-bottom:8px; font-family:'Courier New'; font-size:10.5pt;">
+            <tr>
+              <td align="left" valign="bottom" style="border:none; padding:0; text-transform:uppercase;">
+                <strong>Candidate Name:</strong> ${studentName}<br/>
+                <strong>Subject Context:</strong> ${subjectName}
+              </td>
+              <td align="right" valign="bottom" style="border:none; padding:0; text-align:right;">
+                <strong>EXAMINATION ARCHITECTURE STATUS</strong><br/>
+                <span style="font-size:9pt; color:#444444;">SYS REGISTERED CODE: EXM-${examId}</span>
+              </td>
+            </tr>
+          </table>
+
+          <div class="word-two-column">
+            ${solutionText}
           </div>
         `;
       });
 
-      // Construct Document XML wrapper wrapper for Microsoft Word compatibility
-      const docxHeader = `<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'><head><title>Master Solution Export</title><style>
-        table { border-collapse: collapse; width: 100%; margin: 12px 0; }
-        th, td { border: 1px solid #cbd5e1; padding: 6px 10px; text-align: left; }
-        th { background-color: #f1f5f9; font-weight: bold; }
-      </style></head><body style="padding:40px;">`;
+      // Office Document Open-XML XML Schema Shell Header Wrapper Configuration Injection Layer
+      const docxHeader = `<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
+      <head>
+        <title>Master Solution Export</title>
+        <style>
+          @page {
+            size: 21.0cm 29.7cm; /* Standard A4 Matrix Configuration Setup */
+            margin: 1.5cm 1.5cm 1.5cm 1.5cm;
+          }
+          body {
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 10pt;
+            color: #000000;
+          }
+          /* Custom MS Word Native Section Definition Breakdown Layer Hook for explicit columns alignment */
+          div.word-two-column {
+            margin:0in;
+            margin-bottom:.0001pt;
+            mso-element:section;
+            page-break-before:auto;
+            mso-section-break-type:continuous;
+            mso-columns:2 20.0pt; /* Configures explicit 2 columns structure definition inside Word */
+          }
+          p, li {
+            margin:0in;
+            margin-bottom:6pt;
+            font-family:'Courier New';
+            font-size:10pt;
+            line-height:1.2;
+          }
+        </style>
+      </head>
+      <body>`;
+      
       const docxFooter = "</body></html>";
-
       const finalSourceHTML = docxHeader + docHtmlBody + docxFooter;
 
-      // Convert to standard byte-stream safe Blob layout parameters
+      // Compile Blob file data stream target parameters
       const blob = new Blob(['\ufeff' + finalSourceHTML], {
         type: 'application/msword'
       });
 
-      // Handle structural programmatic trigger file download routine
+      // Execute client-side download automation hook layout tracking
       const downloadUrl = URL.createObjectURL(blob);
       const tempAnchor = document.createElement('a');
       tempAnchor.href = downloadUrl;
