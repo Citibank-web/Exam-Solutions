@@ -31,7 +31,7 @@
 </head>
 <body class="font-sans antialiased bg-slate-950 text-slate-100 min-h-full flex flex-col selection:bg-indigo-500/30 selection:text-indigo-300">
 
-  <header class="z-40 bg-slate-900 border-b border-slate-800 px-6 py-4 sm:px-10 flex justify-between items-center transition-all duration-200">
+  <header class="sticky top-0 z-50 bg-slate-900/90 backdrop-blur-md border-b border-slate-800 px-6 py-4 sm:px-10 flex justify-between items-center transition-all duration-200">
     <div class="flex items-center gap-3">
       <div class="w-8 h-8 rounded-lg bg-gradient-to-tr from-indigo-600 via-purple-600 to-pink-500 flex items-center justify-center shadow-md shadow-indigo-500/20">
         <svg class="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
@@ -51,7 +51,7 @@
     
     <div class="absolute top-[-5%] left-[-5%] w-[500px] h-[500px] rounded-full bg-indigo-600/5 blur-[120px] pointer-events-none z-0"></div>
 
-    <section class="lg:col-span-7 bg-slate-900/50 backdrop-blur-xl border border-slate-800 rounded-2xl p-6 sm:p-8 shadow-cosmic transition-all duration-300 hover:shadow-cosmic-hover z-10">
+    <section class="lg:col-span-7 w-full bg-slate-900/50 backdrop-blur-xl border border-slate-800 rounded-2xl p-6 sm:p-8 shadow-cosmic transition-all duration-300 hover:shadow-cosmic-hover z-10 overflow-hidden">
       <h2 id="form-panel-title" class="text-base sm:text-lg font-bold tracking-tight text-white pb-4 border-b border-slate-800 mb-6 transition-colors duration-300">
         Step 1: Ingest New Exam Master Sheet
       </h2>
@@ -105,7 +105,7 @@
         <div>
           <label class="block text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-2">📝 Fast Ingest Master Solution (.docx File)</label>
           <div class="file-input-wrapper bg-slate-950 border border-dashed border-slate-800 p-4 rounded-xl text-center transition-all duration-200 hover:bg-slate-900 group ring-1 ring-purple-500/10">
-            <input type="file" id="solution-docx-file" accept=".docx" class="text-sm font-medium text-slate-400 file:mr-4 file:py-1.5 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-bold file:bg-indigo-600 file:text-white hover:file:bg-indigo-700 file:cursor-pointer cursor-pointer">
+            <input type="file" id="solution-docx-file" accept=".docx" class="max-w-full text-sm font-medium text-slate-400 file:mr-4 file:py-1.5 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-bold file:bg-indigo-600 file:text-white hover:file:bg-indigo-700 file:cursor-pointer cursor-pointer">
           </div>
           <small class="block text-[11px] text-slate-500 mt-2 font-normal leading-relaxed">Optional. Uploading a document automatically converts format structure and embedded images directly into the text window below.</small>
         </div>
@@ -137,7 +137,7 @@
       </div>
     </section>
 
-    <div class="lg:col-span-5 flex flex-col gap-8 z-10">
+    <div class="lg:col-span-5 flex flex-col gap-8 w-full z-10">
       
       <section class="bg-slate-900/50 backdrop-blur-xl border border-slate-800 rounded-2xl p-6 sm:p-8 shadow-cosmic transition-all duration-300 hover:shadow-cosmic-hover">
         <h2 class="text-base sm:text-lg font-bold tracking-tight text-white pb-4 border-b border-slate-800 mb-6">
@@ -225,11 +225,18 @@
       padding: 14px 16px;
       border-radius: 12px;
       display: flex;
-      justify-content: space-between;
-      align-items: center;
+      flex-direction: column;
+      gap: 12px;
       border: 1px solid #1E293B;
       box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
       transition: all 250ms cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    @media (min-width: 640px) {
+      .exam-print-row {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+      }
     }
     .exam-print-row:hover {
       border-color: #4338CA;
@@ -238,12 +245,16 @@
       box-shadow: 0 4px 12px rgba(99, 102, 241, 0.1);
     }
     .exam-print-info { cursor: pointer; flex-grow: 1; padding-right: 12px; }
-    .exam-print-info h4 { font-size: 14px; font-weight: 700; color: #F8FAFC; transition: color 200ms; }
+    .exam-print-info h4 { font-size: 14px; font-weight: 700; color: #F8FAFC; transition: color 200ms; word-break: break-all; }
     .exam-print-row:hover .exam-print-info h4 { color: #818CF8; }
-    .exam-print-info p { font-size: 11.5px; color: #94A3B8; margin-top: 3px; font-weight: 400; }
-    .action-row-buttons { display: flex; gap: 8px; }
+    .exam-print-info p { font-size: 11.5px; color: #94A3B8; margin-top: 3px; font-weight: 400; word-break: break-all; }
+    .action-row-buttons { display: flex; gap: 8px; width: 100%; }
+    @media (min-width: 640px) {
+      .action-row-buttons { width: auto; }
+    }
     
     .btn-print {
+      flex: 1;
       background-color: #10B981;
       color: white;
       border: none;
@@ -254,6 +265,10 @@
       font-weight: 600;
       font-size: 11.5px;
       transition: all 200ms;
+      white-space: nowrap;
+    }
+    @media (min-width: 640px) {
+      .btn-print { flex: none; }
     }
     .btn-print:hover { background-color: #059669; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2); }
     .btn-print.btn-row-edit {
@@ -262,6 +277,29 @@
       color: #F1F5F9;
     }
     .btn-print.btn-row-edit:hover { background-color: #334155; border-color: #475569; }
+
+    /* Responsive tables container rules with Sticky Headers */
+    .table-responsive-container {
+      width: 100%;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      margin-top: 1rem;
+      margin-bottom: 1rem;
+      border: 1px solid #1e293b;
+      border-radius: 0.75rem;
+    }
+    .table-responsive-container table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+    }
+    .table-responsive-container th {
+      position: sticky;
+      top: 0;
+      background-color: #0f172a !important;
+      z-index: 10;
+      box-shadow: inset 0 -2px 0 rgba(255,255,255,0.1);
+    }
   </style>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -634,10 +672,151 @@
       terminalLogger.innerHTML += `<br><br><span style="color:#10B981">✓ SUCCESS: All variation models established! You can now run your Step 3 print layout cleanly.</span>`;
     }
 
+      // True CBT-Style Shuffling & Mutation Core Algorithm Engine
     async function simulateBackendAICall(sys, user) {
-      await new Promise(resolve => setTimeout(resolve, 600));
-      const lines = user.split("Master Official Marking Scheme:")[1] || "Processed Scheme Copy.";
-      return `[WAEC/NECO Verified Script Copy]\n\n${lines.trim().replace(/The/g, "This specific")}\n\n[End of Candidate Script Data Row]`;
+      await new Promise(resolve => setTimeout(resolve, 300));
+      
+      // Isolate the base structural text payload
+      let baseHtml = user.split("Master Official Marking Scheme:")[1] || user;
+      baseHtml = baseHtml.trim();
+
+      // Ensure content contains markup structure to parse safely
+      if (!baseHtml.startsWith('<')) {
+        baseHtml = `<div>${baseHtml.replace(/\n/g, '<br>')}</div>`;
+      }
+
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(baseHtml, 'text/html');
+
+      // Helper Randomizer Shuffler Algorithm Loop
+      function shuffle(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [array[i], array[j]] = [array[j], array[i]];
+        }
+      }
+
+      // --- CBT Scenario 1: Standard Ordered HTML Parent Lists (<ol><li>) ---
+      const orderedLists = doc.querySelectorAll('ol');
+      orderedLists.forEach(ol => {
+        const items = Array.from(ol.querySelectorAll('li'));
+        if (items.length > 1) {
+          const texts = items.map(li => li.innerHTML);
+          shuffle(texts);
+          items.forEach((li, idx) => {
+            li.innerHTML = texts[idx];
+          });
+        }
+      });
+
+      // --- CBT Scenario 2: Hardcoded Text Paragraph Serial Lists (1., i., A., ii)) ---
+      const listRegex = /^([\s]*)([0-9]+|[a-zA-Z]+|[ivxlcdmIVXLCDM]+)([\.\)\-]\s+)(.*)/;
+      const paragraphs = Array.from(doc.querySelectorAll('p, div'));
+      
+      let groupCollector = [];
+
+      function processGroupShuffle(group) {
+        if (group.length > 1) {
+          const extractedContents = group.map(g => g.textOnly);
+          shuffle(extractedContents);
+          group.forEach((item, idx) => {
+            item.element.innerHTML = `${item.prefix}${extractedContents[idx]}`;
+          });
+        }
+      }
+
+      paragraphs.forEach(p => {
+        if (p.tagName === 'TABLE' || p.closest('table')) return; // Skip inside table elements to process via table handler
+        if (p.children.length === 0 || (p.children.length === 1 && p.firstElementChild.tagName === 'BR')) {
+          const rawText = p.innerText.trim();
+          const match = rawText.match(listRegex);
+          
+          if (match) {
+            const prefixMarkup = rawText.replace(match[4], '');
+            groupCollector.push({ element: p, textOnly: match[4], prefix: prefixMarkup });
+          } else {
+            processGroupShuffle(groupCollector);
+            groupCollector = [];
+          }
+        }
+      });
+      processGroupShuffle(groupCollector); // Catch trailing arrays
+
+      // --- CBT Scenario 3: HTML Table Shuffling with Serial / Roman Numeral Sorting Matrix ---
+      const tables = doc.querySelectorAll('table');
+      tables.forEach(table => {
+        // Enforce structural wrappers for absolute mobile responsiveness
+        if (!table.parentElement.classList.contains('table-responsive-container')) {
+          const resWrapper = doc.createElement('div');
+          resWrapper.className = 'table-responsive-container';
+          table.parentNode.insertBefore(resWrapper, table);
+          resWrapper.appendChild(table);
+        }
+
+        const tbody = table.querySelector('tbody') || table;
+        const allRows = Array.from(tbody.querySelectorAll('tr'));
+        if (allRows.length <= 1) return;
+
+        let dataRows = [];
+
+        // Isolate headers to remain untouched
+        if (table.querySelector('thead')) {
+          dataRows = Array.from(table.querySelector('tbody').querySelectorAll('tr'));
+        } else {
+          // Always treat the absolute first row as an untouched header row
+          dataRows = allRows.slice(1);
+        }
+
+        if (dataRows.length > 1) {
+          // Extract the original numbering sequences (prefixes) from the first cell of each row sequentially
+          const originalNumberedPrefixes = dataRows.map(row => {
+            const firstCell = row.querySelector('td, th');
+            if (!firstCell) return { cleanMatch: false, html: "" };
+            const testText = firstCell.innerText.trim();
+            const match = testText.match(/^([0-9]+|[a-zA-Z]+|[ivxlcdmIVXLCDM]+)([\.\)\-]?)$/);
+            return {
+              cleanMatch: !!match,
+              html: firstCell.innerHTML
+            };
+          });
+
+          // Map data row body data fields for content shuffling (excluding the index cell context if it's a serial number)
+          const mappedRows = dataRows.map((row, idx) => {
+            const cells = Array.from(row.querySelectorAll('td, th'));
+            const keepsSequentialNumbers = originalNumberedPrefixes[idx].cleanMatch;
+
+            return {
+              cellsHTML: cells.map(c => c.innerHTML),
+              hasNumberedPrefixIndex: keepsSequentialNumbers
+            };
+          });
+
+          // Shuffle only the content models
+          shuffle(mappedRows);
+
+          // Re-write back into rows while reinforcing ascending serial numbers on the first cell
+          dataRows.forEach((row, rowIndex) => {
+            const currentShuffledData = mappedRows[rowIndex];
+            const liveCells = Array.from(row.querySelectorAll('td, th'));
+            
+            currentShuffledData.cellsHTML.forEach((htmlValue, cellIndex) => {
+              if (liveCells[cellIndex]) {
+                if (cellIndex === 0 && currentShuffledData.hasNumberedPrefixIndex && originalNumberedPrefixes[rowIndex].cleanMatch) {
+                  // Keep the original sequential order numbering layout intact at this physical location
+                  liveCells[cellIndex].innerHTML = originalNumberedPrefixes[rowIndex].html;
+                } else if (cellIndex === 0 && currentShuffledData.hasNumberedPrefixIndex) {
+                  liveCells[cellIndex].innerHTML = htmlValue;
+                } else {
+                  // Shift standard cell matrix parameters
+                  liveCells[cellIndex].innerHTML = htmlValue;
+                }
+              }
+            });
+          });
+        }
+      });
+
+      return doc.body.innerHTML;
     }
 
     rosterForm.addEventListener('submit', async (e) => {
