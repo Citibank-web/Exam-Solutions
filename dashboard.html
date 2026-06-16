@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Dashboard - Exam Portal</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    /* ==========================================================================
+       Premium Light Theme CSS Design System & Grid Layout
+       ========================================================================== */
+    :root {
+      --bg-main: #f8fafc;
+      --bg-workspace: #f1f5f9;
+      --panel-bg: #ffffff;
+      --panel-hover: #f8fafc;
+      --text-main: #0f172a;
+      --text-secondary: #334155;
+      --text-muted: #64748b;
+      --accent: #4f46e5;
+      --accent-hover: #4338ca;
+      --accent-subtle: #f5f3ff;
+      --border: #e2e8f0;
+      --border-focus: #cbd5e1;
+      
+      --shadow-sm: 0 1px 2px 0 rgba(15, 23, 42, 0.05);
+      --shadow-md: 0 4px 6px -1px rgba(15, 23, 42, 0.05), 0 2px 4px -2px rgba(15, 23, 42, 0.05);
+      --shadow-lg: 0 20px 25px -5px rgba(15, 23, 42, 0.04), 0 8px 10px -6px rgba(15, 23, 42, 0.04);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    body {
+      background-color: var(--bg-main);
+      color: var(--text-main);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Core Application Grid Structure */
+    .dashboard-layout {
+      display: grid;
+      grid-template-columns: 340px 1fr;
+      min-height: 100vh;
+      width: 100vw;
+    }
+
+    /* ==========================================================================
+       Sidebar Panel Styling
+       ========================================================================== */
+    .sidebar {
+      background-color: var(--panel-bg);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      position: sticky;
+      top: 0;
+      overflow-y: auto;
+      box-shadow: var(--shadow-sm);
+      z-index: 10;
+    }
+
+    .user-profile {
+      padding: 24px 32px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      height: 80px;
+    }
+
+    .user-profile h3 {
+      font-size: 15px;
+      font-weight: 800;
+      background: linear-gradient(135deg, var(--text-main) 30%, var(--accent) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 170px;
+      letter-spacing: -0.02em;
+      position: relative;
+      padding-left: 10px;
+    }
+
+    /* Decorative identifier anchor before the username */
+    .user-profile h3::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 4px;
+      bottom: 4px;
+      width: 3px;
+      background: var(--accent);
+      border-radius: 2px;
+    }
+
+    .btn-logout {
+      background: #fff5f5;
+      border: 1px solid #fecaca;
+      color: #ef4444;
+      padding: 8px 16px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 12.5px;
+      font-weight: 700;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 2px 4px rgba(239, 68, 68, 0.04);
+    }
+
+    .btn-logout:hover {
+      background: #ef4444;
+      color: #ffffff;
+      border-color: #ef4444;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(239, 68, 68, 0.16);
+    }
+
+    .exam-list-header {
+      padding: 32px 32px 14px 32px;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-muted);
+      font-weight: 800;
+    }
+
+    .exam-list {
+      list-style: none;
+      padding: 0 16px;
+    }
+
+    .exam-item {
+      padding: 18px 20px;
+      margin-bottom: 8px;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      border: 1px solid transparent;
+      background: transparent;
+      position: relative;
+    }
+
+    .exam-item:hover {
+      background-color: var(--panel-hover);
+      transform: translateY(-1px);
+    }
+
+    .exam-item.active {
+      background-color: var(--accent-subtle);
+      border-color: var(--border);
+    }
+
+    .exam-item.active::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 18px;
+      bottom: 18px;
+      width: 4px;
+      background-color: var(--accent);
+      border-radius: 0 4px 4px 0;
+    }
+
+    .exam-item h4 {
+      font-size: 15px;
+      font-weight: 600;
+      margin-bottom: 4px;
+      color: var(--text-main);
+      letter-spacing: -0.01em;
+    }
+
+    .exam-item p {
+      font-size: 12.5px;
+      color: var(--text-muted);
+    }
+
+    /* ==========================================================================
+       Main Workspace Viewport Styling
+       ========================================================================== */
+    .main-viewport {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 48px 64px;
+      position: relative;
+      background: var(--bg-workspace);
+    }
+
+    .empty-state {
+      text-align: center;
+      max-width: 480px;
+      padding: 40px;
+      background: var(--panel-bg);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      box-shadow: var(--shadow-lg);
+    }
+
+    .empty-state-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 64px;
+      height: 64px;
+      background: var(--accent-subtle);
+      color: var(--accent);
+      border-radius: 16px;
+      margin-bottom: 24px;
+    }
+
+    .empty-state h2 {
+      font-size: 22px;
+      font-weight: 700;
+      margin-bottom: 12px;
+      letter-spacing: -0.02em;
+      color: var(--text-main);
+    }
+
+    .empty-state p {
+      color: var(--text-muted);
+      font-size: 14.5px;
+      line-height: 1.6;
+    }
+
+    .workspace-content {
+      width: 100%;
+      max-width: 800px;
+      align-self: flex-start;
+      display: none;
+      animation: fadeIn 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .workspace-header {
+      margin-bottom: 32px;
+      padding-bottom: 8px;
+    }
+
+    .workspace-header h2 {
+      font-size: 32px;
+      font-weight: 800;
+      letter-spacing: -0.025em;
+      margin-bottom: 8px;
+      color: var(--text-main);
+    }
+
+    .workspace-header span {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--accent);
+      background: var(--accent-subtle);
+      padding: 6px 14px;
+      border-radius: 20px;
+      display: inline-block;
+    }
+
+    .info-card {
+      background: var(--panel-bg);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 40px;
+      margin-bottom: 32px;
+      box-shadow: var(--shadow-lg);
+    }
+
+    .info-card h3 {
+      font-size: 12px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 20px;
+      color: var(--text-muted);
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 12px;
+    }
+
+    .info-card p {
+      font-size: 16px;
+      color: var(--text-secondary);
+      line-height: 1.75;
+      font-weight: 450;
+    }
+
+    .btn-launch {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      background: linear-gradient(135deg, var(--accent) 0%, var(--accent-hover) 100%);
+      color: white;
+      padding: 16px 42px;
+      border-radius: 14px;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 15.5px;
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 4px 14px rgba(79, 70, 229, 0.35);
+    }
+
+    .btn-launch svg {
+      transition: transform 0.2s ease;
+    }
+
+    .btn-launch:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 22px rgba(79, 70, 229, 0.45);
+    }
+
+    /* Pop out dynamic arrow vector inside launcher button on hover state */
+    .btn-launch:hover svg {
+      transform: translateX(4px);
+    }
+    
+    .btn-launch:active {
+      transform: translateY(0);
+      box-shadow: 0 4px 10px rgba(79, 70, 229, 0.25);
+    }
+
+    /* ==========================================================================
+       CSS Loading Spinner Core Definition
+       ========================================================================== */
+    .spinner-container {
+      display: none;
+      position: absolute;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .spinner {
+      width: 44px;
+      height: 44px;
+      border: 3.5px solid var(--border);
+      border-left-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 0.75s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .spinner-text {
+      color: var(--text-muted);
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    /* Utility Helpers */
+    .hidden { display: none !important; }
+    .flex { display: flex !important; }
+    .block { display: block !important; }
+
+    /* ==========================================================================
+       Mobile Optimization Adaptive Layer Queries
+       ========================================================================== */
+    @media (max-width: 1024px) {
+      .dashboard-layout {
+        grid-template-columns: 1fr;
+        height: auto;
+      }
+      
+      .sidebar {
+        height: auto;
+        position: relative;
+        border-right: none;
+        border-bottom: 1px solid var(--border);
+      }
+      
+      .user-profile {
+        padding: 0 16px;
+        height: 72px;
+      }
+      
+      .exam-list {
+        display: flex;
+        overflow-x: auto;
+        padding: 0 8px 16px 8px;
+        gap: 12px;
+        scroll-snap-type: x mandatory;
+        -webkit-overflow-scrolling: touch;
+      }
+      
+      .exam-item {
+        flex: 0 0 290px;
+        margin-bottom: 0;
+        scroll-snap-align: start;
+        background: var(--panel-bg);
+        border: 1px solid var(--border);
+        padding: 16px;
+      }
+
+      .exam-item.active::before {
+        left: 16px;
+        top: auto;
+        bottom: 0;
+        width: calc(100% - 32px);
+        height: 3px;
+        border-radius: 4px 4px 0 0;
+      }
+      
+      .exam-list-header {
+        padding: 16px 16px 8px 16px;
+      }
+
+      .main-viewport {
+        padding: 24px 8px;
+        min-height: 55vh;
+      }
+
+      .empty-state {
+        padding: 32px 20px;
+        border-radius: 12px;
+      }
+
+      .workspace-content {
+        padding: 0 8px;
+      }
+
+      .workspace-header h2 {
+        font-size: 26px;
+      }
+
+      .info-card {
+        padding: 24px 20px;
+        border-radius: 12px;
+      }
+      
+      .btn-launch {
+        width: 100%;
+        text-align: center;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="dashboard-layout">
+    <aside class="sidebar">
+      <div class="user-profile">
+        <h3 id="student-name">Loading...</h3>
+        <button class="btn-logout" id="btn-logout">Sign Out</button>
+      </div>
+      
+      <div class="exam-list-header">Your Registered Exams</div>
+      <ul class="exam-list" id="exam-list-container"></ul>
+    </aside>
+
+    <main class="main-viewport" id="main-viewport">
+      
+      <div class="spinner-container" id="loading-spinner">
+        <div class="spinner"></div>
+        <div class="spinner-text">Synchronizing workspace tables...</div>
+      </div>
+
+      <div class="empty-state" id="empty-view">
+        <div class="empty-state-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+        </div>
+        <h2>Welcome to Your Examination Workspace</h2>
+        <p>Please select an examination module from the left sidebar panel to preview registration status and launch your dynamic environment.</p>
+      </div>
+
+      <div class="workspace-content" id="workspace-view">
+        <div class="workspace-header">
+          <h2 id="view-subject">Subject Title</h2>
+          <span id="view-date">Date Placeholder</span>
+        </div>
+
+        <div class="info-card">
+          <h3>Active Examination Overview</h3>
+          <p id="view-question">Question summary parameters are loaded here natively.</p>
+        </div>
+
+        <button class="btn-launch" id="btn-enter-exam">
+          Launch Solution Room
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </button>
+      </div>
+
+    </main>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    const SUPABASE_URL = "https://ixncydkmeihhdpvsmjtx.supabase.co";
+    const SUPABASE_ANON_KEY = "sb_publishable_kILpb-WHjdkpeRXVpeQ2dA_MAMqf5m7";
+    
+    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    // Document Node References
+    const studentNameLabel = document.getElementById('student-name');
+    const examListContainer = document.getElementById('exam-list-container');
+    const loadingSpinner = document.getElementById('loading-spinner');
+    const emptyView = document.getElementById('empty-view');
+    const workspaceView = document.getElementById('workspace-view');
+    const logoutBtn = document.getElementById('btn-logout');
+
+    // Workspace Data Mapping targets
+    const viewSubject = document.getElementById('view-subject');
+    const viewDate = document.getElementById('view-date');
+    const viewQuestion = document.getElementById('view-question');
+    const enterExamBtn = document.getElementById('btn-enter-exam');
+
+    let currentSessionUser = null;
+    let currentlySelectedExamId = null;
+
+    // 1. Guard Runtime Checklist: Check Identity Presence
+    async function checkUserAuthentication() {
+      const { data: { user }, error } = await supabaseClient.auth.getUser();
+      
+      if (error || !user) {
+        window.location.href = "index.html";
+        return;
+      }
+      
+      currentSessionUser = user;
+      fetchStudentProfile(user.id);
+    }
+
+    // 2. Fetch Personal Core Account Metrics
+    async function fetchStudentProfile(userId) {
+      const { data: profile, error } = await supabaseClient
+        .from('profiles')
+        .select('full_name')
+        .eq('id', userId)
+        .single();
+
+      if (!error && profile) {
+        studentNameLabel.innerText = profile.full_name;
+      }
+      fetchRegisteredExams(userId);
+    }
+
+    // 3. Query RLS Protected Junction Roster Table
+    async function fetchRegisteredExams(userId) {
+      showLoader(true);
+      
+      const { data: registrations, error } = await supabaseClient
+        .from('student_exams')
+        .select(`
+          exam_id,
+          exams ( id, subject, exam_date )
+        `)
+        .eq('student_id', userId);
+
+      showLoader(false);
+
+      if (error || !registrations || registrations.length === 0) {
+        examListContainer.innerHTML = `<p style="padding: 24px; color: var(--text-muted); font-size:14px;">No active registrations assigned.</p>`;
+        return;
+      }
+
+      examListContainer.innerHTML = "";
+      
+      registrations.forEach(item => {
+        const exam = item.exams;
+        if (!exam) return;
+
+        const li = document.createElement('li');
+        li.className = 'exam-item';
+        li.dataset.id = exam.id;
+        li.innerHTML = `
+          <h4>${exam.subject}</h4>
+          <p>Exam Ref: EXM-${exam.id} • ${exam.exam_date}</p>
+        `;
+        
+        li.addEventListener('click', () => handleExamSelection(exam.id, li));
+        examListContainer.appendChild(li);
+      });
+    }
+
+    // 4. Handle Selection Actions and Render Target Exam Meta
+    async function handleExamSelection(examId, elementToken) {
+      currentlySelectedExamId = examId;
+      
+      document.querySelectorAll('.exam-item').forEach(el => el.classList.remove('active'));
+      elementToken.classList.add('active');
+
+      emptyView.classList.add('hidden');
+      workspaceView.classList.add('hidden');
+      showLoader(true);
+
+      const { data: exam, error } = await supabaseClient
+        .from('exams')
+        .select('id, subject, exam_date, master_question')
+        .eq('id', examId)
+        .single();
+
+      showLoader(false);
+
+      if (error || !exam) {
+        alert("Failed to database lookup parameters.");
+        return;
+      }
+
+      viewSubject.innerText = exam.subject;
+      viewDate.innerText = `Scheduled Execution Date: ${exam.exam_date}`;
+      viewQuestion.innerText = exam.master_question.substring(0, 180) + "...";
+      
+      workspaceView.classList.remove('hidden');
+      workspaceView.classList.add('block');
+    }
+
+    enterExamBtn.addEventListener('click', () => {
+      if (currentlySelectedExamId) {
+        window.location.href = `exam-view.html?examId=${currentlySelectedExamId}`;
+      }
+    });
+
+    logoutBtn.addEventListener('click', async () => {
+      await supabaseClient.auth.signOut();
+      window.location.href = "index.html";
+    });
+
+    function showLoader(status) {
+      if (status) {
+        loadingSpinner.classList.add('flex');
+      } else {
+        loadingSpinner.classList.remove('flex');
+      }
+    }
+
+    checkUserAuthentication();
+  </script>
+</body>
+</html>
