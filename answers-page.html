@@ -21,6 +21,7 @@
           boxShadow: {
             'cosmic': '0 4px 30px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.1)',
             'cosmic-hover': '0 10px 40px rgba(99, 102, 241, 0.15), 0 4px 30px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.2)',
+            'glow': '0 0 15px rgba(99, 102, 241, 0.5)'
           }
         }
       }
@@ -41,7 +42,6 @@
       animation: buttonShimmer 4s infinite linear;
     }
     
-    /* Responsive Content Container without Breakages */
     .solution-content {
       background-color: #ffffff;
       color: #1e293b;
@@ -67,7 +67,6 @@
       margin-bottom: 1rem;
     }
     
-    /* Symmetrical Proportional Table Matrix */
     .solution-content table {
       width: 100% !important;
       max-width: 100%;
@@ -75,13 +74,13 @@
       border-spacing: 0;
       margin: 1rem 0;
       font-size: 0.75rem;
-      table-layout: fixed; /* Enforces strict symmetrical scaling */
+      table-layout: fixed;
       border-radius: 6px;
       overflow: hidden;
       border: 1px solid #cbd5e1;
     }
     .solution-content th, .solution-content td {
-      width: 50%; /* Uniform matching programmatic size widths */
+      width: 50%;
       border-bottom: 1px solid #cbd5e1;
       border-right: 1px solid #cbd5e1;
       padding: 8px 10px;
@@ -107,7 +106,6 @@
     .solution-content td { color: #334155; font-weight: 500; }
     .solution-content tr:nth-child(even) { background-color: #f8fafc; }
 
-    /* Print Architecture */
     @media print {
       @page { size: A4 portrait; margin: 15mm; }
       body { background: #ffffff !important; color: #000000 !important; font-family: 'Courier New', Courier, monospace !important; }
@@ -142,11 +140,16 @@
       </div>
     </div>
 
-    <div class="mt-3">
+    <div class="mt-3 flex flex-col items-center justify-center gap-2.5">
       <a href="https://t.me/your_telegram_group" target="_blank" class="animate-shimmer relative overflow-hidden inline-flex items-center gap-2 px-6 py-2 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-semibold text-xs tracking-wide rounded-xl shadow-md transition-all duration-300 hover:opacity-95 hover:scale-[1.01] group whitespace-nowrap">
         <span>✈ Join Our Telegram Group</span>
         <span class="w-1.5 h-1.5 bg-emerald-400 rounded-full shadow-[0_0_8px_#34d399]"></span>
       </a>
+      
+      <button onclick="forceRefreshSolutions()" id="refresh-btn" class="relative overflow-hidden inline-flex items-center gap-2 px-5 py-1.5 bg-slate-900 border border-indigo-500/40 text-indigo-300 hover:text-white font-bold text-[10px] tracking-widest uppercase rounded-lg shadow-glow hover:bg-indigo-600/10 active:scale-95 transition-all duration-300">
+        <svg class="w-3 h-3 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 4v5h.582m15.356 2A8.001 8.001 0 1121.253 8H18"></path></svg>
+        <span>Check for Updates / Refresh</span>
+      </button>
     </div>
   </header>
 
@@ -181,64 +184,21 @@
       return "DEV-" + Math.abs(hash);
     }
 
-    async function initializeExamRenderPipeline() {
-      const urlParams = new URLSearchParams(window.location.search);
-      const examId = urlParams.get('examId');
+    function getCachedExam(examId) {
+      try {
+        const cached = localStorage.getItem(`exam_cache_${examId}`);
+        return cached ? JSON.parse(cached) : null;
+      } catch (e) { return null; }
+    }
+
+    function setExamCache(examId, subject, uniqueText) {
+      try {
+        localStorage.setItem(`exam_cache_${examId}`, JSON.stringify({ subject, uniqueText, timestamp: Date.now() }));
+      } catch (e) {}
+    }
+
+    function renderContentLayout(subject, examId, uniqueText) {
       const container = document.getElementById('print-container');
-
-      if (!examId) {
-        container.innerHTML = `<p class="text-red-400 text-center font-semibold py-10 bg-slate-900/50 border border-red-500/20 rounded-2xl mx-2">Error: Access validation context missing. Please re-enter PIN template.</p>`;
-        return;
-      }
-
-      const { data: exam, error: examErr } = await supabaseClient
-        .from('exams')
-        .select('id, subject, master_solution_template, master_solution')
-        .eq('id', examId)
-        .single();
-
-      if (examErr || !exam) {
-        container.innerHTML = `<p class="text-red-400 text-center font-semibold py-10 bg-slate-900/50 border border-red-500/20 rounded-2xl mx-2">Database Error: Target examination sheet not resolved.</p>`;
-        return;
-      }
-
-      const deviceId = getDeviceFingerprint();
-
-      let { data: session } = await supabaseClient
-        .from('anonymous_sessions')
-        .select('session_id')
-        .eq('exam_id', exam.id)
-        .eq('device_fingerprint', deviceId)
-        .single();
-
-      let uniqueText = "";
-
-      if (session) {
-        const { data: solution } = await supabaseClient
-          .from('mutated_solutions')
-          .select('unique_solution_text')
-          .eq('session_id', session.session_id)
-          .single();
-        uniqueText = solution?.unique_solution_text;
-      } else {
-        const { data: newSession, error: sErr } = await supabaseClient
-          .from('anonymous_sessions')
-          .insert([{ exam_id: exam.id, device_fingerprint: deviceId }])
-          .select().single();
-
-        if (sErr) {
-          container.innerHTML = `<p class="text-red-400 text-center font-semibold py-4">Session Obtainment Failed.</p>`;
-          return;
-        }
-
-        const baseBlueprint = exam.master_solution_template || exam.master_solution;
-        uniqueText = compileVariantText(baseBlueprint, deviceId);
-
-        await supabaseClient
-          .from('mutated_solutions')
-          .insert([{ exam_id: exam.id, session_id: newSession.session_id, unique_solution_text: uniqueText }]);
-      }
-
       container.innerHTML = `
         <div class="print-card w-full flex flex-col gap-4">
           <div class="bg-slate-900/60 backdrop-blur-xl border border-slate-800 rounded-xl p-4 sm:p-6 shadow-cosmic flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
@@ -249,14 +209,14 @@
               </div>
               <div>
                 <span class="block text-[9px] font-bold uppercase tracking-widest text-slate-500">Subject Context</span>
-                <div class="text-base font-extrabold text-indigo-400 tracking-tight">${exam.subject}</div>
+                <div class="text-base font-extrabold text-indigo-400 tracking-tight">${subject}</div>
               </div>
             </div>
             <div class="sm:text-right flex flex-col gap-1.5 items-start sm:items-end w-full sm:w-auto border-t border-slate-800/60 sm:border-0 pt-3 sm:pt-0">
               <span class="text-[9px] font-extrabold tracking-wider bg-amber-500/10 border border-amber-500/20 text-amber-400 px-2.5 py-0.5 rounded uppercase inline-block">
                 Architecture Status
               </span>
-              <span class="text-[11px] font-mono text-slate-400 tracking-tight">EXM-${exam.id}</span>
+              <span class="text-[11px] font-mono text-slate-400 tracking-tight">EXM-${examId}</span>
             </div>
           </div>
           
@@ -265,6 +225,85 @@
           </div>
         </div>
       `;
+    }
+
+    async function initializeExamRenderPipeline() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const examId = urlParams.get('examId');
+      const container = document.getElementById('print-container');
+
+      if (!examId) {
+        container.innerHTML = `<p class="text-red-400 text-center font-semibold py-10 bg-slate-900/50 border border-red-500/20 rounded-2xl mx-2">Error: Access validation context missing. Please re-enter PIN template.</p>`;
+        return;
+      }
+
+      // Fast Local cache extraction check
+      const localCachedData = getCachedExam(examId);
+      if (localCachedData) {
+        renderContentLayout(localCachedData.subject, examId, localCachedData.uniqueText);
+        return;
+      }
+
+      try {
+        // ALWAYS pull down the live dashboard copy first so updates are synced
+        const { data: exam, error: examErr } = await supabaseClient
+          .from('exams')
+          .select('id, subject, master_solution_template, master_solution')
+          .eq('id', examId)
+          .single();
+
+        if (examErr || !exam) {
+          container.innerHTML = `<p class="text-red-400 text-center font-semibold py-10 bg-slate-900/50 border border-red-500/20 rounded-2xl mx-2">Database Error: Target examination sheet not resolved.</p>`;
+          return;
+        }
+
+        const deviceId = getDeviceFingerprint();
+
+        // Register session for device if it doesn't exist
+        let { data: session } = await supabaseClient
+          .from('anonymous_sessions')
+          .select('session_id')
+          .eq('exam_id', exam.id)
+          .eq('device_fingerprint', deviceId)
+          .single();
+
+        if (!session) {
+          await supabaseClient
+            .from('anonymous_sessions')
+            .insert([{ exam_id: exam.id, device_fingerprint: deviceId }]);
+        }
+
+        // FIX EFFECT: Calculate permutation on the LIVE dashboard text directly!
+        const baseBlueprint = exam.master_solution_template || exam.master_solution;
+        const uniqueText = compileVariantText(baseBlueprint, deviceId);
+
+        if (uniqueText) {
+          setExamCache(examId, exam.subject, uniqueText);
+          renderContentLayout(exam.subject, examId, uniqueText);
+        }
+
+      } catch (err) {
+        container.innerHTML = `<p class="text-red-400 text-center font-semibold py-4">Structural Generation Exception Detected.</p>`;
+      }
+    }
+
+    function forceRefreshSolutions() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const examId = urlParams.get('examId');
+      const btn = document.getElementById('refresh-btn');
+      
+      if (examId) {
+        localStorage.removeItem(`exam_cache_${examId}`);
+      }
+      
+      if (btn) {
+        btn.innerHTML = `<span>Checking for Updates...</span>`;
+        btn.classList.add('opacity-70', 'animate-pulse');
+      }
+      
+      setTimeout(() => {
+        window.location.reload();
+      }, 400);
     }
 
     function compileVariantText(template, seed) {
