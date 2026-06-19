@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full bg-slate-950 antialiased">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Examination Script Sheet</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+          },
+          boxShadow: {
+            'cosmic': '0 4px 30px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.1)',
+            'cosmic-hover': '0 10px 40px rgba(99, 102, 241, 0.15), 0 4px 30px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.2)',
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    @keyframes buttonShimmer {
+      0% { left: -100%; }
+      30%, 100% { left: 150%; }
+    }
+    .animate-shimmer::before {
+      content: '';
+      position: absolute;
+      top: 0; left: -100%;
+      width: 50%; height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.25), transparent);
+      transform: skewX(-25deg);
+      animation: buttonShimmer 4s infinite linear;
+    }
+    
+    /* Responsive Content Container without Breakages */
+    .solution-content {
+      background-color: #ffffff;
+      color: #1e293b;
+      padding: 0.25rem;
+      width: 100%;
+    }
+    
+    .solution-content h3 {
+      font-size: 0.9rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #0f172a;
+      margin-bottom: 0.75rem;
+      margin-top: 0.5rem;
+      border-bottom: 2px solid #cbd5e1;
+      padding-bottom: 0.25rem;
+    }
+    .solution-content p {
+      font-size: 0.825rem;
+      color: #334155;
+      line-height: 1.5;
+      margin-bottom: 1rem;
+    }
+    
+    /* Symmetrical Proportional Table Matrix */
+    .solution-content table {
+      width: 100% !important;
+      max-width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      margin: 1rem 0;
+      font-size: 0.75rem;
+      table-layout: fixed; /* Enforces strict symmetrical scaling */
+      border-radius: 6px;
+      overflow: hidden;
+      border: 1px solid #cbd5e1;
+    }
+    .solution-content th, .solution-content td {
+      width: 50%; /* Uniform matching programmatic size widths */
+      border-bottom: 1px solid #cbd5e1;
+      border-right: 1px solid #cbd5e1;
+      padding: 8px 10px;
+      word-wrap: break-word;
+      word-break: break-word;
+      overflow-wrap: break-word;
+      white-space: normal;
+    }
+    .solution-content th:last-child, .solution-content td:last-child {
+      border-right: none;
+    }
+    .solution-content tr:last-child td {
+      border-bottom: none;
+    }
+    .solution-content th { 
+      background-color: #f1f5f9; 
+      color: #0f172a; 
+      font-weight: 700; 
+      text-align: left;
+      text-transform: uppercase;
+      letter-spacing: 0.02em;
+    }
+    .solution-content td { color: #334155; font-weight: 500; }
+    .solution-content tr:nth-child(even) { background-color: #f8fafc; }
+
+    /* Print Architecture */
+    @media print {
+      @page { size: A4 portrait; margin: 15mm; }
+      body { background: #ffffff !important; color: #000000 !important; font-family: 'Courier New', Courier, monospace !important; }
+      .no-print { display: none !important; }
+      .print-card { background: #ffffff !important; border: none !important; box-shadow: none !important; padding: 0 !important; width: 100% !important; color: #000000 !important; }
+      .solution-content table, .solution-content th, .solution-content td { border: 1px solid #000000 !important; color: #000000 !important; }
+    }
+  </style>
+</head>
+<body class="font-sans text-slate-100 min-h-full flex flex-col bg-slate-950 selection:bg-indigo-500/30 selection:text-indigo-300 w-full overflow-x-hidden">
+
+  <header class="no-print sticky top-0 w-full bg-slate-950/95 border-b border-slate-900/80 backdrop-blur-md px-4 pt-4 pb-4 text-center z-50 shadow-lg">
+    <div class="relative inline-block w-full max-w-7xl mx-auto">
+      <h1 class="text-2xl font-extrabold tracking-wider text-white uppercase sm:text-3xl whitespace-nowrap overflow-hidden text-ellipsis block w-full">
+        ♦ EXAM-SOLUTIONS
+      </h1>
+      <div class="w-48 h-[3px] mx-auto mt-2 bg-gradient-to-r from-transparent via-indigo-500 to-transparent rounded-full"></div>
+    </div>
+
+    <div class="flex items-center justify-center gap-2 max-w-2xl mx-auto mt-3 px-2 overflow-x-auto whitespace-nowrap no-scrollbar">
+      <div class="inline-flex flex-nowrap items-center gap-1.5 px-3 py-1.5 bg-slate-900/80 border border-slate-800/80 rounded-lg shadow-sm text-[10px] font-bold text-slate-300 tracking-widest uppercase ring-1 ring-white/[0.02]">
+        <span class="w-1.5 h-1.5 rounded-full bg-indigo-500 shrink-0"></span><span class="font-bold">WAEC</span>
+      </div>
+      <div class="inline-flex flex-nowrap items-center gap-1.5 px-3 py-1.5 bg-slate-900/80 border border-slate-800/80 rounded-lg shadow-sm text-[10px] font-bold text-slate-300 tracking-widest uppercase ring-1 ring-white/[0.02]">
+        <span class="w-1.5 h-1.5 rounded-full bg-purple-500 shrink-0"></span><span class="font-bold">NECO</span>
+      </div>
+      <div class="inline-flex flex-nowrap items-center gap-1.5 px-3 py-1.5 bg-slate-900/80 border border-slate-800/80 rounded-lg shadow-sm text-[10px] font-bold text-slate-300 tracking-widest uppercase ring-1 ring-white/[0.02]">
+        <span class="w-1.5 h-1.5 rounded-full bg-pink-500 shrink-0"></span><span class="font-bold">NABTEB</span>
+      </div>
+      <div class="inline-flex flex-nowrap items-center gap-1.5 px-3 py-1.5 bg-slate-900/80 border border-slate-800/80 rounded-lg shadow-sm text-[10px] font-bold text-slate-300 tracking-widest uppercase ring-1 ring-white/[0.02]">
+        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0"></span><span class="font-bold">JAMB</span>
+      </div>
+    </div>
+
+    <div class="mt-3">
+      <a href="https://t.me/your_telegram_group" target="_blank" class="animate-shimmer relative overflow-hidden inline-flex items-center gap-2 px-6 py-2 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-semibold text-xs tracking-wide rounded-xl shadow-md transition-all duration-300 hover:opacity-95 hover:scale-[1.01] group whitespace-nowrap">
+        <span>✈ Join Our Telegram Group</span>
+        <span class="w-1.5 h-1.5 bg-emerald-400 rounded-full shadow-[0_0_8px_#34d399]"></span>
+      </a>
+    </div>
+  </header>
+
+  <div class="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] rounded-full bg-indigo-600/5 blur-[130px] z-0 pointer-events-none"></div>
+  <div class="absolute bottom-[-5%] right-[10%] w-[400px] h-[400px] rounded-full bg-purple-600/5 blur-[120px] z-0 pointer-events-none"></div>
+
+  <main id="print-container" class="w-full max-w-5xl mx-auto flex-1 flex flex-col justify-center z-10 my-6 px-3 sm:px-6 lg:px-8 overflow-x-hidden">
+    <div class="text-center py-16 text-slate-500">
+      <p class="text-sm font-semibold tracking-wide animate-pulse">Building structural paper data matrix context...</p>
+    </div>
+  </main>
+
+  <footer class="no-print w-full mt-auto py-6 bg-slate-950/80 border-t border-slate-900/60 backdrop-blur-md text-center text-xs font-medium text-slate-500 tracking-wide z-10">
+    <div class="mb-1.5">
+      <a href="https://examsolutions.netlify.app" class="text-indigo-400 hover:text-indigo-300 font-bold tracking-[0.2em] uppercase transition-colors duration-200">
+        https://examsolutions.netlify.app
+      </a>
+    </div>
+    <div class="text-[10px] tracking-widest text-slate-600 uppercase">WAEC | NECO | NABTEB | JAMB</div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    const SUPABASE_URL = "https://ixncydkmeihhdpvsmjtx.supabase.co";
+    const SUPABASE_ANON_KEY = "sb_publishable_kILpb-WHjdkpeRXVpeQ2dA_MAMqf5m7";
+    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    function getDeviceFingerprint() {
+      const signature = window.navigator.userAgent + window.navigator.language + window.screen.colorDepth + window.screen.width;
+      let hash = 0;
+      for (let i = 0; i < signature.length; i++) { hash = (hash << 5) - hash + signature.charCodeAt(i); hash |= 0; }
+      return "DEV-" + Math.abs(hash);
+    }
+
+    async function initializeExamRenderPipeline() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const examId = urlParams.get('examId');
+      const container = document.getElementById('print-container');
+
+      if (!examId) {
+        container.innerHTML = `<p class="text-red-400 text-center font-semibold py-10 bg-slate-900/50 border border-red-500/20 rounded-2xl mx-2">Error: Access validation context missing. Please re-enter PIN template.</p>`;
+        return;
+      }
+
+      const { data: exam, error: examErr } = await supabaseClient
+        .from('exams')
+        .select('id, subject, master_solution_template, master_solution')
+        .eq('id', examId)
+        .single();
+
+      if (examErr || !exam) {
+        container.innerHTML = `<p class="text-red-400 text-center font-semibold py-10 bg-slate-900/50 border border-red-500/20 rounded-2xl mx-2">Database Error: Target examination sheet not resolved.</p>`;
+        return;
+      }
+
+      const deviceId = getDeviceFingerprint();
+
+      let { data: session } = await supabaseClient
+        .from('anonymous_sessions')
+        .select('session_id')
+        .eq('exam_id', exam.id)
+        .eq('device_fingerprint', deviceId)
+        .single();
+
+      let uniqueText = "";
+
+      if (session) {
+        const { data: solution } = await supabaseClient
+          .from('mutated_solutions')
+          .select('unique_solution_text')
+          .eq('session_id', session.session_id)
+          .single();
+        uniqueText = solution?.unique_solution_text;
+      } else {
+        const { data: newSession, error: sErr } = await supabaseClient
+          .from('anonymous_sessions')
+          .insert([{ exam_id: exam.id, device_fingerprint: deviceId }])
+          .select().single();
+
+        if (sErr) {
+          container.innerHTML = `<p class="text-red-400 text-center font-semibold py-4">Session Obtainment Failed.</p>`;
+          return;
+        }
+
+        const baseBlueprint = exam.master_solution_template || exam.master_solution;
+        uniqueText = compileVariantText(baseBlueprint, deviceId);
+
+        await supabaseClient
+          .from('mutated_solutions')
+          .insert([{ exam_id: exam.id, session_id: newSession.session_id, unique_solution_text: uniqueText }]);
+      }
+
+      container.innerHTML = `
+        <div class="print-card w-full flex flex-col gap-4">
+          <div class="bg-slate-900/60 backdrop-blur-xl border border-slate-800 rounded-xl p-4 sm:p-6 shadow-cosmic flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+            <div class="space-y-2 w-full sm:w-auto">
+              <div>
+                <span class="block text-[9px] font-bold uppercase tracking-widest text-slate-500">Candidate Reference</span>
+                <div class="text-sm font-bold text-white">Unregistered Device Profile</div>
+              </div>
+              <div>
+                <span class="block text-[9px] font-bold uppercase tracking-widest text-slate-500">Subject Context</span>
+                <div class="text-base font-extrabold text-indigo-400 tracking-tight">${exam.subject}</div>
+              </div>
+            </div>
+            <div class="sm:text-right flex flex-col gap-1.5 items-start sm:items-end w-full sm:w-auto border-t border-slate-800/60 sm:border-0 pt-3 sm:pt-0">
+              <span class="text-[9px] font-extrabold tracking-wider bg-amber-500/10 border border-amber-500/20 text-amber-400 px-2.5 py-0.5 rounded uppercase inline-block">
+                Architecture Status
+              </span>
+              <span class="text-[11px] font-mono text-slate-400 tracking-tight">EXM-${exam.id}</span>
+            </div>
+          </div>
+          
+          <div class="bg-white border border-slate-200 rounded-xl p-4 sm:p-6 shadow-md w-full box-border overflow-hidden">
+            <div class="solution-content w-full">${uniqueText}</div>
+          </div>
+        </div>
+      `;
+    }
+
+    function compileVariantText(template, seed) {
+      if (template) return template;
+      const sampleVariations = [
+        `<h3>Section A: Analytical Systems Optimization</h3><p>Using seed sequence parameter ${seed}, evaluate the baseline function limits.</p><table><thead><tr><th>Index Alpha</th><th>Output Matrix Delta</th></tr></thead><tbody><tr><td>0x01</td><td>Optimal Flag Set Identification Engine Activated</td></tr></tbody></table>`,
+        `<h3>Section A: Computational Framework Layouts</h3><p>Under device node index identifier ${seed}, solve the structural load balancing criteria matrix equations.</p><table><thead><tr><th>Node ID</th><th>Calculated Load Max</th></tr></thead><tbody><tr><td>Cluster 1</td><td>94.2% Variance Capacity Reached Successfully</td></tr></tbody></table>`
+      ];
+      const selectedIndex = parseInt(seed.replace(/\D/g, "") || "0") % sampleVariations.length;
+      return sampleVariations[selectedIndex];
+    }
+
+    initializeExamRenderPipeline();
+  </script>
+</body>
+</html>

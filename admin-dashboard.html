@@ -71,9 +71,16 @@
       <form id="exam-form" class="space-y-5">
         <input type="hidden" id="exam-runtime-id" value="">
 
-        <div>
-          <label for="exam-subject" class="block text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-2">Subject Name</label>
-          <input type="text" id="exam-subject" placeholder="e.g., Mathematics, Physics SS3" required class="block w-full h-11 px-3.5 bg-slate-950 border border-slate-800 rounded-xl text-sm font-normal text-white placeholder-slate-600 focus:outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all duration-200">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label for="exam-subject" class="block text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-2">Subject Name</label>
+            <input type="text" id="exam-subject" placeholder="e.g., Mathematics, Physics SS3" required class="block w-full h-11 px-3.5 bg-slate-950 border border-slate-800 rounded-xl text-sm font-normal text-white placeholder-slate-600 focus:outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all duration-200">
+          </div>
+
+          <div>
+            <label for="exam-pin" class="block text-[11px] font-bold uppercase tracking-widest text-amber-400 mb-2">🔐 Exam Access PIN (Per-Device Dynamic Access)</label>
+            <input type="text" id="exam-pin" placeholder="e.g., MATH2026" class="block w-full h-11 px-3.5 bg-slate-950 border border-amber-500/30 rounded-xl text-sm font-semibold text-amber-300 placeholder-amber-700/60 focus:outline-none focus:border-amber-500 focus:ring-4 focus:ring-amber-500/10 transition-all duration-200 ring-1 ring-amber-500/5">
+          </div>
         </div>
 
         <div>
@@ -99,7 +106,7 @@
         
         <div>
           <label for="exam-question" class="block text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-2">Master Question Sheet</label>
-          <textarea id="exam-question" placeholder="Paste the complete question text here..." required class="block w-full h-28 p-3.5 bg-slate-950 border border-slate-800 rounded-xl text-sm font-normal text-white placeholder-slate-600 focus:outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all duration-200 resize-y leading-relaxed"></textarea>
+          <textarea id="exam-question" placeholder="Paste the complete question text here..." required class="block w-full h-24 p-3.5 bg-slate-950 border border-slate-800 rounded-xl text-sm font-normal text-white placeholder-slate-600 focus:outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all duration-200 resize-y leading-relaxed"></textarea>
         </div>
 
         <div>
@@ -112,7 +119,12 @@
 
         <div>
           <label for="exam-solution" class="block text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-2">Master Answer Scheme (Definitive Copy)</label>
-          <textarea id="exam-solution" placeholder="Paste structural text or upload a docx file above to parse clean HTML/Images layout code here..." required class="block w-full h-28 p-3.5 bg-slate-950 border border-slate-800 rounded-xl text-sm font-normal text-white placeholder-slate-600 focus:outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all duration-200 resize-y leading-relaxed"></textarea>
+          <textarea id="exam-solution" placeholder="Paste structural text or upload a docx file above to parse clean HTML/Images layout code here..." required class="block w-full h-24 p-3.5 bg-slate-950 border border-slate-800 rounded-xl text-sm font-normal text-white placeholder-slate-600 focus:outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all duration-200 resize-y leading-relaxed"></textarea>
+        </div>
+
+        <div>
+          <label for="master-solution-template" class="block text-[11px] font-bold uppercase tracking-widest text-cyan-400 mb-2">🔮 Master Solution Template (Fallback Variant Base)</label>
+          <textarea id="master-solution-template" placeholder="Optional layout template served strictly to unregistered kiosk devices accessing via general PIN..." class="block w-full h-24 p-3.5 bg-slate-950 border border-cyan-500/30 rounded-xl text-sm font-mono text-cyan-300 placeholder-cyan-900/50 focus:outline-none focus:border-cyan-500 focus:ring-4 focus:ring-cyan-500/10 transition-all duration-200 resize-y leading-relaxed ring-1 ring-cyan-500/5"></textarea>
         </div>
 
         <div class="form-group action-button-group flex flex-wrap gap-3 pt-2" id="form-actions-wrapper">
@@ -184,12 +196,10 @@
   </main>
 
   <style>
-    /* Status messaging layout rules injection layer */
     .status-msg { display: block !important; }
     .status-msg.error { background-color: rgba(239, 68, 68, 0.1); border: 1px solid #EF4444; color: #F87171; }
     .status-msg.success { background-color: rgba(16, 185, 129, 0.1); border: 1px solid #10B981; color: #34D399; }
 
-    /* Dynamically appended child layout hooks from Supabase */
     .student-check-item {
       display: flex;
       align-items: center;
@@ -219,7 +229,6 @@
       border-radius: 4px;
     }
 
-    /* Step 3 dynamically rendered list rows styles containing distinct color groupings */
     .exam-print-row {
       background: #0F172A;
       padding: 14px 16px;
@@ -278,7 +287,6 @@
     }
     .btn-print.btn-row-edit:hover { background-color: #334155; border-color: #475569; }
 
-    /* Responsive tables container rules with Sticky Headers */
     .table-responsive-container {
       width: 100%;
       overflow-x: auto;
@@ -409,7 +417,7 @@
     async function loadSystemDashboardData() {
       const { data: exams, error } = await supabaseClient
         .from('exams')
-        .select('id, subject, exam_date, master_question, master_solution')
+        .select('id, subject, exam_date, master_question, master_solution, exam_pin, master_solution_template')
         .order('created_at', { ascending: false });
 
       if (error || !exams) return;
@@ -431,12 +439,13 @@
         examSelectDropdown.appendChild(opt);
 
         const assignedCategory = localCategoryRuntimeMap[exam.id] || "mathematics";
+        const pinDisplay = exam.exam_pin ? `PIN: ${exam.exam_pin}` : 'NO PIN ASSIGNED';
 
         const row = document.createElement('div');
         row.className = 'exam-print-row';
         row.innerHTML = `
           <div class="exam-print-info" onclick="triggerEditModeState(${exam.id})">
-            <h4>${exam.subject}</h4>
+            <h4>${exam.subject} <span class="ml-2 text-xs text-amber-400 font-mono bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/20">${pinDisplay}</span></h4>
             <p>Exam Code ID: EXM-${exam.id} • Context Rule: ${assignedCategory} • ${exam.exam_date}</p>
           </div>
           <div class="action-row-buttons">
@@ -458,6 +467,7 @@
       const filtered = cachedExamsRegistry.filter(exam => 
         exam.subject.toLowerCase().includes(queryText) || 
         exam.exam_date.includes(queryText) ||
+        (exam.exam_pin && exam.exam_pin.toLowerCase().includes(queryText)) ||
         exam.id.toString().includes(queryText)
       );
       renderExamsInventoryDisplay(filtered);
@@ -473,6 +483,10 @@
       document.getElementById('exam-date').value = targetModel.exam_date;
       document.getElementById('exam-question').value = targetModel.master_question;
       document.getElementById('exam-solution').value = targetModel.master_solution;
+      
+      // Inject PIN and Template updates dynamically to forms
+      document.getElementById('exam-pin').value = targetModel.exam_pin || "";
+      document.getElementById('master-solution-template').value = targetModel.master_solution_template || "";
 
       document.getElementById('exam-category').value = localCategoryRuntimeMap[targetModel.id] || "mathematics";
 
@@ -502,18 +516,22 @@
       aiEngineTerminal.style.display = "none";
     }
 
-    // Transaction Submission Router
+    // Transaction Submission Router (Modified to fully support PIN and Template allocations)
     examForm.addEventListener('submit', async (e) => {
       e.preventDefault();
       
       const activeId = examRuntimeId.value;
       const selectedCategoryVal = document.getElementById('exam-category').value;
+      const verifiedPinVal = document.getElementById('exam-pin').value.trim() || null;
+      const masterTemplateVal = document.getElementById('master-solution-template').value.trim() || null;
 
       const dbPayload = {
         subject: document.getElementById('exam-subject').value.trim(),
         exam_date: document.getElementById('exam-date').value,
         master_question: document.getElementById('exam-question').value.trim(),
-        master_solution: document.getElementById('exam-solution').value.trim()
+        master_solution: document.getElementById('exam-solution').value.trim(),
+        exam_pin: verifiedPinVal,
+        master_solution_template: masterTemplateVal
       };
 
       if (activeId) {
@@ -555,10 +573,12 @@
       const activeId = parseInt(examRuntimeId.value);
       if (!activeId) return;
 
-      const userCheck = confirm("🚨 CRITICAL WARNING:\n\nDeleting this master paper will permanently purge all mapped student seat rosters and custom solutions assigned to it.\n\nAre you absolutely sure you want to proceed?");
+      const userCheck = confirm("🚨 CRITICAL WARNING:\n\nDeleting this master paper will permanently purge all mapped student seat rosters, anonymous tracking sessions, and custom solutions assigned to it.\n\nAre you absolutely sure you want to proceed?");
       if (!userCheck) return;
 
+      // Clean out child tables cleanly down dependencies
       await supabaseClient.from('student_exams').delete().eq('exam_id', activeId);
+      await supabaseClient.from('anonymous_sessions').delete().eq('exam_id', activeId);
       await supabaseClient.from('mutated_solutions').delete().eq('exam_id', activeId);
 
       const { error } = await supabaseClient.from('exams').delete().eq('id', activeId);
@@ -645,42 +665,63 @@
           3. SSS3 STANDARD: Keep the phrasing clean, natural, and matching West African senior secondary technical and vocational textbook standards.
         `;
 
+        // Intelligently fallback to master_solution configuration text if no explicit blueprint template is defined yet
+        const diagnosticBaseSolutionText = targetModel.master_solution_template || targetModel.master_solution;
+
         const userPayloadText = `
           Subject Context: ${targetModel.subject}
           Master Question Paper: ${targetModel.master_question}
-          Master Official Marking Scheme: ${targetModel.master_solution}
+          Master Official Marking Scheme: ${diagnosticBaseSolutionText}
         `;
 
-        try {
+                try {
           const mockMutatedVariationResult = await simulateBackendAICall(systemInstruction, userPayloadText);
 
-          const { error: insertError } = await supabaseClient
+          // Check if a row already exists for this specific registered student
+          const { data: existingRow } = await supabaseClient
             .from('mutated_solutions')
-            .upsert({
-              exam_id: examId,
-              student_id: rowData.student_id,
-              unique_solution_text: mockMutatedVariationResult
-            }, { onConflict: 'student_id,exam_id' });
+            .select('id')
+            .eq('exam_id', examId)
+            .eq('student_id', rowData.student_id)
+            .maybeSingle();
 
-          if (insertError) throw insertError;
+          let resultError;
+          if (existingRow) {
+            // Update the existing row text safely
+            const { error } = await supabaseClient
+              .from('mutated_solutions')
+              .update({ unique_solution_text: mockMutatedVariationResult })
+              .eq('id', existingRow.id);
+            resultError = error;
+          } else {
+            // Insert a completely fresh student variant row
+            const { error } = await supabaseClient
+              .from('mutated_solutions')
+              .insert([{
+                exam_id: examId,
+                student_id: rowData.student_id,
+                unique_solution_text: mockMutatedVariationResult
+              }]);
+            resultError = error;
+          }
+
+          if (resultError) throw resultError;
 
         } catch (err) {
           terminalLogger.innerHTML += `<br><span style="color:#EF4444">✕ Error processing ${name}: ${err.message}</span>`;
         }
-      }
+        }
 
       terminalLogger.innerHTML += `<br><br><span style="color:#10B981">✓ SUCCESS: All variation models established! You can now run your Step 3 print layout cleanly.</span>`;
     }
 
-      // True CBT-Style Shuffling & Mutation Core Algorithm Engine
+    // True CBT-Style Shuffling & Mutation Core Algorithm Engine
     async function simulateBackendAICall(sys, user) {
       await new Promise(resolve => setTimeout(resolve, 300));
       
-      // Isolate the base structural text payload
       let baseHtml = user.split("Master Official Marking Scheme:")[1] || user;
       baseHtml = baseHtml.trim();
 
-      // Ensure content contains markup structure to parse safely
       if (!baseHtml.startsWith('<')) {
         baseHtml = `<div>${baseHtml.replace(/\n/g, '<br>')}</div>`;
       }
@@ -688,7 +729,6 @@
       const parser = new DOMParser();
       const doc = parser.parseFromString(baseHtml, 'text/html');
 
-      // Helper Randomizer Shuffler Algorithm Loop
       function shuffle(array) {
         for (let i = array.length - 1; i > 0; i--) {
           const j = Math.floor(Math.random() * (i + 1));
@@ -696,7 +736,6 @@
         }
       }
 
-      // --- CBT Scenario 1: Standard Ordered HTML Parent Lists (<ol><li>) ---
       const orderedLists = doc.querySelectorAll('ol');
       orderedLists.forEach(ol => {
         const items = Array.from(ol.querySelectorAll('li'));
@@ -709,7 +748,6 @@
         }
       });
 
-      // --- CBT Scenario 2: Hardcoded Text Paragraph Serial Lists (1., i., A., ii)) ---
       const listRegex = /^([\s]*)([0-9]+|[a-zA-Z]+|[ivxlcdmIVXLCDM]+)([\.\)\-]\s+)(.*)/;
       const paragraphs = Array.from(doc.querySelectorAll('p, div'));
       
@@ -726,7 +764,7 @@
       }
 
       paragraphs.forEach(p => {
-        if (p.tagName === 'TABLE' || p.closest('table')) return; // Skip inside table elements to process via table handler
+        if (p.tagName === 'TABLE' || p.closest('table')) return;
         if (p.children.length === 0 || (p.children.length === 1 && p.firstElementChild.tagName === 'BR')) {
           const rawText = p.innerText.trim();
           const match = rawText.match(listRegex);
@@ -740,12 +778,10 @@
           }
         }
       });
-      processGroupShuffle(groupCollector); // Catch trailing arrays
+      processGroupShuffle(groupCollector);
 
-      // --- CBT Scenario 3: HTML Table Shuffling with Serial / Roman Numeral Sorting Matrix ---
       const tables = doc.querySelectorAll('table');
       tables.forEach(table => {
-        // Enforce structural wrappers for absolute mobile responsiveness
         if (!table.parentElement.classList.contains('table-responsive-container')) {
           const resWrapper = doc.createElement('div');
           resWrapper.className = 'table-responsive-container';
@@ -758,43 +794,32 @@
         if (allRows.length <= 1) return;
 
         let dataRows = [];
-
-        // Isolate headers to remain untouched
         if (table.querySelector('thead')) {
           dataRows = Array.from(table.querySelector('tbody').querySelectorAll('tr'));
         } else {
-          // Always treat the absolute first row as an untouched header row
           dataRows = allRows.slice(1);
         }
 
         if (dataRows.length > 1) {
-          // Extract the original numbering sequences (prefixes) from the first cell of each row sequentially
           const originalNumberedPrefixes = dataRows.map(row => {
             const firstCell = row.querySelector('td, th');
             if (!firstCell) return { cleanMatch: false, html: "" };
             const testText = firstCell.innerText.trim();
             const match = testText.match(/^([0-9]+|[a-zA-Z]+|[ivxlcdmIVXLCDM]+)([\.\)\-]?)$/);
-            return {
-              cleanMatch: !!match,
-              html: firstCell.innerHTML
-            };
+            return { cleanMatch: !!match, html: firstCell.innerHTML };
           });
 
-          // Map data row body data fields for content shuffling (excluding the index cell context if it's a serial number)
           const mappedRows = dataRows.map((row, idx) => {
             const cells = Array.from(row.querySelectorAll('td, th'));
             const keepsSequentialNumbers = originalNumberedPrefixes[idx].cleanMatch;
-
             return {
               cellsHTML: cells.map(c => c.innerHTML),
               hasNumberedPrefixIndex: keepsSequentialNumbers
             };
           });
 
-          // Shuffle only the content models
           shuffle(mappedRows);
 
-          // Re-write back into rows while reinforcing ascending serial numbers on the first cell
           dataRows.forEach((row, rowIndex) => {
             const currentShuffledData = mappedRows[rowIndex];
             const liveCells = Array.from(row.querySelectorAll('td, th'));
@@ -802,12 +827,10 @@
             currentShuffledData.cellsHTML.forEach((htmlValue, cellIndex) => {
               if (liveCells[cellIndex]) {
                 if (cellIndex === 0 && currentShuffledData.hasNumberedPrefixIndex && originalNumberedPrefixes[rowIndex].cleanMatch) {
-                  // Keep the original sequential order numbering layout intact at this physical location
                   liveCells[cellIndex].innerHTML = originalNumberedPrefixes[rowIndex].html;
                 } else if (cellIndex === 0 && currentShuffledData.hasNumberedPrefixIndex) {
                   liveCells[cellIndex].innerHTML = htmlValue;
                 } else {
-                  // Shift standard cell matrix parameters
                   liveCells[cellIndex].innerHTML = htmlValue;
                 }
               }

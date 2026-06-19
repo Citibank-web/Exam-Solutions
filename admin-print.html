@@ -12,32 +12,119 @@
       margin: 0;
       padding: 16px;
       color: #1e293b;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
     }
     
+    /* Branded Main Header for Portal Layout */
+    .portal-main-header {
+      text-align: center;
+      margin: 20px auto 32px auto;
+      max-width: 1200px;
+      width: 100%;
+    }
+    .portal-title {
+      font-family: system-ui, -apple-system, sans-serif;
+      font-size: 28px;
+      font-weight: 800;
+      color: #0f172a;
+      letter-spacing: 1px;
+      margin: 0 0 8px 0;
+      display: inline-block;
+      border-bottom: 3px solid #ef4444;
+      padding-bottom: 4px;
+    }
+    .portal-subtitle {
+      font-family: system-ui, -apple-system, sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      color: #64748b;
+      letter-spacing: 2px;
+      margin: 0 0 16px 0;
+      text-transform: uppercase;
+    }
+    .telegram-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: linear-gradient(135deg, #24a1de, #1d82b2);
+      color: #ffffff;
+      text-decoration: none;
+      font-family: system-ui, -apple-system, sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      padding: 8px 18px;
+      border-radius: 20px;
+      box-shadow: 0 4px 12px rgba(36, 161, 222, 0.3);
+      transition: all 0.2s ease;
+    }
+    .telegram-link:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 16px rgba(36, 161, 222, 0.4);
+    }
+
     /* Individual student sheet container */
     .student-sheet {
       background: #ffffff;
       padding: 32px;
-      margin-bottom: 24px;
+      margin-bottom: 32px;
       border: 1px solid #e2e8f0;
-      border-radius: 6px;
+      border-radius: 8px;
       box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
       max-width: 1200px;
       margin-left: auto;
       margin-right: auto;
+      width: 100%;
+      box-sizing: border-box;
     }
 
+    /* Premium Branded Candidate Meta Info Card */
     .header-info {
-      font-family: 'Courier New', Courier, monospace;
-      font-size: 10pt;
-      border-bottom: 2px solid #1e293b;
-      padding-bottom: 12px;
+      font-family: system-ui, -apple-system, sans-serif;
+      background-color: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-left: 5px solid #3b82f6;
+      border-radius: 6px;
+      padding: 16px 20px;
       margin-bottom: 24px;
       display: flex;
       flex-direction: row;
       justify-content: space-between;
+      align-items: center;
       gap: 16px;
-      line-height: 1.3;
+      line-height: 1.5;
+    }
+    .header-info .meta-left strong {
+      color: #475569;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .header-info .meta-left .val-text {
+      color: #0f172a;
+      font-size: 15px;
+      font-weight: 700;
+    }
+    .header-info .meta-right {
+      text-align: right;
+    }
+    .header-info .meta-right .status-tag {
+      font-size: 10px;
+      font-weight: 800;
+      background: #e0f2fe;
+      color: #0369a1;
+      padding: 4px 8px;
+      border-radius: 4px;
+      letter-spacing: 0.5px;
+      display: inline-block;
+      margin-bottom: 4px;
+    }
+    .header-info .meta-right .sys-code {
+      font-size: 11px;
+      color: #64748b;
+      font-weight: 500;
+      display: block;
     }
 
     .solution-content {
@@ -91,12 +178,13 @@
 
     .action-header {
       margin-bottom: 24px;
-      display: flex;
+      display: none; /* Controlled dynamically by Supabase Authentication Guard */
       justify-content: flex-end;
       gap: 12px;
       max-width: 1200px;
       margin-left: auto;
       margin-right: auto;
+      width: 100%;
     }
 
     .action-btn {
@@ -115,23 +203,33 @@
       background: #10b981; 
       box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
     }
-
     .btn-docx:hover { background: #059669; }
 
     .btn-pdf {
       background: #ef4444; 
       box-shadow: 0 4px 12px rgba(239, 68, 68, 0.2);
     }
-
     .btn-pdf:hover { background: #dc2626; }
+
+    /* Branded Application Portal Footer */
+    .portal-main-footer {
+      margin-top: auto;
+      padding: 24px 16px;
+      text-align: center;
+      font-family: system-ui, -apple-system, sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      color: #94a3b8;
+      letter-spacing: 1px;
+    }
 
     @media (max-width: 768px) {
       body { padding: 12px; }
       .action-header { flex-direction: column; text-align: center; margin-bottom: 16px; }
       .action-btn { width: 100%; }
       .student-sheet { padding: 20px; margin-bottom: 16px; }
-      .header-info { flex-direction: column; justify-content: flex-start; gap: 8px; }
-      .header-info div:last-child { text-align: left !important; }
+      .header-info { flex-direction: column; align-items: flex-start; gap: 12px; padding: 14px; }
+      .header-info .meta-right { text-align: left !important; }
       .solution-content { column-count: 1; column-rule: none; }
       .solution-content table { display: block; width: 100%; overflow-x: auto; white-space: nowrap; }
     }
@@ -162,18 +260,50 @@
         width: 100%;
       }
 
+      /* Revert header metadata design to native monochrome standard layout on A4 paper */
       .header-info {
-        font-family: 'Courier New', Courier, monospace;
-        font-size: 10pt;
-        line-height: 1.2;
-        border-bottom: 2px solid #000000;
+        font-family: 'Courier New', Courier, monospace !important;
+        font-size: 10pt !important;
+        line-height: 1.2 !important;
+        border: none !important;
+        border-bottom: 2px solid #000000 !important;
+        border-radius: 0 !important;
+        padding: 0 0 12px 0 !important;
+        margin-bottom: 24px !important;
+        background-color: transparent !important;
         display: flex !important;
         flex-direction: row !important;
         justify-content: space-between !important;
+        align-items: flex-end !important;
       }
-
-      .header-info div:last-child {
+      .header-info .meta-left strong {
+        color: #000000 !important;
+        font-size: 10pt !important;
+        text-transform: uppercase !important;
+        letter-spacing: normal !important;
+      }
+      .header-info .meta-left .val-text {
+        color: #000000 !important;
+        font-size: 10pt !important;
+        font-weight: normal !important;
+      }
+      .header-info .meta-right {
         text-align: right !important;
+      }
+      .header-info .meta-right .status-tag {
+        font-size: 10pt !important;
+        font-weight: bold !important;
+        background: transparent !important;
+        color: #000000 !important;
+        padding: 0 !important;
+        letter-spacing: normal !important;
+        display: inline !important;
+      }
+      .header-info .meta-right .sys-code {
+        font-size: 9pt !important;
+        color: #000000 !important;
+        font-weight: normal !important;
+        display: inline !important;
       }
 
       .solution-content {
@@ -211,7 +341,15 @@
 </head>
 <body>
 
-  <div class="no-print action-header">
+  <header class="no-print portal-main-header">
+    <h1 class="portal-title">♦EXAM-SOLUTIONS</h1>
+    <div class="portal-subtitle">•WAEC | •NECO | •NABTEB | •JAMB</div>
+    <a href="https://t.me/your_telegram_group" target="_blank" class="telegram-link">
+      ✈ Join Our Telegram Group
+    </a>
+  </header>
+
+  <div id="admin-actions-wrapper" class="no-print action-header">
     <button onclick="exportAllToDocx()" class="action-btn btn-docx">
       📄 Export to Word (.Docx)
     </button>
@@ -221,8 +359,12 @@
   </div>
 
   <div id="print-container">
-    <p style="color:#666; font-size:14px; font-family: system-ui, -apple-system, sans-serif;">Querying database system records...</p>
+    <p style="color:#666; font-size:14px; font-family: system-ui, -apple-system, sans-serif; text-align: center;">Querying database system records...</p>
   </div>
+
+  <footer class="no-print portal-main-footer">
+    EXAM-SOLUTIONS.NETLIFY.APP
+  </footer>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
@@ -234,11 +376,22 @@
     const examId = urlParams.get('examId');
     let fetchedRecordsGlobal = [];
 
+    // Check auth status to show/hide admin panels from public anonymous access paths
+    async function evaluateSecurityContext() {
+      const { data: { session } } = await supabaseClient.auth.getSession();
+      const menu = document.getElementById('admin-actions-wrapper');
+      if (session) {
+        menu.style.display = 'flex';
+      } else {
+        menu.style.display = 'none';
+      }
+    }
+
     async function fetchAndRenderSolutions() {
       const container = document.getElementById('print-container');
       
       if (!examId) {
-        container.innerHTML = "<p style='color:#ef4444; font-size:14px; font-weight:bold; font-family: system-ui, -apple-system, sans-serif;'>Error: No Exam ID parameter targeted in URL route query string.</p>";
+        container.innerHTML = "<p style='color:#ef4444; font-size:14px; font-weight:bold; font-family: system-ui, -apple-system, sans-serif; text-align: center;'>Error: No Exam ID parameter targeted in URL route query string.</p>";
         return;
       }
 
@@ -247,13 +400,14 @@
         .select(`
           unique_solution_text,
           profiles:student_id ( full_name ),
+          anonymous_sessions:session_id ( device_fingerprint ),
           exams:exam_id ( subject )
         `)
         .eq('exam_id', examId);
 
       if (error) {
         console.error("Error fetching print records:", error.message);
-        container.innerHTML = `<p style='color:#ef4444; font-size:14px; font-family: system-ui, -apple-system, sans-serif;'>Database Query Failure: ${error.message}</p>`;
+        container.innerHTML = `<p style='color:#ef4444; font-size:14px; font-family: system-ui, -apple-system, sans-serif; text-align: center;'>Database Query Failure: ${error.message}</p>`;
         return;
       }
 
@@ -270,20 +424,47 @@
       fetchedRecordsGlobal = data;
 
       data.forEach(record => {
-        const studentName = record.profiles?.full_name || "Unknown Candidate";
-        const subjectName = record.exams?.subject || "Examination Paper Copy";
+        let studentName = "";
+        if (record.profiles) {
+          const profileData = Array.isArray(record.profiles) ? record.profiles[0] : record.profiles;
+          studentName = profileData?.full_name || "";
+        }
+        
+        if (!studentName && record.anonymous_sessions) {
+          const sessionData = Array.isArray(record.anonymous_sessions) ? record.anonymous_sessions[0] : record.anonymous_sessions;
+          if (sessionData?.device_fingerprint) {
+            studentName = `Anon Device (${String(sessionData.device_fingerprint).substring(0, 8)})`;
+          }
+        }
+        
+        if (!studentName || studentName === "undefined") {
+          studentName = "Unregistered Device Profile";
+        }
+
+        let subjectName = "";
+        if (record.exams) {
+          const examData = Array.isArray(record.exams) ? record.exams[0] : record.exams;
+          subjectName = examData?.subject || "";
+        }
+        
+        if (!subjectName || subjectName === "undefined") {
+          subjectName = "Examination Paper Copy";
+        }
+
         const solutionText = record.unique_solution_text || "<p>No solution text written.</p>";
 
         const sheetHTML = `
           <div class="student-sheet">
             <div class="header-info">
-              <div>
-                <strong style="text-transform: uppercase;">Candidate Name:</strong> ${studentName}<br>
-                <strong style="text-transform: uppercase;">Subject Context:</strong> ${subjectName}
+              <div class="meta-left">
+                <strong>Candidate Name</strong><br>
+                <div class="val-text">${studentName}</div>
+                <strong style="margin-top: 4px; display:inline-block;">Subject Context</strong><br>
+                <div class="val-text" style="font-size:14px; font-weight:600; color:#475569;">${subjectName}</div>
               </div>
-              <div style="text-align: right;">
-                <strong>EXAMINATION ARCHITECTURE STATUS</strong><br>
-                <span style="font-size: 9pt; color:#666;">SYS REGISTERED CODE: EXM-${examId}</span>
+              <div class="meta-right">
+                <span class="status-tag">EXAMINATION ARCHITECTURE STATUS</span>
+                <span class="sys-code">SYS REGISTERED CODE: EXM-${examId}</span>
               </div>
             </div>
             <div class="solution-content">${solutionText}</div>
@@ -292,6 +473,7 @@
         container.innerHTML += sheetHTML;
       });
     }
+    
 
     // Dynamic Word Generation Logic Matrix
     function exportAllToDocx() {
@@ -303,8 +485,30 @@
       let docHtmlBody = "";
 
       fetchedRecordsGlobal.forEach((record, index) => {
-        const studentName = record.profiles?.full_name || "Unknown Candidate";
-        const subjectName = record.exams?.subject || "Examination Paper Copy";
+        let studentName = "";
+        if (record.profiles) {
+          const profileData = Array.isArray(record.profiles) ? record.profiles[0] : record.profiles;
+          studentName = profileData?.full_name || "";
+        }
+        if (!studentName && record.anonymous_sessions) {
+          const sessionData = Array.isArray(record.anonymous_sessions) ? record.anonymous_sessions[0] : record.anonymous_sessions;
+          if (sessionData?.device_fingerprint) {
+            studentName = `Anon Device (${String(sessionData.device_fingerprint).substring(0, 8)})`;
+          }
+        }
+        if (!studentName || studentName === "undefined") {
+          studentName = "Unregistered Device Profile";
+        }
+
+        let subjectName = "";
+        if (record.exams) {
+          const examData = Array.isArray(record.exams) ? record.exams[0] : record.exams;
+          subjectName = examData?.subject || "";
+        }
+        if (!subjectName || subjectName === "undefined") {
+          subjectName = "Examination Paper Copy";
+        }
+
         let solutionContentRaw = record.unique_solution_text || "<p>No solution text written.</p>";
 
         const parser = new DOMParser();
@@ -331,6 +535,7 @@
         const optimizedHTMLContent = subDoc.body.innerHTML;
         const pageBreak = index > 0 ? '<br clear="all" style="page-break-before:always; break-before:page;"/>' : '';
 
+        // Safe Standard Native Word Format Table Headers (Clean layout for Docx exports)
         docHtmlBody += `
           ${pageBreak}
           <table width="100%" cellspacing="0" cellpadding="0" style="border-collapse:collapse; border-bottom:2.5pt solid #000000; margin-bottom:24px; padding-bottom:8px; font-family:'Courier New'; font-size:10.5pt;">
@@ -402,8 +607,9 @@
       URL.revokeObjectURL(downloadUrl);
     }
 
+    // Process interface runtime order
+    evaluateSecurityContext();
     fetchAndRenderSolutions();
   </script>
 </body>
-  </html>
-  
+</html>
