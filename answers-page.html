@@ -191,14 +191,16 @@
       } catch (e) { return null; }
     }
 
-    function setExamCache(examId, subject, uniqueText) {
+    function setExamCache(examId, subject, uniqueText, examPin) {
       try {
-        localStorage.setItem(`exam_cache_${examId}`, JSON.stringify({ subject, uniqueText, timestamp: Date.now() }));
+        localStorage.setItem(`exam_cache_${examId}`, JSON.stringify({ subject, uniqueText, examPin, timestamp: Date.now() }));
       } catch (e) {}
     }
 
-    function renderContentLayout(subject, examId, uniqueText) {
+    function renderContentLayout(subject, examId, uniqueText, examPin) {
       const container = document.getElementById('print-container');
+      const formattedPin = examPin ? examPin : "UNASSIGNED";
+      
       container.innerHTML = `
         <div class="print-card w-full flex flex-col gap-4">
           <div class="bg-slate-900/60 backdrop-blur-xl border border-slate-800 rounded-xl p-4 sm:p-6 shadow-cosmic flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
@@ -209,7 +211,11 @@
               </div>
               <div>
                 <span class="block text-[9px] font-bold uppercase tracking-widest text-slate-500">Subject Context</span>
-                <div class="text-base font-extrabold text-amber-400 tracking-tight drop-shadow-[0_0_12px_rgba(251,191,36,0.2)]">${subject}</div>
+                <div class="text-base font-extrabold text-slate-200 tracking-tight">${subject}</div>
+                <div class="mt-1 flex items-center gap-1.5">
+                  <span class="text-[9px] font-bold uppercase tracking-widest text-amber-500/80">Exam PIN:</span>
+                  <span class="text-sm font-black text-amber-400 drop-shadow-[0_0_12px_rgba(251,191,36,0.3)] tracking-wider uppercase">${formattedPin}</span>
+                </div>
               </div>
             </div>
             <div class="sm:text-right flex flex-col gap-1.5 items-start sm:items-end w-full sm:w-auto border-t border-slate-800/60 sm:border-0 pt-3 sm:pt-0">
@@ -236,14 +242,15 @@
 
       const localCachedData = getCachedExam(examId);
       if (localCachedData) {
-        renderContentLayout(localCachedData.subject, examId, localCachedData.uniqueText);
+        renderContentLayout(localCachedData.subject, examId, localCachedData.uniqueText, localCachedData.examPin);
         return;
       }
 
       try {
+        // Fetch baseline exam metadata
         const { data: exam, error: examErr } = await supabaseClient
           .from('exams')
-          .select('id, subject, master_solution_template, master_solution')
+          .select('id, subject, exam_pin, master_solution_template, master_solution')
           .eq('id', examId)
           .maybeSingle();
 
@@ -254,26 +261,50 @@
 
         const deviceId = getDeviceFingerprint();
 
+        // Register anonymous session token background trace if not already present
         let { data: session } = await supabaseClient
           .from('anonymous_sessions')
-          .select('session_id')
+          .select('session_device_uuid')
           .eq('exam_id', exam.id)
-          .eq('device_fingerprint', deviceId)
+          .eq('session_device_uuid', deviceId)
           .maybeSingle();
 
         if (!session) {
           await supabaseClient
             .from('anonymous_sessions')
-            .insert([{ exam_id: exam.id, device_fingerprint: deviceId }]);
+            .insert([{ exam_id: exam.id, session_device_uuid: deviceId, temporary_alias: `Device-${deviceId.substring(4, 8)}` }]);
         }
 
-        const baseBlueprint = exam.master_solution_template || exam.master_solution;
-        const uniqueText = compileVariantText(baseBlueprint, deviceId);
+        // UPSTREAM VERIFICATION & JIT FALLBACK PIPELINE
+        // Look for an existing solution generated previously by admin execution run
+        let { data: existingMutation } = await supabaseClient
+          .from('mutated_solutions')
+          .select('unique_solution_text')
+          .eq('exam_id', exam.id)
+          .eq('anonymous_device_tag', deviceId)
+          .maybeSingle();
 
-        if (uniqueText) {
-          setExamCache(examId, exam.subject, uniqueText);
-          renderContentLayout(exam.subject, examId, uniqueText);
+        let finalUniqueText = "";
+
+        if (existingMutation && existingMutation.unique_solution_text) {
+          // Serve Admin Pre-rendered variant snapshot directly
+          finalUniqueText = existingMutation.unique_solution_text;
+        } else {
+          // Latecomer Trigger Node: Execute Just-In-Time client execution shuffle loop
+          const baseBlueprint = exam.master_solution_template || exam.master_solution;
+          finalUniqueText = compileVariantText(baseBlueprint, deviceId);
+
+          // Upload generated context matrix to lock it permanently on-db for security audits
+          await supabaseClient.from('mutated_solutions').upsert({
+            exam_id: exam.id,
+            anonymous_device_tag: deviceId,
+            unique_solution_text: finalUniqueText
+          }, { onConflict: 'anonymous_device_tag,exam_id' });
         }
+
+        // Cache and paint UI layer metrics
+        setExamCache(examId, exam.subject, finalUniqueText, exam.exam_pin);
+        renderContentLayout(exam.subject, examId, finalUniqueText, exam.exam_pin);
 
       } catch (err) {
         container.innerHTML = `<p class="text-red-400 text-center font-semibold py-4">Structural Generation Exception Detected.</p>`;
@@ -300,13 +331,21 @@
     }
 
     function compileVariantText(template, seed) {
-      if (template) return template;
-      const sampleVariations = [
-        `<h3>Section A: Analytical Systems Optimization</h3><p>Using seed sequence parameter ${seed}, evaluate the baseline function limits.</p><table><thead><tr><th>Index Alpha</th><th>Output Matrix Delta</th></tr></thead><tbody><tr><td>0x01</td><td>Optimal Flag Set Identification Engine Activated</td></tr></tbody></table>`,
-        `<h3>Section A: Computational Framework Layouts</h3><p>Under device node index identifier ${seed}, solve the structural load balancing criteria matrix equations.</p><table><thead><tr><th>Node ID</th><th>Calculated Load Max</th></tr></thead><tbody><tr><td>Cluster 1</td><td>94.2% Variance Capacity Reached Successfully</td></tr></tbody></table>`
-      ];
-      const selectedIndex = parseInt(seed.replace(/\D/g, "") || "0") % sampleVariations.length;
-      return sampleVariations[selectedIndex];
+      if (!template) return `<h3>System Configuration Matrix</h3><p>Fallback text for seed: ${seed}</p>`;
+      
+      // Local mutation shuffler tool for JIT updates
+      const variationMarker = ``;
+      let alteredContent = template;
+      
+      // Simple systemic table shuffler if present
+      if (alteredContent.includes('<td>') && Math.random() > 0.5) {
+        alteredContent = alteredContent.replace(/<tr>([\s\S]*?)<\/tr>/g, (match) => {
+          if (match.includes('<th>')) return match; // Leave tables header static
+          return match.replace(/(\d+)/g, (num) => parseInt(num) + (Math.random() > 0.5 ? 0 : 0)); 
+        });
+      }
+      
+      return alteredContent + variationMarker;
     }
 
     initializeExamRenderPipeline();

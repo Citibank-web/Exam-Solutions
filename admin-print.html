@@ -179,12 +179,41 @@
     .action-header {
       margin-bottom: 24px;
       display: none; /* Controlled dynamically by Supabase Authentication Guard */
-      justify-content: flex-end;
-      gap: 12px;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
       max-width: 1200px;
       margin-left: auto;
       margin-right: auto;
       width: 100%;
+      background: #ffffff;
+      padding: 16px;
+      border-radius: 8px;
+      border: 1px solid #e2e8f0;
+      box-sizing: border-box;
+    }
+
+    .ict-generator-box {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-family: system-ui, -apple-system, sans-serif;
+    }
+
+    .ict-input {
+      width: 80px;
+      padding: 10px;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      font-weight: bold;
+      text-align: center;
+      font-size: 14px;
+    }
+
+    .btn-group {
+      display: flex;
+      gap: 12px;
     }
 
     .action-btn {
@@ -211,6 +240,12 @@
     }
     .btn-pdf:hover { background: #dc2626; }
 
+    .btn-ict {
+      background: #f59e0b;
+      box-shadow: 0 4px 12px rgba(245, 158, 11, 0.2);
+    }
+    .btn-ict:hover { background: #d97706; }
+
     /* Branded Application Portal Footer */
     .portal-main-footer {
       margin-top: auto;
@@ -226,6 +261,9 @@
     @media (max-width: 768px) {
       body { padding: 12px; }
       .action-header { flex-direction: column; text-align: center; margin-bottom: 16px; }
+      .ict-generator-box { width: 100%; flex-direction: column; }
+      .ict-input { width: 100%; box-sizing: border-box; }
+      .btn-group { width: 100%; flex-direction: column; }
       .action-btn { width: 100%; }
       .student-sheet { padding: 20px; margin-bottom: 16px; }
       .header-info { flex-direction: column; align-items: flex-start; gap: 12px; padding: 14px; }
@@ -350,12 +388,21 @@
   </header>
 
   <div id="admin-actions-wrapper" class="no-print action-header">
-    <button onclick="exportAllToDocx()" class="action-btn btn-docx">
-      📄 Export to Word (.Docx)
-    </button>
-    <button onclick="window.print()" class="action-btn btn-pdf">
-      📕 Save / Print as PDF
-    </button>
+    <div class="ict-generator-box">
+      <label for="ictCopyCount" style="font-weight:700; color:#475569; font-size:13px;">⚡ ICT Bulk Copy Count:</label>
+      <input type="number" id="ictCopyCount" class="ict-input" value="10" min="1" max="200">
+      <button onclick="generateAnonymousICTScripts()" class="action-btn btn-ict">
+        🔄 Render Unassigned Variants
+      </button>
+    </div>
+    <div class="btn-group">
+      <button onclick="exportAllToDocx()" class="action-btn btn-docx">
+        📄 Export to Word (.Docx)
+      </button>
+      <button onclick="window.print()" class="action-btn btn-pdf">
+        📕 Save / Print as PDF
+      </button>
+    </div>
   </div>
 
   <div id="print-container">
@@ -375,6 +422,8 @@
     const urlParams = new URLSearchParams(window.location.search);
     const examId = urlParams.get('examId');
     let fetchedRecordsGlobal = [];
+    let backupMasterSubject = "Examination Paper Copy";
+    let backupMasterText = "<p>No active solution text structure compiled in database.</p>";
 
     // Check auth status to show/hide admin panels from public anonymous access paths
     async function evaluateSecurityContext() {
@@ -387,6 +436,83 @@
       }
     }
 
+    // Helper client-side shuffler to mutate solutions for rapid ICT generation when unassigned
+    function executeClientMutationEngine(baseHtml, index) {
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(baseHtml, 'text/html');
+      
+      // 1. Mutate Lists (Shuffle list item variations if present)
+      doc.querySelectorAll('ul, ol').forEach(list => {
+        const items = Array.from(list.children);
+        if(items.length > 1 && index % 2 === 0) {
+          items.reverse().forEach(item => list.appendChild(item));
+        }
+      });
+      
+      // 2. Mutate Table Structures Safely (Alternating row structural layouts)
+      doc.querySelectorAll('table').forEach(table => {
+        const rows = Array.from(table.querySelectorAll('tbody tr'));
+        if (rows.length > 2) {
+          // Subtle variance to randomize visual signature
+          for (let i = 0; i < rows.length - 1; i += 2) {
+            if(rows[i] && rows[i+1] && (index % 3 === 0)) {
+              rows[i].parentNode.insertBefore(rows[i+1], rows[i]);
+            }
+          }
+        }
+      });
+
+      // 3. Insert subtle non-breaking variant hashes to guarantee unique print layouts
+      const paragraphs = doc.querySelectorAll('p, td');
+      if(paragraphs.length > 0) {
+        const targetCell = paragraphs[index % paragraphs.length];
+        targetCell.innerHTML += `<span style="display:none !important; font-size:0px;">[v-${index+1}]</span>`;
+      }
+
+      return doc.body.innerHTML;
+    }
+
+    // Explicitly fallback and print independent copies directly inside the ICT center
+    function generateAnonymousICTScripts() {
+      const targetCount = parseInt(document.getElementById('ictCopyCount').value) || 10;
+      const container = document.getElementById('print-container');
+      
+      container.innerHTML = "";
+      fetchedRecordsGlobal = []; // Reset global tracking matrix for custom export pipeline
+
+      for (let i = 0; i < targetCount; i++) {
+        const mockStudentName = `ICT Candidate Batch (Seat-${String(i + 1).padStart(2, '0')})`;
+        const mutatedText = executeClientMutationEngine(backupMasterText, i);
+
+        // Map to global array so Word Exporter matches on-screen changes
+        fetchedRecordsGlobal.push({
+          unique_solution_text: mutatedText,
+          profiles: { full_name: mockStudentName },
+          anonymous_sessions: null,
+          exams: { subject: backupMasterSubject }
+        });
+
+        const sheetHTML = `
+          <div class="student-sheet">
+            <div class="header-info">
+              <div class="meta-left">
+                <strong>Candidate Name</strong><br>
+                <div class="val-text" style="color: #d97706; font-weight:800;">${mockStudentName}</div>
+                <strong style="margin-top: 4px; display:inline-block;">Subject Context</strong><br>
+                <div class="val-text" style="font-size:14px; font-weight:600; color:#475569;">${backupMasterSubject}</div>
+              </div>
+              <div class="meta-right">
+                <span class="status-tag" style="background:#fef3c7; color:#b45309;">UNASSIGNED ICT BULK VARIANT</span>
+                <span class="sys-code">SYS REGISTERED CODE: EXM-${examId}</span>
+              </div>
+            </div>
+            <div class="solution-content">${mutatedText}</div>
+          </div>
+        `;
+        container.innerHTML += sheetHTML;
+      }
+    }
+
     async function fetchAndRenderSolutions() {
       const container = document.getElementById('print-container');
       
@@ -395,13 +521,26 @@
         return;
       }
 
+      // Pre-fetch the master exam data to establish fallback variables for unassigned generation
+      const { data: baseExam } = await supabaseClient
+        .from('exams')
+        .select('subject, master_solution_template') // Assuming layout uses master_solution_template or fallback string
+        .eq('id', examId)
+        .single();
+
+      if (baseExam) {
+        backupMasterSubject = baseExam.subject || "Examination Paper Copy";
+        // Fallback option matrix
+        backupMasterText = baseExam.master_solution_template || "<p>Base Master Template Empty.</p>";
+      }
+
       const { data, error } = await supabaseClient
         .from('mutated_solutions')
         .select(`
           unique_solution_text,
           profiles:student_id ( full_name ),
           anonymous_sessions:session_id ( device_fingerprint ),
-          exams:exam_id ( subject )
+          exams:exam_id ( subject, master_solution_template )
         `)
         .eq('exam_id', examId);
 
@@ -413,8 +552,9 @@
 
       if (!data || data.length === 0) {
         container.innerHTML = `
-          <div style="background: #fff; padding: 25px; border-radius: 6px; border: 1px solid #e1e1e6; font-family: system-ui, -apple-system, sans-serif; max-width: 1200px; margin: 0 auto;">
-            <p style='color:#f59e0b; font-size:15px; font-weight: 600; margin-bottom: 8px;'>No student variations found for this exam layout yet (ID: EXM-${examId}).</p>
+          <div style="background: #fff; padding: 25px; border-radius: 6px; border: 1px solid #e1e1e6; font-family: system-ui, -apple-system, sans-serif; max-width: 1200px; margin: 0 auto; text-align:center;">
+            <p style='color:#f59e0b; font-size:15px; font-weight: 600; margin-bottom: 12px;'>No student variations found for this exam layout yet (ID: EXM-${examId}).</p>
+            <p style='color:#64748b; font-size:13px; margin-bottom: 16px;'>You can enforce automated generation for physical distribution using the console above.</p>
           </div>
         `;
         return;
@@ -422,6 +562,12 @@
 
       container.innerHTML = "";
       fetchedRecordsGlobal = data;
+
+      // Ensure backup templates hold content from nested data joins if previous single lookups missing
+      if(data[0] && data[0].exams) {
+        const exObj = Array.isArray(data[0].exams) ? data[0].exams[0] : data[0].exams;
+        if(exObj?.master_solution_template) backupMasterText = exObj.master_solution_template;
+      }
 
       data.forEach(record => {
         let studentName = "";

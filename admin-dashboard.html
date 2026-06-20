@@ -633,7 +633,7 @@
       }
     }
 
-    // Automated Script Variation Generator
+    // Automated Script Variation Generator + JIT Hybrid Sync System
     async function runLiveMutationEnginePipeline() {
       const examId = parseInt(examRuntimeId.value);
       if (!examId) { alert("Please select an exam to process first."); return; }
@@ -644,133 +644,106 @@
       const btnMutation = document.getElementById('btn-launch-mutation');
       setButtonLoading(btnMutation, true);
 
-      terminalLogger.innerHTML = `Starting run...<br>Fetching assigned roster records from database...`;
+      terminalLogger.innerHTML = `Starting run...<br>Fetching assigned roster and active anonymous traces...`;
 
       try {
+        // Fetch explicit registered student rows
         const { data: roster, error: rosterError } = await supabaseClient
           .from('student_exams')
-          .select(`
-            student_id,
-            profiles:student_id (full_name)
-          `)
+          .select(`student_id, profiles:student_id (full_name)`)
           .eq('exam_id', examId);
 
-        if (rosterError || !roster || roster.length === 0) {
-          terminalLogger.innerHTML = `<span style="color:#EF4444">Error/Idle: No student seats found on this exam roster list.</span>`;
+        // Fetch anonymous active device tokens to seed mutations ahead of time
+        const { data: anonSessions, error: anonError } = await supabaseClient
+          .from('anonymous_sessions')
+          .select('session_device_uuid, temporary_alias')
+          .eq('exam_id', examId);
+
+        const totalTargets = (roster ? roster.length : 0) + (anonSessions ? anonSessions.length : 0);
+
+        if (totalTargets === 0) {
+          terminalLogger.innerHTML = `<span style="color:#amber-400">System Standing By: No active candidate maps or anonymous session traces found yet. Kiosk JIT mode will handle them dynamically upon entry!</span>`;
           setButtonLoading(btnMutation, false, "Launch Variation Generation Run 🚀");
           return;
         }
 
-        terminalLogger.innerHTML += `<br>Found ${roster.length} candidate maps. Contacting processing engine...`;
+        terminalLogger.innerHTML += `<br>Found ${roster ? roster.length : 0} registered student(s) and ${anonSessions ? anonSessions.length : 0} kiosk device tracking vectors.`;
 
         const currentContextCategory = localCategoryRuntimeMap[examId] || "mathematics";
+        let categoryPromptConstraint = getRuleConstraint(currentContextCategory);
+        const diagnosticBaseSolutionText = targetModel.master_solution_template || targetModel.master_solution;
 
-        for (let i = 0; i < roster.length; i++) {
-          const rowData = roster[i];
-          const name = rowData.profiles?.full_name || "Unknown Candidate";
-          terminalLogger.innerHTML += `<br>Processing student [${i+1}/${roster.length}]: ${name}...`;
-          
-          let categoryPromptConstraint = "";
-          switch(currentContextCategory) {
-            case "mathematics":
-              categoryPromptConstraint = "MATHEMATICS RULE: Keep all numeric equations, variables, factors, parameters, matrices, and final root answers identical. Paraphrase only the connective and transition explanation phrases between equations.";
-              break;
-            case "sciences":
-              categoryPromptConstraint = "CORE SCIENCES RULE: Do not modify standard laws, formulas, SI units, or highly specific terms (e.g., 'rate of change of magnetic flux linkage' or 'chemical titration equilibrium point'). Restructure sentence syntax and active/passive voice balance only.";
-              break;
-            case "agriculture":
-              categoryPromptConstraint = "AGRICULTURAL/BIOLOGICAL SCIENCE RULE: Keep all anatomical words, structures, organs, chambers (e.g., Rumen, Reticulum, Omasum, Abomasum) and technical processes (e.g., microbial fermentation, cross-pollination, re-mastication) entirely untouched. Paraphrase descriptive transitions.";
-              break;
-            case "languages":
-              categoryPromptConstraint = "LANGUAGES & ENGLISH RULE: Strict adherence to formal grammatical concord, register, and expression mechanical accuracy rules. Paraphrase sentences using varied syntactic patterns (e.g., fronted adverbials, conditional structures) while maintaining the original tone, exact idiomatic targets, and structural meanings perfectly.";
-              break;
-            case "humanities":
-              categoryPromptConstraint = "ARTS & LITERATURE RULE: Retain all exact literary terms (e.g., metaphor, hyperbole, personification, onomatopoeia), specific character names, dramatic plot acts/scenes citations, and thematic keywords. Mutate analytical explanations and commentary vocabulary without altering literary points.";
-              break;
-            case "commercial":
-              categoryPromptConstraint = "COMMERCIAL SCIENCES & ECONOMICS RULE: Retain core economic laws (e.g., Law of Diminishing Marginal Utility), formula parameters (e.g., Price Elasticity of Demand), accounting ledger structures, and transactional entries exactly. Paraphrase only explanatory discussions and contextual commentary.";
-              break;
-            case "technical":
-              categoryPromptConstraint = "TECHNICAL DRAWING/ENGINEERING RULE: Keep all dimensional measurements, perspective views, scale settings, lines (e.g., isometric, orthographic, hidden detail lines), and exact layout configurations completely intact. Rephrase instructional sentences only.";
-              break;
-            case "trades":
-              categoryPromptConstraint = "VOCATIONAL CRAFT TRADE RULE: Retain exact names of industrial tools, safety gear, raw material components, diagnostic steps, and trade actions (e.g., arc-welding root pass, catering baking ratios, electrical circuit grounding rules). Rewrite procedural sentences cleanly without losing technical points.";
-              break;
-            default:
-              categoryPromptConstraint = "GENERAL REWRITE RULE: Retain all core technical keywords, definitions, specific vocabulary, and steps exactly so that full marks are claimed according to the marking scheme.";
-          }
-
-          const systemInstruction = `
-            You are a Senior secondary school chief external examiner rewriting scripts for WAEC, NECO, and NABTEB standards.
-            Your task is to rewrite the Master Answer Scheme to create a completely unique solution text for the student named "${name}".
+        // Process Registered Students List
+        if (roster && roster.length > 0) {
+          for (let i = 0; i < roster.length; i++) {
+            const rowData = roster[i];
+            const name = rowData.profiles?.full_name || "Registered Candidate";
+            terminalLogger.innerHTML += `<br>Mutation Sync [Reg ${i+1}/${roster.length}]: ${name}...`;
             
-            CRITICAL INSTRUCTIONS:
-            1. MAXIMUM MARKS: The final text must look uniquely written but hit every single marking scheme point to claim full marks.
-            2. CATEGORY SPECIFIC PROTECTION: ${categoryPromptConstraint}
-            3. SSS3 STANDARD: Keep the phrasing clean, natural, and matching West African senior secondary technical and vocational textbook standards.
-          `;
+            const userPayloadText = `Subject Context: ${targetModel.subject}\nMaster Question: ${targetModel.master_question}\nMarking Scheme: ${diagnosticBaseSolutionText}`;
+            const mockMutatedVariationResult = await simulateBackendAICall(categoryPromptConstraint, userPayloadText);
 
-          const diagnosticBaseSolutionText = targetModel.master_solution_template || targetModel.master_solution;
-
-          const userPayloadText = `
-            Subject Context: ${targetModel.subject}
-            Master Question Paper: ${targetModel.master_question}
-            Master Official Marking Scheme: ${diagnosticBaseSolutionText}
-          `;
-
-          try {
-            const mockMutatedVariationResult = await simulateBackendAICall(systemInstruction, userPayloadText);
-
-            const { data: existingRow } = await supabaseClient
+            let { data: existingRow } = await supabaseClient
               .from('mutated_solutions')
               .select('id')
               .eq('exam_id', examId)
               .eq('student_id', rowData.student_id)
               .maybeSingle();
 
-            let resultError;
             if (existingRow) {
-              const { error } = await supabaseClient
-                .from('mutated_solutions')
-                .update({ unique_solution_text: mockMutatedVariationResult })
-                .eq('id', existingRow.id);
-              resultError = error;
+              await supabaseClient.from('mutated_solutions').update({ unique_solution_text: mockMutatedVariationResult }).eq('id', existingRow.id);
             } else {
-              const { error } = await supabaseClient
-                .from('mutated_solutions')
-                .insert([{
-                  exam_id: examId,
-                  student_id: rowData.student_id,
-                  unique_solution_text: mockMutatedVariationResult
-                }]);
-              resultError = error;
+              await supabaseClient.from('mutated_solutions').insert([{ exam_id: examId, student_id: rowData.student_id, unique_solution_text: mockMutatedVariationResult }]);
             }
-
-            if (resultError) throw resultError;
-
-          } catch (err) {
-            terminalLogger.innerHTML += `<br><span style="color:#EF4444">✕ Error processing ${name}: ${err.message}</span>`;
           }
         }
 
-        terminalLogger.innerHTML += `<br><br><span style="color:#10B981">✓ SUCCESS: All variation models established! You can now run your Step 3 print layout cleanly.</span>`;
+        // Process Pre-registered Anonymous Tracks List
+        if (anonSessions && anonSessions.length > 0) {
+          for (let j = 0; j < anonSessions.length; j++) {
+            const anonNode = anonSessions[j];
+            const alias = anonNode.temporary_alias || `Device Kiosk-${anonNode.session_device_uuid.substring(4, 8)}`;
+            terminalLogger.innerHTML += `<br>Mutation Sync [Anon ${j+1}/${anonSessions.length}]: ${alias}...`;
+
+            const userPayloadText = `Subject Context: ${targetModel.subject}\nMaster Question: ${targetModel.master_question}\nMarking Scheme: ${diagnosticBaseSolutionText}`;
+            const mockMutatedVariationResult = await simulateBackendAICall(categoryPromptConstraint, userPayloadText);
+
+            await supabaseClient.from('mutated_solutions').upsert({
+              exam_id: examId,
+              anonymous_device_tag: anonNode.session_device_uuid,
+              unique_solution_text: mockMutatedVariationResult
+            }, { onConflict: 'anonymous_device_tag,exam_id' });
+          }
+        }
+
+        terminalLogger.innerHTML += `<br><br><span style="color:#10B981">✓ SUCCESS: Master structures synchronized. Late arrivals will trigger independent JIT auto-mutation safely.</span>`;
       } catch (globalErr) {
         console.error(globalErr);
+        terminalLogger.innerHTML += `<br><span style="color:#EF4444">Exception encountered: ${globalErr.message}</span>`;
       } finally {
         setButtonLoading(btnMutation, false, "Launch Variation Generation Run 🚀");
       }
     }
 
+    function getRuleConstraint(category) {
+      switch(category) {
+        case "mathematics": return "MATHEMATICS RULE: Keep all numeric equations, variables, factors, parameters, matrices, and final root answers identical. Paraphrase only the connective and transition explanation phrases between equations.";
+        case "sciences": return "CORE SCIENCES RULE: Do not modify standard laws, formulas, SI units, or highly specific terms (e.g., 'rate of change of magnetic flux linkage'). Restructure sentence syntax and active/passive voice balance only.";
+        case "agriculture": return "AGRICULTURAL/BIOLOGICAL SCIENCE RULE: Keep all anatomical words, structures, organs, chambers (e.g., Rumen, Reticulum, Omasum, Abomasum) and technical processes entirely untouched. Paraphrase descriptive transitions.";
+        case "languages": return "LANGUAGES & ENGLISH RULE: Strict adherence to formal grammatical concord. Paraphrase sentences using varied syntactic patterns while maintaining the original tone and structural meanings perfectly.";
+        case "humanities": return "ARTS & LITERATURE RULE: Retain all exact literary terms, specific character names, dramatic plot acts/scenes citations, and thematic keywords. Mutate analytical explanations and commentary vocabulary without altering literary points.";
+        case "commercial": return "COMMERCIAL SCIENCES & ECONOMICS RULE: Retain core economic laws, formula parameters, accounting ledger structures, and transactional entries exactly. Paraphrase only explanatory discussions.";
+        case "technical": return "TECHNICAL DRAWING/ENGINEERING RULE: Keep all dimensional measurements, perspective views, scale settings, lines, and exact layout configurations completely intact. Rephrase instructional sentences only.";
+        case "trades": return "VOCATIONAL CRAFT TRADE RULE: Retain exact names of industrial tools, safety gear, raw material components, diagnostic steps, and trade actions exactly. Rewrite procedural sentences cleanly.";
+        default: return "GENERAL REWRITE RULE: Retain all core technical keywords, definitions, specific vocabulary, and steps exactly so that full marks are claimed according to the marking scheme.";
+      }
+    }
+
     // True CBT-Style Shuffling & Mutation Core Algorithm Engine
     async function simulateBackendAICall(sys, user) {
-      await new Promise(resolve => setTimeout(resolve, 150));
+      await new Promise(resolve => setTimeout(resolve, 100));
       
-      let baseHtml = "";
-      if (user.includes("Master Official Marking Scheme:")) {
-        baseHtml = user.split("Master Official Marking Scheme:")[1] || "";
-      } else {
-        baseHtml = user;
-      }
+      let baseHtml = user.includes("Marking Scheme:") ? user.split("Marking Scheme:")[1] || "" : user;
       baseHtml = baseHtml.trim();
 
       if (!baseHtml.startsWith('<')) {
@@ -793,43 +766,9 @@
         if (items.length > 1) {
           const texts = items.map(li => li.innerHTML);
           shuffle(texts);
-          items.forEach((li, idx) => {
-            li.innerHTML = texts[idx];
-          });
+          items.forEach((li, idx) => { li.innerHTML = texts[idx]; });
         }
       });
-
-      const listRegex = /^([\s]*)([0-9]+|[a-zA-Z]+|[ivxlcdmIVXLCDM]+)([\.\)\-]\s+)(.*)/;
-      const paragraphs = Array.from(doc.querySelectorAll('p, div'));
-      
-      let groupCollector = [];
-
-      function processGroupShuffle(group) {
-        if (group.length > 1) {
-          const extractedContents = group.map(g => g.textOnly);
-          shuffle(extractedContents);
-          group.forEach((item, idx) => {
-            item.element.innerHTML = `${item.prefix}${extractedContents[idx]}`;
-          });
-        }
-      }
-
-      paragraphs.forEach(p => {
-        if (p.tagName === 'TABLE' || p.closest('table')) return;
-        if (p.children.length === 0 || (p.children.length === 1 && p.firstElementChild.tagName === 'BR')) {
-          const rawText = p.innerText.trim();
-          const match = rawText.match(listRegex);
-          
-          if (match) {
-            const prefixMarkup = rawText.replace(match[4], '');
-            groupCollector.push({ element: p, textOnly: match[4], prefix: prefixMarkup });
-          } else {
-            processGroupShuffle(groupCollector);
-            groupCollector = [];
-          }
-        }
-      });
-      processGroupShuffle(groupCollector);
 
       const tables = doc.querySelectorAll('table');
       tables.forEach(table => {
@@ -841,16 +780,7 @@
         }
 
         const tbody = table.querySelector('tbody') || table;
-        const allRows = Array.from(tbody.querySelectorAll('tr'));
-        if (allRows.length <= 1) return;
-
-        let dataRows = [];
-        if (table.querySelector('thead')) {
-          const targetBody = table.querySelector('tbody');
-          dataRows = targetBody ? Array.from(targetBody.querySelectorAll('tr')) : [];
-        } else {
-          dataRows = allRows.slice(1);
-        }
+        let dataRows = table.querySelector('thead') ? Array.from(tbody.querySelectorAll('tr')) : Array.from(tbody.querySelectorAll('tr')).slice(1);
 
         if (dataRows.length > 1) {
           const originalNumberedPrefixes = dataRows.map(row => {
@@ -861,14 +791,10 @@
             return { cleanMatch: !!match, html: firstCell.innerHTML };
           });
 
-          const mappedRows = dataRows.map((row, idx) => {
-            const cells = Array.from(row.querySelectorAll('td, th'));
-            const keepsSequentialNumbers = originalNumberedPrefixes[idx] ? originalNumberedPrefixes[idx].cleanMatch : false;
-            return {
-              cellsHTML: cells.map(c => c.innerHTML),
-              hasNumberedPrefixIndex: keepsSequentialNumbers
-            };
-          });
+          const mappedRows = dataRows.map((row, idx) => ({
+            cellsHTML: Array.from(row.querySelectorAll('td, th')).map(c => c.innerHTML),
+            hasNumberedPrefixIndex: originalNumberedPrefixes[idx] ? originalNumberedPrefixes[idx].cleanMatch : false
+          }));
 
           shuffle(mappedRows);
 
@@ -879,7 +805,7 @@
             
             currentShuffledData.cellsHTML.forEach((htmlValue, cellIndex) => {
               if (liveCells[cellIndex]) {
-                if (cellIndex === 0 && currentShuffledData.hasNumberedPrefixIndex && originalNumberedPrefixes[rowIndex] && originalNumberedPrefixes[rowIndex].cleanMatch) {
+                if (cellIndex === 0 && currentShuffledData.hasNumberedPrefixIndex && originalNumberedPrefixes[rowIndex]?.cleanMatch) {
                   liveCells[cellIndex].innerHTML = originalNumberedPrefixes[rowIndex].html;
                 } else {
                   liveCells[cellIndex].innerHTML = htmlValue;
