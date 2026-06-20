@@ -9,8 +9,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
-  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js" defer></script>
   <script src="https://cdn.tailwindcss.com"></script>
   
   <script>
@@ -42,8 +41,8 @@
         Exam Solution Portal — System Administration
       </h1>
     </div>
-    <button class="btn-logout px-4 h-9 border border-slate-800 rounded-lg text-xs font-semibold text-slate-400 bg-slate-950 transition-all duration-200 hover:bg-red-600 hover:text-white hover:border-red-600 hover:shadow-lg hover:shadow-red-900/30" id="btn-logout">
-      Sign Out Panel
+    <button class="btn-logout px-4 h-9 border border-slate-800 rounded-lg text-xs font-semibold text-slate-400 bg-slate-950 transition-all duration-200 hover:bg-red-600 hover:text-white hover:border-red-600 hover:shadow-lg hover:shadow-red-900/30 inline-flex items-center justify-center gap-2" id="btn-logout">
+      <span>Sign Out Panel</span>
     </button>
   </header>
 
@@ -128,8 +127,8 @@
         </div>
 
         <div class="form-group action-button-group flex flex-wrap gap-3 pt-2" id="form-actions-wrapper">
-          <button type="submit" id="btn-exam-submit" class="flex-1 min-w-[140px] h-11 px-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white text-sm font-semibold rounded-xl shadow-md transition-all duration-300 hover:opacity-95 hover:scale-[1.01] active:scale-[0.99] focus:outline-none">
-            Publish Exam Paper
+          <button type="submit" id="btn-exam-submit" class="flex-1 min-w-[140px] h-11 px-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white text-sm font-semibold rounded-xl shadow-md transition-all duration-300 hover:opacity-95 hover:scale-[1.01] active:scale-[0.99] focus:outline-none inline-flex items-center justify-center gap-2">
+            <span>Publish Exam Paper</span>
           </button>
         </div>
       </form>
@@ -142,8 +141,8 @@
         <p class="text-xs font-normal text-slate-400 mb-4 leading-relaxed">
           Generate unique, high-scoring answer variations for all candidates assigned to this exam.
         </p>
-        <button type="button" class="w-full h-10 px-4 bg-gradient-to-r from-amber-500 to-orange-500 text-white shadow-sm shadow-amber-500/10 hover:shadow-md hover:shadow-orange-500/20 text-xs font-bold rounded-lg transition-all duration-200 hover:scale-[1.01] active:scale-[0.99]" onclick="runLiveMutationEnginePipeline()">
-          Launch Variation Generation Run 🚀
+        <button id="btn-launch-mutation" type="button" class="w-full h-10 px-4 bg-gradient-to-r from-amber-500 to-orange-500 text-white shadow-sm shadow-amber-500/10 hover:shadow-md hover:shadow-orange-500/20 text-xs font-bold rounded-lg transition-all duration-200 hover:scale-[1.01] active:scale-[0.99] inline-flex items-center justify-center gap-2" onclick="runLiveMutationEnginePipeline()">
+          <span>Launch Variation Generation Run 🚀</span>
         </button>
         <div class="status-logger mt-4 bg-slate-900 p-4 rounded-lg font-mono text-[11px] text-cyan-400 border border-slate-800 max-h-40 overflow-y-auto leading-relaxed" id="terminal-logger">System standing by... ready to run.</div>
       </div>
@@ -176,8 +175,8 @@
             </div>
           </div>
           
-          <button type="submit" class="w-full h-11 px-4 bg-slate-100 text-slate-950 text-sm font-semibold rounded-xl transition-all duration-200 hover:bg-slate-200 hover:shadow-md focus:outline-none">
-            Register Selected Seat Assignments
+          <button id="btn-roster-submit" type="submit" class="w-full h-11 px-4 bg-slate-100 text-slate-950 text-sm font-semibold rounded-xl transition-all duration-200 hover:bg-slate-200 hover:shadow-md focus:outline-none inline-flex items-center justify-center gap-2">
+            <span>Register Selected Seat Assignments</span>
           </button>
         </form>
       </section>
@@ -308,6 +307,16 @@
       z-index: 10;
       box-shadow: inset 0 -2px 0 rgba(255,255,255,0.1);
     }
+    
+    /* Global inline CSS spinner element */
+    .btn-loading-spinner {
+      width: 14px; height: 14px;
+      border: 2px solid transparent;
+      border-top-color: currentColor;
+      border-radius: 50%;
+      animation: buttonLoadingRotate 0.6s linear infinite;
+    }
+    @keyframes buttonLoadingRotate { to { transform: rotate(360deg); } }
   </style>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -323,7 +332,6 @@
     const examForm = document.getElementById('exam-form');
     const examRuntimeId = document.getElementById('exam-runtime-id');
     const formPanelTitle = document.getElementById('form-panel-title');
-    const btnExamSubmit = document.getElementById('btn-exam-submit');
     const formActionsWrapper = document.getElementById('form-actions-wrapper');
     const examSearchBar = document.getElementById('exam-search-bar');
     const aiEngineTerminal = document.getElementById('ai-engine-terminal');
@@ -336,6 +344,20 @@
     const toggleAllCheckbox = document.getElementById('toggle-all-students');
     const printListContainer = document.getElementById('print-list-container');
     const logoutBtn = document.getElementById('btn-logout');
+
+    // UI Feedback Helper Utilities
+    function setButtonLoading(btnElement, isLoading, explicitDefaultText = "Proceed") {
+      if (!btnElement) return;
+      if (isLoading) {
+        btnElement.disabled = true;
+        btnElement.setAttribute('data-prev-content', btnElement.innerHTML);
+        btnElement.innerHTML = `<div class="btn-loading-spinner"></div><span>Processing...</span>`;
+      } else {
+        btnElement.disabled = false;
+        const previousContent = btnElement.getAttribute('data-prev-content');
+        btnElement.innerHTML = previousContent ? previousContent : `<span>${explicitDefaultText}</span>`;
+      }
+    }
 
     // Mammoth .docx Parsing Engine Integration Handler
     docxFileInput.addEventListener('change', function(e) {
@@ -494,9 +516,9 @@
       formPanelTitle.className = "text-base sm:text-lg font-bold tracking-tight pb-4 border-b border-slate-800 mb-6 text-indigo-400 transition-colors duration-300";
       
       formActionsWrapper.innerHTML = `
-        <button type="submit" id="btn-exam-submit" class="flex-1 min-w-[120px] h-11 px-4 bg-emerald-600 text-white text-sm font-semibold rounded-xl transition-all duration-200 hover:bg-emerald-500">Update Architecture</button>
-        <button type="button" class="flex-1 min-w-[120px] h-11 px-4 bg-red-600 text-white text-sm font-semibold rounded-xl transition-all duration-200 hover:bg-red-500" onclick="executeDestructiveDelete()">Delete Paper</button>
-        <button type="button" class="flex-1 min-w-[120px] h-11 px-4 bg-slate-950 border border-slate-800 text-slate-200 text-sm font-semibold rounded-xl transition-all duration-200 hover:bg-slate-900" onclick="resetFormToCreationState()">Cancel</button>
+        <button type="submit" id="btn-exam-submit" class="flex-1 min-w-[120px] h-11 px-4 bg-emerald-600 text-white text-sm font-semibold rounded-xl transition-all duration-200 hover:bg-emerald-500 inline-flex items-center justify-center gap-2"><span>Update Architecture</span></button>
+        <button type="button" id="btn-exam-delete" class="flex-1 min-w-[120px] h-11 px-4 bg-red-600 text-white text-sm font-semibold rounded-xl transition-all duration-200 hover:bg-red-500 inline-flex items-center justify-center gap-2" onclick="executeDestructiveDelete()"><span>Delete Paper</span></button>
+        <button type="button" class="flex-1 min-w-[120px] h-11 px-4 bg-slate-950 border border-slate-800 text-slate-200 text-sm font-semibold rounded-xl transition-all duration-200 hover:bg-slate-900 inline-flex items-center justify-center gap-2" onclick="resetFormToCreationState()"><span>Cancel</span></button>
       `;
 
       aiEngineTerminal.style.display = "block";
@@ -512,14 +534,17 @@
       document.getElementById('exam-category').value = "";
       formPanelTitle.innerText = "Step 1: Ingest New Exam Master Sheet";
       formPanelTitle.className = "text-base sm:text-lg font-bold tracking-tight text-white pb-4 border-b border-slate-800 mb-6";
-      formActionsWrapper.innerHTML = `<button type="submit" id="btn-exam-submit" class="w-full h-11 px-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white text-sm font-semibold rounded-xl transition-all duration-200 hover:opacity-90">Publish Exam Paper</button>`;
+      formActionsWrapper.innerHTML = `<button type="submit" id="btn-exam-submit" class="w-full h-11 px-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white text-sm font-semibold rounded-xl transition-all duration-200 hover:opacity-90 inline-flex items-center justify-center gap-2"><span>Publish Exam Paper</span></button>`;
       aiEngineTerminal.style.display = "none";
     }
 
-    // Transaction Submission Router (Modified to fully support PIN and Template allocations)
+    // Transaction Submission Router
     examForm.addEventListener('submit', async (e) => {
       e.preventDefault();
       
+      const btnSubmit = document.getElementById('btn-exam-submit');
+      setButtonLoading(btnSubmit, true);
+
       const activeId = examRuntimeId.value;
       const selectedCategoryVal = document.getElementById('exam-category').value;
       const verifiedPinVal = document.getElementById('exam-pin').value.trim() || null;
@@ -534,37 +559,43 @@
         master_solution_template: masterTemplateVal
       };
 
-      if (activeId) {
-        const { error } = await supabaseClient
-          .from('exams')
-          .update(dbPayload)
-          .eq('id', parseInt(activeId));
+      try {
+        if (activeId) {
+          const { error } = await supabaseClient
+            .from('exams')
+            .update(dbPayload)
+            .eq('id', parseInt(activeId));
 
-        if (error) { 
-          alert(`Modification update failure: ${error.message}`); 
-        } else { 
-          localCategoryRuntimeMap[activeId] = selectedCategoryVal;
-          alert("Master text structure securely updated inside registry matrix!"); 
-          resetFormToCreationState(); 
-          loadSystemDashboardData(); 
-        }
-      } else {
-        const { data, error } = await supabaseClient
-          .from('exams')
-          .insert([dbPayload])
-          .select('id')
-          .single();
-
-        if (error) { 
-          alert(`Ingestion configuration anomaly: ${error.message}`); 
-        } else { 
-          if (data && data.id) {
-            localCategoryRuntimeMap[data.id] = selectedCategoryVal;
+          if (error) { 
+            alert(`Modification update failure: ${error.message}`); 
+          } else { 
+            localCategoryRuntimeMap[activeId] = selectedCategoryVal;
+            alert("Master text structure securely updated inside registry matrix!"); 
+            resetFormToCreationState(); 
+            await loadSystemDashboardData(); 
           }
-          alert("Master exam architecture securely established!"); 
-          resetFormToCreationState(); 
-          loadSystemDashboardData(); 
+        } else {
+          const { data, error } = await supabaseClient
+            .from('exams')
+            .insert([dbPayload])
+            .select('id')
+            .maybeSingle();
+
+          if (error) { 
+            alert(`Ingestion configuration anomaly: ${error.message}`); 
+          } else { 
+            if (data && data.id) {
+              localCategoryRuntimeMap[data.id] = selectedCategoryVal;
+            }
+            alert("Master exam architecture securely established!"); 
+            resetFormToCreationState(); 
+            await loadSystemDashboardData(); 
+          }
         }
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setButtonLoading(btnSubmit, false, activeId ? "Update Architecture" : "Publish Exam Paper");
       }
     });
 
@@ -576,20 +607,29 @@
       const userCheck = confirm("🚨 CRITICAL WARNING:\n\nDeleting this master paper will permanently purge all mapped student seat rosters, anonymous tracking sessions, and custom solutions assigned to it.\n\nAre you absolutely sure you want to proceed?");
       if (!userCheck) return;
 
-      // Clean out child tables cleanly down dependencies
-      await supabaseClient.from('student_exams').delete().eq('exam_id', activeId);
-      await supabaseClient.from('anonymous_sessions').delete().eq('exam_id', activeId);
-      await supabaseClient.from('mutated_solutions').delete().eq('exam_id', activeId);
+      const btnDelete = document.getElementById('btn-exam-delete');
+      setButtonLoading(btnDelete, true);
 
-      const { error } = await supabaseClient.from('exams').delete().eq('id', activeId);
+      try {
+        // Clean out child tables cleanly down dependencies
+        await supabaseClient.from('student_exams').delete().eq('exam_id', activeId);
+        await supabaseClient.from('anonymous_sessions').delete().eq('exam_id', activeId);
+        await supabaseClient.from('mutated_solutions').delete().eq('exam_id', activeId);
 
-      if (error) {
-        alert(`System purge constraint abort: ${error.message}`);
-      } else {
-        delete localCategoryRuntimeMap[activeId];
-        alert("Paper and associated metadata successfully erased.");
-        resetFormToCreationState();
-        loadSystemDashboardData();
+        const { error } = await supabaseClient.from('exams').delete().eq('id', activeId);
+
+        if (error) {
+          alert(`System purge constraint abort: ${error.message}`);
+        } else {
+          delete localCategoryRuntimeMap[activeId];
+          alert("Paper and associated metadata successfully erased.");
+          resetFormToCreationState();
+          await loadSystemDashboardData();
+        }
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setButtonLoading(btnDelete, false, "Delete Paper");
       }
     }
 
@@ -601,125 +641,136 @@
       const targetModel = cachedExamsRegistry.find(e => e.id === examId);
       if (!targetModel) return;
 
+      const btnMutation = document.getElementById('btn-launch-mutation');
+      setButtonLoading(btnMutation, true);
+
       terminalLogger.innerHTML = `Starting run...<br>Fetching assigned roster records from database...`;
 
-      const { data: roster, error: rosterError } = await supabaseClient
-        .from('student_exams')
-        .select(`
-          student_id,
-          profiles:student_id (full_name)
-        `)
-        .eq('exam_id', examId);
+      try {
+        const { data: roster, error: rosterError } = await supabaseClient
+          .from('student_exams')
+          .select(`
+            student_id,
+            profiles:student_id (full_name)
+          `)
+          .eq('exam_id', examId);
 
-      if (rosterError || !roster || roster.length === 0) {
-        terminalLogger.innerHTML = `<span style="color:#EF4444">Error/Idle: No student seats found on this exam roster list.</span>`;
-        return;
-      }
-
-      terminalLogger.innerHTML += `<br>Found ${roster.length} candidate maps. Contacting processing engine...`;
-
-      const currentContextCategory = localCategoryRuntimeMap[examId] || "mathematics";
-
-      for (let i = 0; i < roster.length; i++) {
-        const rowData = roster[i];
-        const name = rowData.profiles?.full_name || "Unknown Candidate";
-        terminalLogger.innerHTML += `<br>Processing student [${i+1}/${roster.length}]: ${name}...`;
-        
-        let categoryPromptConstraint = "";
-        switch(currentContextCategory) {
-          case "mathematics":
-            categoryPromptConstraint = "MATHEMATICS RULE: Keep all numeric equations, variables, factors, parameters, matrices, and final root answers identical. Paraphrase only the connective and transition explanation phrases between equations.";
-            break;
-          case "sciences":
-            categoryPromptConstraint = "CORE SCIENCES RULE: Do not modify standard laws, formulas, SI units, or highly specific terms (e.g., 'rate of change of magnetic flux linkage' or 'chemical titration equilibrium point'). Restructure sentence syntax and active/passive voice balance only.";
-            break;
-          case "agriculture":
-            categoryPromptConstraint = "AGRICULTURAL/BIOLOGICAL SCIENCE RULE: Keep all anatomical words, structures, organs, chambers (e.g., Rumen, Reticulum, Omasum, Abomasum) and technical processes (e.g., microbial fermentation, cross-pollination, re-mastication) entirely untouched. Paraphrase descriptive transitions.";
-            break;
-          case "languages":
-            categoryPromptConstraint = "LANGUAGES & ENGLISH RULE: Strict adherence to formal grammatical concord, register, and expression mechanical accuracy rules. Paraphrase sentences using varied syntactic patterns (e.g., fronted adverbials, conditional structures) while maintaining the original tone, exact idiomatic targets, and structural meanings perfectly.";
-            break;
-          case "humanities":
-            categoryPromptConstraint = "ARTS & LITERATURE RULE: Retain all exact literary terms (e.g., metaphor, hyperbole, personification, onomatopoeia), specific character names, dramatic plot acts/scenes citations, and thematic keywords. Mutate analytical explanations and commentary vocabulary without altering literary points.";
-            break;
-          case "commercial":
-            categoryPromptConstraint = "COMMERCIAL SCIENCES & ECONOMICS RULE: Retain core economic laws (e.g., Law of Diminishing Marginal Utility), formula parameters (e.g., Price Elasticity of Demand), accounting ledger structures, and transactional entries exactly. Paraphrase only explanatory discussions and contextual commentary.";
-            break;
-          case "technical":
-            categoryPromptConstraint = "TECHNICAL DRAWING/ENGINEERING RULE: Keep all dimensional measurements, perspective views, scale settings, lines (e.g., isometric, orthographic, hidden detail lines), and exact layout configurations completely intact. Rephrase instructional sentences only.";
-            break;
-          case "trades":
-            categoryPromptConstraint = "VOCATIONAL CRAFT TRADE RULE: Retain exact names of industrial tools, safety gear, raw material components, diagnostic steps, and trade actions (e.g., arc-welding root pass, catering baking ratios, electrical circuit grounding rules). Rewrite procedural sentences cleanly without losing technical points.";
-            break;
-          default:
-            categoryPromptConstraint = "GENERAL REWRITE RULE: Retain all core technical keywords, definitions, specific vocabulary, and steps exactly so that full marks are claimed according to the marking scheme.";
+        if (rosterError || !roster || roster.length === 0) {
+          terminalLogger.innerHTML = `<span style="color:#EF4444">Error/Idle: No student seats found on this exam roster list.</span>`;
+          setButtonLoading(btnMutation, false, "Launch Variation Generation Run 🚀");
+          return;
         }
 
-        const systemInstruction = `
-          You are a Senior secondary school chief external examiner rewriting scripts for WAEC, NECO, and NABTEB standards.
-          Your task is to rewrite the Master Answer Scheme to create a completely unique solution text for the student named "${name}".
+        terminalLogger.innerHTML += `<br>Found ${roster.length} candidate maps. Contacting processing engine...`;
+
+        const currentContextCategory = localCategoryRuntimeMap[examId] || "mathematics";
+
+        for (let i = 0; i < roster.length; i++) {
+          const rowData = roster[i];
+          const name = rowData.profiles?.full_name || "Unknown Candidate";
+          terminalLogger.innerHTML += `<br>Processing student [${i+1}/${roster.length}]: ${name}...`;
           
-          CRITICAL INSTRUCTIONS:
-          1. MAXIMUM MARKS: The final text must look uniquely written but hit every single marking scheme point to claim full marks.
-          2. CATEGORY SPECIFIC PROTECTION: ${categoryPromptConstraint}
-          3. SSS3 STANDARD: Keep the phrasing clean, natural, and matching West African senior secondary technical and vocational textbook standards.
-        `;
-
-        // Intelligently fallback to master_solution configuration text if no explicit blueprint template is defined yet
-        const diagnosticBaseSolutionText = targetModel.master_solution_template || targetModel.master_solution;
-
-        const userPayloadText = `
-          Subject Context: ${targetModel.subject}
-          Master Question Paper: ${targetModel.master_question}
-          Master Official Marking Scheme: ${diagnosticBaseSolutionText}
-        `;
-
-                try {
-          const mockMutatedVariationResult = await simulateBackendAICall(systemInstruction, userPayloadText);
-
-          // Check if a row already exists for this specific registered student
-          const { data: existingRow } = await supabaseClient
-            .from('mutated_solutions')
-            .select('id')
-            .eq('exam_id', examId)
-            .eq('student_id', rowData.student_id)
-            .maybeSingle();
-
-          let resultError;
-          if (existingRow) {
-            // Update the existing row text safely
-            const { error } = await supabaseClient
-              .from('mutated_solutions')
-              .update({ unique_solution_text: mockMutatedVariationResult })
-              .eq('id', existingRow.id);
-            resultError = error;
-          } else {
-            // Insert a completely fresh student variant row
-            const { error } = await supabaseClient
-              .from('mutated_solutions')
-              .insert([{
-                exam_id: examId,
-                student_id: rowData.student_id,
-                unique_solution_text: mockMutatedVariationResult
-              }]);
-            resultError = error;
+          let categoryPromptConstraint = "";
+          switch(currentContextCategory) {
+            case "mathematics":
+              categoryPromptConstraint = "MATHEMATICS RULE: Keep all numeric equations, variables, factors, parameters, matrices, and final root answers identical. Paraphrase only the connective and transition explanation phrases between equations.";
+              break;
+            case "sciences":
+              categoryPromptConstraint = "CORE SCIENCES RULE: Do not modify standard laws, formulas, SI units, or highly specific terms (e.g., 'rate of change of magnetic flux linkage' or 'chemical titration equilibrium point'). Restructure sentence syntax and active/passive voice balance only.";
+              break;
+            case "agriculture":
+              categoryPromptConstraint = "AGRICULTURAL/BIOLOGICAL SCIENCE RULE: Keep all anatomical words, structures, organs, chambers (e.g., Rumen, Reticulum, Omasum, Abomasum) and technical processes (e.g., microbial fermentation, cross-pollination, re-mastication) entirely untouched. Paraphrase descriptive transitions.";
+              break;
+            case "languages":
+              categoryPromptConstraint = "LANGUAGES & ENGLISH RULE: Strict adherence to formal grammatical concord, register, and expression mechanical accuracy rules. Paraphrase sentences using varied syntactic patterns (e.g., fronted adverbials, conditional structures) while maintaining the original tone, exact idiomatic targets, and structural meanings perfectly.";
+              break;
+            case "humanities":
+              categoryPromptConstraint = "ARTS & LITERATURE RULE: Retain all exact literary terms (e.g., metaphor, hyperbole, personification, onomatopoeia), specific character names, dramatic plot acts/scenes citations, and thematic keywords. Mutate analytical explanations and commentary vocabulary without altering literary points.";
+              break;
+            case "commercial":
+              categoryPromptConstraint = "COMMERCIAL SCIENCES & ECONOMICS RULE: Retain core economic laws (e.g., Law of Diminishing Marginal Utility), formula parameters (e.g., Price Elasticity of Demand), accounting ledger structures, and transactional entries exactly. Paraphrase only explanatory discussions and contextual commentary.";
+              break;
+            case "technical":
+              categoryPromptConstraint = "TECHNICAL DRAWING/ENGINEERING RULE: Keep all dimensional measurements, perspective views, scale settings, lines (e.g., isometric, orthographic, hidden detail lines), and exact layout configurations completely intact. Rephrase instructional sentences only.";
+              break;
+            case "trades":
+              categoryPromptConstraint = "VOCATIONAL CRAFT TRADE RULE: Retain exact names of industrial tools, safety gear, raw material components, diagnostic steps, and trade actions (e.g., arc-welding root pass, catering baking ratios, electrical circuit grounding rules). Rewrite procedural sentences cleanly without losing technical points.";
+              break;
+            default:
+              categoryPromptConstraint = "GENERAL REWRITE RULE: Retain all core technical keywords, definitions, specific vocabulary, and steps exactly so that full marks are claimed according to the marking scheme.";
           }
 
-          if (resultError) throw resultError;
+          const systemInstruction = `
+            You are a Senior secondary school chief external examiner rewriting scripts for WAEC, NECO, and NABTEB standards.
+            Your task is to rewrite the Master Answer Scheme to create a completely unique solution text for the student named "${name}".
+            
+            CRITICAL INSTRUCTIONS:
+            1. MAXIMUM MARKS: The final text must look uniquely written but hit every single marking scheme point to claim full marks.
+            2. CATEGORY SPECIFIC PROTECTION: ${categoryPromptConstraint}
+            3. SSS3 STANDARD: Keep the phrasing clean, natural, and matching West African senior secondary technical and vocational textbook standards.
+          `;
 
-        } catch (err) {
-          terminalLogger.innerHTML += `<br><span style="color:#EF4444">✕ Error processing ${name}: ${err.message}</span>`;
-        }
+          const diagnosticBaseSolutionText = targetModel.master_solution_template || targetModel.master_solution;
+
+          const userPayloadText = `
+            Subject Context: ${targetModel.subject}
+            Master Question Paper: ${targetModel.master_question}
+            Master Official Marking Scheme: ${diagnosticBaseSolutionText}
+          `;
+
+          try {
+            const mockMutatedVariationResult = await simulateBackendAICall(systemInstruction, userPayloadText);
+
+            const { data: existingRow } = await supabaseClient
+              .from('mutated_solutions')
+              .select('id')
+              .eq('exam_id', examId)
+              .eq('student_id', rowData.student_id)
+              .maybeSingle();
+
+            let resultError;
+            if (existingRow) {
+              const { error } = await supabaseClient
+                .from('mutated_solutions')
+                .update({ unique_solution_text: mockMutatedVariationResult })
+                .eq('id', existingRow.id);
+              resultError = error;
+            } else {
+              const { error } = await supabaseClient
+                .from('mutated_solutions')
+                .insert([{
+                  exam_id: examId,
+                  student_id: rowData.student_id,
+                  unique_solution_text: mockMutatedVariationResult
+                }]);
+              resultError = error;
+            }
+
+            if (resultError) throw resultError;
+
+          } catch (err) {
+            terminalLogger.innerHTML += `<br><span style="color:#EF4444">✕ Error processing ${name}: ${err.message}</span>`;
+          }
         }
 
-      terminalLogger.innerHTML += `<br><br><span style="color:#10B981">✓ SUCCESS: All variation models established! You can now run your Step 3 print layout cleanly.</span>`;
+        terminalLogger.innerHTML += `<br><br><span style="color:#10B981">✓ SUCCESS: All variation models established! You can now run your Step 3 print layout cleanly.</span>`;
+      } catch (globalErr) {
+        console.error(globalErr);
+      } finally {
+        setButtonLoading(btnMutation, false, "Launch Variation Generation Run 🚀");
+      }
     }
 
     // True CBT-Style Shuffling & Mutation Core Algorithm Engine
     async function simulateBackendAICall(sys, user) {
-      await new Promise(resolve => setTimeout(resolve, 300));
+      await new Promise(resolve => setTimeout(resolve, 150));
       
-      let baseHtml = user.split("Master Official Marking Scheme:")[1] || user;
+      let baseHtml = "";
+      if (user.includes("Master Official Marking Scheme:")) {
+        baseHtml = user.split("Master Official Marking Scheme:")[1] || "";
+      } else {
+        baseHtml = user;
+      }
       baseHtml = baseHtml.trim();
 
       if (!baseHtml.startsWith('<')) {
@@ -795,7 +846,8 @@
 
         let dataRows = [];
         if (table.querySelector('thead')) {
-          dataRows = Array.from(table.querySelector('tbody').querySelectorAll('tr'));
+          const targetBody = table.querySelector('tbody');
+          dataRows = targetBody ? Array.from(targetBody.querySelectorAll('tr')) : [];
         } else {
           dataRows = allRows.slice(1);
         }
@@ -811,7 +863,7 @@
 
           const mappedRows = dataRows.map((row, idx) => {
             const cells = Array.from(row.querySelectorAll('td, th'));
-            const keepsSequentialNumbers = originalNumberedPrefixes[idx].cleanMatch;
+            const keepsSequentialNumbers = originalNumberedPrefixes[idx] ? originalNumberedPrefixes[idx].cleanMatch : false;
             return {
               cellsHTML: cells.map(c => c.innerHTML),
               hasNumberedPrefixIndex: keepsSequentialNumbers
@@ -823,13 +875,12 @@
           dataRows.forEach((row, rowIndex) => {
             const currentShuffledData = mappedRows[rowIndex];
             const liveCells = Array.from(row.querySelectorAll('td, th'));
+            if (!currentShuffledData) return;
             
             currentShuffledData.cellsHTML.forEach((htmlValue, cellIndex) => {
               if (liveCells[cellIndex]) {
-                if (cellIndex === 0 && currentShuffledData.hasNumberedPrefixIndex && originalNumberedPrefixes[rowIndex].cleanMatch) {
+                if (cellIndex === 0 && currentShuffledData.hasNumberedPrefixIndex && originalNumberedPrefixes[rowIndex] && originalNumberedPrefixes[rowIndex].cleanMatch) {
                   liveCells[cellIndex].innerHTML = originalNumberedPrefixes[rowIndex].html;
-                } else if (cellIndex === 0 && currentShuffledData.hasNumberedPrefixIndex) {
-                  liveCells[cellIndex].innerHTML = htmlValue;
                 } else {
                   liveCells[cellIndex].innerHTML = htmlValue;
                 }
@@ -844,28 +895,38 @@
 
     rosterForm.addEventListener('submit', async (e) => {
       e.preventDefault();
+      
+      const btnRoster = document.getElementById('btn-roster-submit');
       const targetExamId = parseInt(examSelectDropdown.value);
       if (!targetExamId) { alert("Please select a target examination paper."); return; }
 
       const selectedBoxes = document.querySelectorAll('input[name="student-checkbox"]:checked');
       if (selectedBoxes.length === 0) { alert("Please check at least one student candidate checkbox row."); return; }
 
+      setButtonLoading(btnRoster, true);
+
       const bulkInsertPayload = Array.from(selectedBoxes).map(cb => ({
         exam_id: targetExamId,
         student_id: cb.value
       }));
 
-      const { error } = await supabaseClient
-        .from('student_exams')
-        .upsert(bulkInsertPayload, { onConflict: 'student_id,exam_id' });
+      try {
+        const { error } = await supabaseClient
+          .from('student_exams')
+          .upsert(bulkInsertPayload, { onConflict: 'student_id,exam_id' });
 
-      if (error) { 
-        alert(`Seat routing conflict matrix errored: ${error.message}`); 
-      } else { 
-        alert(`Successfully registered structural seat links! Safe-mapped ${bulkInsertPayload.length} candidates cleanly.`); 
-        rosterForm.reset();
-        toggleAllCheckbox.checked = false;
-        document.querySelectorAll('input[name="student-checkbox"]').forEach(cb => cb.checked = false);
+        if (error) { 
+          alert(`Seat routing conflict matrix errored: ${error.message}`); 
+        } else { 
+          alert(`Successfully registered structural seat links! Safe-mapped ${bulkInsertPayload.length} candidates cleanly.`); 
+          rosterForm.reset();
+          toggleAllCheckbox.checked = false;
+          document.querySelectorAll('input[name="student-checkbox"]').forEach(cb => cb.checked = false);
+        }
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setButtonLoading(btnRoster, false, "Register Selected Seat Assignments");
       }
     });
 
@@ -874,8 +935,13 @@
     }
 
     logoutBtn.addEventListener('click', async () => {
-      await supabaseClient.auth.signOut();
-      window.location.href = "index.html";
+      setButtonLoading(logoutBtn, true);
+      try {
+        await supabaseClient.auth.signOut();
+        window.location.href = "index.html";
+      } catch(e) {
+        setButtonLoading(logoutBtn, false, "Sign Out Panel");
+      }
     });
 
     verifyAdminAuthentication();

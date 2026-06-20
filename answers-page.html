@@ -209,14 +209,11 @@
               </div>
               <div>
                 <span class="block text-[9px] font-bold uppercase tracking-widest text-slate-500">Subject Context</span>
-                <div class="text-base font-extrabold text-indigo-400 tracking-tight">${subject}</div>
+                <div class="text-base font-extrabold text-amber-400 tracking-tight drop-shadow-[0_0_12px_rgba(251,191,36,0.2)]">${subject}</div>
               </div>
             </div>
             <div class="sm:text-right flex flex-col gap-1.5 items-start sm:items-end w-full sm:w-auto border-t border-slate-800/60 sm:border-0 pt-3 sm:pt-0">
-              <span class="text-[9px] font-extrabold tracking-wider bg-amber-500/10 border border-amber-500/20 text-amber-400 px-2.5 py-0.5 rounded uppercase inline-block">
-                Architecture Status
-              </span>
-              <span class="text-[11px] font-mono text-slate-400 tracking-tight">EXM-${examId}</span>
+              <span class="text-[11px] font-mono text-slate-400 font-bold tracking-tight bg-slate-950/60 px-2.5 py-1 rounded border border-slate-800">EXM-${examId}</span>
             </div>
           </div>
           
@@ -237,7 +234,6 @@
         return;
       }
 
-      // Fast Local cache extraction check
       const localCachedData = getCachedExam(examId);
       if (localCachedData) {
         renderContentLayout(localCachedData.subject, examId, localCachedData.uniqueText);
@@ -245,12 +241,11 @@
       }
 
       try {
-        // ALWAYS pull down the live dashboard copy first so updates are synced
         const { data: exam, error: examErr } = await supabaseClient
           .from('exams')
           .select('id, subject, master_solution_template, master_solution')
           .eq('id', examId)
-          .single();
+          .maybeSingle();
 
         if (examErr || !exam) {
           container.innerHTML = `<p class="text-red-400 text-center font-semibold py-10 bg-slate-900/50 border border-red-500/20 rounded-2xl mx-2">Database Error: Target examination sheet not resolved.</p>`;
@@ -259,13 +254,12 @@
 
         const deviceId = getDeviceFingerprint();
 
-        // Register session for device if it doesn't exist
         let { data: session } = await supabaseClient
           .from('anonymous_sessions')
           .select('session_id')
           .eq('exam_id', exam.id)
           .eq('device_fingerprint', deviceId)
-          .single();
+          .maybeSingle();
 
         if (!session) {
           await supabaseClient
@@ -273,7 +267,6 @@
             .insert([{ exam_id: exam.id, device_fingerprint: deviceId }]);
         }
 
-        // FIX EFFECT: Calculate permutation on the LIVE dashboard text directly!
         const baseBlueprint = exam.master_solution_template || exam.master_solution;
         const uniqueText = compileVariantText(baseBlueprint, deviceId);
 
@@ -303,7 +296,7 @@
       
       setTimeout(() => {
         window.location.reload();
-      }, 400);
+      }, 200);
     }
 
     function compileVariantText(template, seed) {

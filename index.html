@@ -361,7 +361,7 @@
       }
     });
 
-    // Unregistered PIN Gateway Verification Engine
+      // Unregistered PIN Gateway Verification Engine
     async function authenticatePortalAccess(e) {
       e.preventDefault();
       statusBox.classList.add('hidden');
@@ -378,17 +378,36 @@
       btnPin.disabled = true;
       btnPin.style.opacity = "0.7";
 
+      // Changed from .single() to .maybeSingle() to capture clean structural execution returns
       const { data: exam, error: examErr } = await supabaseClient
         .from('exams')
-        .select('id')
+        .select('*') 
         .eq('exam_pin', pin)
-        .single();
+        .maybeSingle();
 
-      if (examErr || !exam) {
-        btnPin.innerText = "Verify & Initialize Paper";
-        btnPin.disabled = false;
-        btnPin.style.opacity = "1";
-        statusBox.innerText = "Access Denied: Invalid or expired Examination PIN code configuration.";
+      // Clear layout loading states
+      btnPin.innerText = "Verify & Initialize Paper";
+      btnPin.disabled = false;
+      btnPin.style.opacity = "1";
+
+      // 1. Explicitly trap database structural or schema mismatches
+      if (examErr) {
+        statusBox.innerText = `Database Error [${examErr.code}]: ${examErr.message}`;
+        statusBox.className = "status-msg error";
+        return;
+      }
+
+      // 2. Trap empty record returns cleanly
+      if (!exam) {
+        statusBox.innerText = `Access Denied: The PIN "${pin}" does not match any active database entries.`;
+        statusBox.className = "status-msg error";
+        return;
+      }
+
+      // 3. Fallback check: Verify if an 'id' column actually exists in your data payload
+      const TargetId = exam.id || exam.exam_id; 
+      if (!TargetId) {
+        statusBox.innerText = "Schema Mismatch: Found the PIN row, but no 'id' or 'exam_id' column exists in your table layout.";
         statusBox.className = "status-msg error";
         return;
       }
@@ -397,7 +416,7 @@
       statusBox.className = "status-msg success";
 
       setTimeout(() => {
-        window.location.href = `answers-page.html?examId=${exam.id}`;
+        window.location.href = `answers-page.html?examId=${TargetId}`;
       }, 1000);
     }
 
