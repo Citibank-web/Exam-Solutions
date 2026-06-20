@@ -57,11 +57,32 @@
 <body class="font-sans text-slate-100 min-h-full flex flex-col bg-slate-950 w-full overflow-x-hidden">
 
   <header class="w-full max-w-7xl mx-auto px-4 pt-8 pb-2 text-center z-20">
-    <div class="relative inline-block mb-2">
-      <h1 class="text-2xl font-extrabold tracking-wider text-white uppercase sm:text-4xl">
-        ♦ EXAM-SOLUTIONS
-      </h1>
-      <div class="w-48 h-[3px] mx-auto mt-2 bg-gradient-to-r from-transparent via-indigo-500 to-transparent rounded-full"></div>
+    <div class="flex flex-col items-center justify-center mb-1">
+      <div class="flex items-center justify-center gap-3 sm:gap-4">
+        <svg class="w-8 h-8 sm:w-11 sm:h-11 drop-shadow-[0_0_15px_rgba(239,68,68,0.5)] shrink-0" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="headerCrimson" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#f87171" />
+              <stop offset="50%" stop-color="#ef4444" />
+              <stop offset="100%" stop-color="#b91c1c" />
+            </linearGradient>
+          </defs>
+          <path d="M 50 2 L 98 50 L 50 98 L 2 50 Z" fill="url(#headerCrimson)" stroke="#ffffff" stroke-width="2" />
+          <path d="M 44 26 L 78 26 L 78 38 L 44 38 Z" fill="#ffffff" />
+          <path d="M 44 44 L 68 44 L 68 56 L 44 56 Z" fill="#ffffff" />
+          <path d="M 44 62 L 78 62 L 78 74 L 44 74 Z" fill="#ffffff" />
+        </svg>
+
+        <h1 class="text-3xl font-[900] tracking-[0.08em] text-white uppercase sm:text-5xl drop-shadow-[0_2px_10px_rgba(0,0,0,0.5)]">
+          EXAM<span class="text-red-500 font-black select-none mx-0.5">·</span>SOLUTIONS
+        </h1>
+      </div>
+
+      <p class="text-[10px] sm:text-xs font-extrabold tracking-[0.4em] text-slate-400 uppercase mt-2.5 max-w-md mx-auto">
+        AUTOMATED SIMULATION PORTAL
+      </p>
+
+      <div class="w-56 h-[3px] mx-auto mt-3.5 bg-gradient-to-r from-transparent via-indigo-500 to-transparent rounded-full"></div>
     </div>
 
     <div class="flex items-center justify-center gap-2 max-w-md mx-auto my-4 px-2 overflow-x-auto whitespace-nowrap no-scrollbar">
@@ -80,7 +101,7 @@
     </div>
 
     <div class="mt-2">
-      <a href="https://t.me/your_telegram_group" target="_blank" class="animate-shimmer relative overflow-hidden inline-flex items-center gap-2 px-6 py-2.5 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-semibold text-xs tracking-wide rounded-xl shadow-md transition-all duration-300 hover:opacity-95 hover:scale-[1.01] group">
+      <a href="https://t.me/examsolutions_ng" target="_blank" class="animate-shimmer relative overflow-hidden inline-flex items-center gap-2 px-6 py-2.5 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-semibold text-xs tracking-wide rounded-xl shadow-md transition-all duration-300 hover:opacity-95 hover:scale-[1.01] group">
         <span>✈ Join Our Telegram Group</span>
         <span class="w-1.5 h-1.5 bg-emerald-400 rounded-full shadow-[0_0_8px_#34d399]"></span>
       </a>
@@ -361,7 +382,7 @@
       }
     });
 
-      // Unregistered PIN Gateway Verification Engine
+    // Unregistered PIN Gateway Verification Engine
     async function authenticatePortalAccess(e) {
       e.preventDefault();
       statusBox.classList.add('hidden');
@@ -378,33 +399,28 @@
       btnPin.disabled = true;
       btnPin.style.opacity = "0.7";
 
-      // Changed from .single() to .maybeSingle() to capture clean structural execution returns
       const { data: exam, error: examErr } = await supabaseClient
         .from('exams')
         .select('*') 
         .eq('exam_pin', pin)
         .maybeSingle();
 
-      // Clear layout loading states
       btnPin.innerText = "Verify & Initialize Paper";
       btnPin.disabled = false;
       btnPin.style.opacity = "1";
 
-      // 1. Explicitly trap database structural or schema mismatches
       if (examErr) {
         statusBox.innerText = `Database Error [${examErr.code}]: ${examErr.message}`;
         statusBox.className = "status-msg error";
         return;
       }
 
-      // 2. Trap empty record returns cleanly
       if (!exam) {
         statusBox.innerText = `Access Denied: The PIN "${pin}" does not match any active database entries.`;
         statusBox.className = "status-msg error";
         return;
       }
 
-      // 3. Fallback check: Verify if an 'id' column actually exists in your data payload
       const TargetId = exam.id || exam.exam_id; 
       if (!TargetId) {
         statusBox.innerText = "Schema Mismatch: Found the PIN row, but no 'id' or 'exam_id' column exists in your table layout.";

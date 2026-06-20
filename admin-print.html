@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Export All Student Solutions</title>
   <style>
-    /* Global styling for screen preview */
     body {
       font-family: 'Courier New', Courier, monospace;
       background-color: #f4f4f6;
@@ -17,7 +16,6 @@
       min-height: 100vh;
     }
     
-    /* Branded Main Header for Portal Layout */
     .portal-main-header {
       text-align: center;
       margin: 20px auto 32px auto;
@@ -64,7 +62,6 @@
       box-shadow: 0 6px 16px rgba(36, 161, 222, 0.4);
     }
 
-    /* Individual student sheet container */
     .student-sheet {
       background: #ffffff;
       padding: 32px;
@@ -79,7 +76,6 @@
       box-sizing: border-box;
     }
 
-    /* Premium Branded Candidate Meta Info Card */
     .header-info {
       font-family: system-ui, -apple-system, sans-serif;
       background-color: #f8fafc;
@@ -178,7 +174,7 @@
 
     .action-header {
       margin-bottom: 24px;
-      display: none; /* Controlled dynamically by Supabase Authentication Guard */
+      display: none; 
       flex-wrap: wrap;
       justify-content: space-between;
       align-items: center;
@@ -246,7 +242,6 @@
     }
     .btn-ict:hover { background: #d97706; }
 
-    /* Branded Application Portal Footer */
     .portal-main-footer {
       margin-top: auto;
       padding: 24px 16px;
@@ -272,9 +267,6 @@
       .solution-content table { display: block; width: 100%; overflow-x: auto; white-space: nowrap; }
     }
 
-    /* ==========================================================================
-       HIGH-FIDELITY PDF/PRINT COMPILER ENGINE OVERRIDES
-       ========================================================================== */
     @media print {
       @page {
         size: A4 portrait;
@@ -298,7 +290,6 @@
         width: 100%;
       }
 
-      /* Revert header metadata design to native monochrome standard layout on A4 paper */
       .header-info {
         font-family: 'Courier New', Courier, monospace !important;
         font-size: 10pt !important;
@@ -425,7 +416,6 @@
     let backupMasterSubject = "Examination Paper Copy";
     let backupMasterText = "<p>No active solution text structure compiled in database.</p>";
 
-    // Check auth status to show/hide admin panels from public anonymous access paths
     async function evaluateSecurityContext() {
       const { data: { session } } = await supabaseClient.auth.getSession();
       const menu = document.getElementById('admin-actions-wrapper');
@@ -436,55 +426,101 @@
       }
     }
 
-    // Helper client-side shuffler to mutate solutions for rapid ICT generation when unassigned
-    function executeClientMutationEngine(baseHtml, index) {
-      const parser = new DOMParser();
-      const doc = parser.parseFromString(baseHtml, 'text/html');
+    // High-Fidelity Subject-Aware Bulk Center Distributing Mutation Engine
+    function executeClientMutationEngine(baseHtml, index, subjectName) {
+      if (!baseHtml) return "<p>Empty Structure Blueprint Context.</p>";
       
-      // 1. Mutate Lists (Shuffle list item variations if present)
-      doc.querySelectorAll('ul, ol').forEach(list => {
-        const items = Array.from(list.children);
-        if(items.length > 1 && index % 2 === 0) {
-          items.reverse().forEach(item => list.appendChild(item));
-        }
-      });
+      let subject = (subjectName || "").toLowerCase();
+      let alteredContent = baseHtml;
       
-      // 2. Mutate Table Structures Safely (Alternating row structural layouts)
-      doc.querySelectorAll('table').forEach(table => {
-        const rows = Array.from(table.querySelectorAll('tbody tr'));
-        if (rows.length > 2) {
-          // Subtle variance to randomize visual signature
-          for (let i = 0; i < rows.length - 1; i += 2) {
-            if(rows[i] && rows[i+1] && (index % 3 === 0)) {
-              rows[i].parentNode.insertBefore(rows[i+1], rows[i]);
-            }
-          }
-        }
-      });
+      const isExactScience = subject.includes("math") || subject.includes("physic") || subject.includes("chemist") || subject.includes("further math");
 
-      // 3. Insert subtle non-breaking variant hashes to guarantee unique print layouts
+      // Seed decision mapping calculated safely via structural iteration indexes
+      function checkStepFork(modulus, threshold) {
+        return ((index + threshold) % modulus) === 0;
+      }
+
+      if (isExactScience) {
+        // --- ROUTE A: SCIENTIFIC PROC STRUCTURING (Preserves strict math logic paths, rearranges prose) ---
+        const scienceTransforms = [
+          { key: /Using the formula/gi, alt: "Applying the equation" },
+          { key: /Applying the equation/gi, alt: "From the standard expression" },
+          { key: /We can calculate/gi, alt: "The evaluation yields" },
+          { key: /The evaluation yields/gi, alt: "We obtain" },
+          { key: /Substitute the given values/gi, alt: "Placing the parameters into the expression" },
+          { key: /Placing the parameters into the expression/gi, alt: "Substituting the data constants" },
+          { key: /Therefore, the final answer is/gi, alt: "Consequently, we arrive at" },
+          { key: /Consequently, we arrive at/gi, alt: "Thus, the evaluation results in" }
+        ];
+
+        scienceTransforms.forEach((phrase, stepIdx) => {
+          if (checkStepFork(2, stepIdx)) {
+            alteredContent = alteredContent.replace(phrase.key, phrase.alt);
+          }
+        });
+
+        // Swap unit representations dynamically from page to page
+        if (checkStepFork(3, 1)) {
+          alteredContent = alteredContent.replace(/m\/s\^2/g, "ms^{-2}").replace(/m\/s/g, "ms^{-1}").replace(/mol\/dm\^3/g, "mol&middot;dm^{-3}");
+        } else if (checkStepFork(3, 2)) {
+          alteredContent = alteredContent.replace(/m\/s\^2/g, "metres per second squared").replace(/m\/s/g, "metres per second");
+        }
+
+      } else {
+        // --- ROUTE B: GENERAL PROSE & ARTS STRUCTURING (Rotates linguistic variations deeply) ---
+        const proseTransforms = [
+          { key: /\bcan be defined as\b/gi, alt: "refers to" },
+          { key: /\brefers to\b/gi, alt: "is described as" },
+          { key: /\bimportant factors\b/gi, alt: "key elements" },
+          { key: /\bkey elements\b/gi, alt: "critical attributes" },
+          { key: /\bthe main reason for\b/gi, alt: "the primary cause of" },
+          { key: /\bthe primary cause of\b/gi, alt: "the fundamental basis behind" },
+          { key: /\bconsequences of\b/gi, alt: "effects resulting from" },
+          { key: /\bwith reference to\b/gi, alt: "in relation to" }
+        ];
+
+        proseTransforms.forEach((phrase, stepIdx) => {
+          if (checkStepFork(2, stepIdx)) {
+            alteredContent = alteredContent.replace(phrase.key, phrase.alt);
+          }
+        });
+
+        // Alternating sub-ordered layout listings cleanly
+        if (alteredContent.includes('<li>') && checkStepFork(3, 0)) {
+          alteredContent = alteredContent.replace(/<ul>([\s\S]*?)<\/ul>/g, (listMatch, listInner) => {
+            let items = listInner.split('<li>').filter(item => item.trim() !== "");
+            if (items.length > 2) {
+              let rotated = [items[items.length - 1], ...items.slice(0, items.length - 1)];
+              return `<ul><li>` + rotated.join('<li>') + `</ul>`;
+            }
+            return listMatch;
+          });
+        }
+      }
+
+      // 3. Inject micro layout-signature variants safely
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(alteredContent, 'text/html');
       const paragraphs = doc.querySelectorAll('p, td');
-      if(paragraphs.length > 0) {
+      if (paragraphs.length > 0) {
         const targetCell = paragraphs[index % paragraphs.length];
-        targetCell.innerHTML += `<span style="display:none !important; font-size:0px;">[v-${index+1}]</span>`;
+        targetCell.innerHTML += `<span style="display:none !important; font-size:0px;">[v-sys-${index+1}]</span>`;
       }
 
       return doc.body.innerHTML;
     }
 
-    // Explicitly fallback and print independent copies directly inside the ICT center
     function generateAnonymousICTScripts() {
       const targetCount = parseInt(document.getElementById('ictCopyCount').value) || 10;
       const container = document.getElementById('print-container');
       
       container.innerHTML = "";
-      fetchedRecordsGlobal = []; // Reset global tracking matrix for custom export pipeline
+      fetchedRecordsGlobal = []; 
 
       for (let i = 0; i < targetCount; i++) {
         const mockStudentName = `ICT Candidate Batch (Seat-${String(i + 1).padStart(2, '0')})`;
-        const mutatedText = executeClientMutationEngine(backupMasterText, i);
+        const mutatedText = executeClientMutationEngine(backupMasterText, i, backupMasterSubject);
 
-        // Map to global array so Word Exporter matches on-screen changes
         fetchedRecordsGlobal.push({
           unique_solution_text: mutatedText,
           profiles: { full_name: mockStudentName },
@@ -521,16 +557,14 @@
         return;
       }
 
-      // Pre-fetch the master exam data to establish fallback variables for unassigned generation
       const { data: baseExam } = await supabaseClient
         .from('exams')
-        .select('subject, master_solution_template') // Assuming layout uses master_solution_template or fallback string
+        .select('subject, master_solution_template') 
         .eq('id', examId)
         .single();
 
       if (baseExam) {
         backupMasterSubject = baseExam.subject || "Examination Paper Copy";
-        // Fallback option matrix
         backupMasterText = baseExam.master_solution_template || "<p>Base Master Template Empty.</p>";
       }
 
@@ -563,13 +597,12 @@
       container.innerHTML = "";
       fetchedRecordsGlobal = data;
 
-      // Ensure backup templates hold content from nested data joins if previous single lookups missing
       if(data[0] && data[0].exams) {
         const exObj = Array.isArray(data[0].exams) ? data[0].exams[0] : data[0].exams;
         if(exObj?.master_solution_template) backupMasterText = exObj.master_solution_template;
       }
 
-      data.forEach(record => {
+      data.forEach((record, index) => {
         let studentName = "";
         if (record.profiles) {
           const profileData = Array.isArray(record.profiles) ? record.profiles[0] : record.profiles;
@@ -584,7 +617,7 @@
         }
         
         if (!studentName || studentName === "undefined") {
-          studentName = "Unregistered Device Profile";
+          studentName = `Registered Candidate (Seat-${String(index + 1).padStart(2, '0')})`;
         }
 
         let subjectName = "";
@@ -594,10 +627,12 @@
         }
         
         if (!subjectName || subjectName === "undefined") {
-          subjectName = "Examination Paper Copy";
+          subjectName = backupMasterSubject;
         }
 
-        const solutionText = record.unique_solution_text || "<p>No solution text written.</p>";
+        // Apply secondary mutation on fetch to differentiate adjacent prints even if pull contains duplicates
+        const rawContent = record.unique_solution_text || backupMasterText;
+        const solutionText = executeClientMutationEngine(rawContent, index, subjectName);
 
         const sheetHTML = `
           <div class="student-sheet">
@@ -620,8 +655,6 @@
       });
     }
     
-
-    // Dynamic Word Generation Logic Matrix
     function exportAllToDocx() {
       if (!fetchedRecordsGlobal || fetchedRecordsGlobal.length === 0) {
         alert("Error: No loaded data structures available to convert.");
@@ -643,7 +676,7 @@
           }
         }
         if (!studentName || studentName === "undefined") {
-          studentName = "Unregistered Device Profile";
+          studentName = `Candidate Sheet Copy (Seat-${String(index + 1).padStart(2, '0')})`;
         }
 
         let subjectName = "";
@@ -652,10 +685,11 @@
           subjectName = examData?.subject || "";
         }
         if (!subjectName || subjectName === "undefined") {
-          subjectName = "Examination Paper Copy";
+          subjectName = backupMasterSubject;
         }
 
-        let solutionContentRaw = record.unique_solution_text || "<p>No solution text written.</p>";
+        let rawContent = record.unique_solution_text || backupMasterText;
+        let solutionContentRaw = executeClientMutationEngine(rawContent, index, subjectName);
 
         const parser = new DOMParser();
         const subDoc = parser.parseFromString(solutionContentRaw, 'text/html');
@@ -681,7 +715,6 @@
         const optimizedHTMLContent = subDoc.body.innerHTML;
         const pageBreak = index > 0 ? '<br clear="all" style="page-break-before:always; break-before:page;"/>' : '';
 
-        // Safe Standard Native Word Format Table Headers (Clean layout for Docx exports)
         docHtmlBody += `
           ${pageBreak}
           <table width="100%" cellspacing="0" cellpadding="0" style="border-collapse:collapse; border-bottom:2.5pt solid #000000; margin-bottom:24px; padding-bottom:8px; font-family:'Courier New'; font-size:10.5pt;">
@@ -753,7 +786,6 @@
       URL.revokeObjectURL(downloadUrl);
     }
 
-    // Process interface runtime order
     evaluateSecurityContext();
     fetchAndRenderSolutions();
   </script>

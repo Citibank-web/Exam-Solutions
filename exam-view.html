@@ -10,9 +10,6 @@
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   
   <style>
-    /* ==========================================================================
-       Premium Light Theme CSS Design System (Heavily Redesigned)
-       ========================================================================== */
     :root {
       --bg-main: #f8fafc;
       --bg-workspace: #f1f5f9;
@@ -57,7 +54,6 @@
       overflow: hidden;
     }
 
-    /* Top Navigation Toolbar */
     .top-bar {
       background: var(--panel-bg);
       border-bottom: 1px solid var(--border);
@@ -127,9 +123,6 @@
       box-shadow: var(--shadow-md);
     }
 
-    /* ==========================================================================
-       The Split Panel Layout (CSS Grid)
-       ========================================================================== */
     .exam-container {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -152,7 +145,6 @@
       position: relative;
     }
 
-    /* Elegant Top Border Line Accents to Distinguish Workspace Panes */
     .panel::before {
       content: '';
       position: absolute;
@@ -188,7 +180,6 @@
       font-weight: 800;
     }
 
-    /* Content Area Typography & Card Wrappers */
     .paper-card {
       background: #fdfdfd;
       border: 1px dashed var(--border);
@@ -206,12 +197,10 @@
       letter-spacing: -0.005em;
     }
 
-    /* Retain breaks on the plaintext question box only */
     #question-box {
       white-space: pre-wrap; 
     }
 
-    /* Auto-scale embedded layout assets and diagrams extracted from docx sheets */
     .content-box img {
       max-width: 100%;
       height: auto;
@@ -221,9 +210,6 @@
       display: block;
     }
 
-    /* ==========================================================================
-       Mammoth Document Table Grid Layout Styling Fixes
-       ========================================================================== */
     .content-box table {
       width: 100%;
       border-collapse: collapse;
@@ -250,7 +236,6 @@
       background-color: #f8fafc;
     }
 
-    /* Custom Scrollbar Presentation Styling */
     .panel::-webkit-scrollbar, .paper-card::-webkit-scrollbar {
       width: 8px;
     }
@@ -265,9 +250,6 @@
       background: #cbd5e1;
     }
 
-    /* ==========================================================================
-       Security Layer & Status Badges
-       ========================================================================== */
     .secure-text {
       user-select: none;
       -webkit-user-select: none;
@@ -275,7 +257,6 @@
       -ms-user-select: none;
     }
 
-    /* Premium Generation Alert Status Framework */
     .status-badge {
       display: inline-flex;
       align-items: center;
@@ -304,9 +285,6 @@
       50% { opacity: 0.65; }
     }
 
-    /* ==========================================================================
-       Mobile Optimization Adaptive Layer Queries
-       ========================================================================== */
     @media (max-width: 1024px) {
       body {
         overflow-y: auto;
@@ -346,9 +324,6 @@
       }
     }
 
-    /* ==========================================================================
-       Workspace Print Output Configurations
-       ========================================================================== */
     @media print {
       .top-bar {
         display: none !important;
@@ -431,7 +406,6 @@
     
     const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    // DOM Pointer Objects
     const examHeaderTitle = document.getElementById('exam-header-title');
     const questionBox = document.getElementById('question-box');
     const solutionBox = document.getElementById('solution-box');
@@ -443,7 +417,6 @@
     let loggedInStudent = null;
     let masterExamData = null;
 
-    // 1. Initial State Authentication Gateway Verification Check
     async function initWorkspace() {
       if (!examId) {
         alert("Fatal Error: Active Exam Reference ID code missing.");
@@ -461,7 +434,6 @@
       loadExamAndSolutionData();
     }
 
-    // 2. Synchronized Double-Lookup Retrieval Matrix Logic Block
     async function loadExamAndSolutionData() {
       const { data: exam, error: examError } = await supabaseClient
         .from('exams')
@@ -486,50 +458,100 @@
         .maybeSingle();
 
       if (solutionCache) {
-        // Cache Hit: Render unique solution string directly into rich HTML view format
         badgeZone.innerHTML = `<div class="status-badge">✓ Secure Assigned Copy Synced</div>`;
         solutionBox.innerHTML = solutionCache.unique_solution_text;
       } else {
-        // Cache Miss: Run the generation and mutation cycle protocol loop
         generateUniqueSolutionVariation();
       }
     }
 
-    // 3. Fallback Paraphrasing & Structure Shuffling Simulation Engine
-    function simulateAIMutationEngine(masterText) {
-      // If the incoming master text contains HTML tags (parsed via mammoth), skip manual text replacement
-      // to keep base64 image strings and tag configurations pristine.
-      if (masterText.trim().startsWith('<') || masterText.includes('</')) {
-        return masterText; 
+    // High-Fidelity Subject-Aware Client Seed Mutation Engine
+    function simulateAIMutationEngine(masterText, studentId, subjectName) {
+      if (!masterText) return "";
+      
+      let subject = (subjectName || "").toLowerCase();
+      let seed = 0;
+      if (studentId) {
+        for (let i = 0; i < studentId.length; i++) {
+          seed += studentId.charCodeAt(i);
+        }
+      } else {
+        seed = Math.floor(Math.random() * 100);
       }
 
-      const transitions = [
-        ["Therefore,", "Consequently,", "As a direct result,", "Hence, it follows that,"],
-        ["To find the", "In order to calculate the", "To solve for the", "Evaluating the value of"],
-        ["We can observe that", "It is evident that", "Analysis indicates that", "We see that"],
-        ["Substituting the numbers,", "Placing these parameters down,", "Plugging these values into our expression,"]
-      ];
-      
-      let modifiedText = masterText;
-      
-      transitions.forEach(pool => {
-        const primaryKeyword = pool[0];
-        const randomAlternative = pool[Math.floor(Math.random() * pool.length)];
-        const escapeRegex = primaryKeyword.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-        modifiedText = modifiedText.replace(new RegExp(escapeRegex, 'g'), randomAlternative);
-      });
-      
-      const structuralDecorators = [
-        `\n\n[Step-by-step verification methodology complete.]`,
-        `\n\nValues completely evaluated and checked against primary metrics.`,
-        `\n\nShowing all structural operational metrics as requested.`
-      ];
-      modifiedText += structuralDecorators[Math.floor(Math.random() * structuralDecorators.length)];
-      
-      return modifiedText;
+      function checkFork(modulus, offset) {
+        return ((seed + offset) % modulus) === 0;
+      }
+
+      let mutatedText = masterText;
+      const isExactScience = subject.includes("math") || subject.includes("physic") || subject.includes("chemist") || subject.includes("further math");
+
+      if (isExactScience) {
+        const sciencePool = [
+          { key: /Using the formula/gi, alt: "Applying the equation" },
+          { key: /Applying the equation/gi, alt: "From the standard expression" },
+          { key: /We can calculate/gi, alt: "The evaluation yields" },
+          { key: /The evaluation yields/gi, alt: "We obtain" },
+          { key: /Substitute the given values/gi, alt: "Placing the parameters into the expression" },
+          { key: /Placing the parameters into the expression/gi, alt: "Substituting the data constants" },
+          { key: /Therefore, the final answer is/gi, alt: "Consequently, we arrive at" },
+          { key: /Consequently, we arrive at/gi, alt: "Thus, the evaluation results in" }
+        ];
+
+        sciencePool.forEach((phrase, idx) => {
+          if (checkFork(2, idx)) {
+            mutatedText = mutatedText.replace(phrase.key, phrase.alt);
+          }
+        });
+
+        if (checkFork(3, 1)) {
+          mutatedText = mutatedText.replace(/m\/s\^2/g, "ms^{-2}").replace(/m\/s/g, "ms^{-1}").replace(/mol\/dm\^3/g, "mol&middot;dm^{-3}");
+        } else if (checkFork(3, 2)) {
+          mutatedText = mutatedText.replace(/m\/s\^2/g, "metres per second squared").replace(/m\/s/g, "metres per second");
+        }
+
+      } else {
+        const prosePool = [
+          { key: /\bcan be defined as\b/gi, alt: "refers to" },
+          { key: /\brefers to\b/gi, alt: "is described as" },
+          { key: /\bimportant factors\b/gi, alt: "key elements" },
+          { key: /\bkey elements\b/gi, alt: "critical attributes" },
+          { key: /\bthe main reason for\b/gi, alt: "the primary cause of" },
+          { key: /\bthe primary cause of\b/gi, alt: "the fundamental basis behind" },
+          { key: /\bconsequences of\b/gi, alt: "effects resulting from" },
+          { key: /\bwith reference to\b/gi, alt: "in relation to" }
+        ];
+
+        prosePool.forEach((phrase, idx) => {
+          if (checkFork(2, idx)) {
+            mutatedText = mutatedText.replace(phrase.key, phrase.alt);
+          }
+        });
+
+        if (mutatedText.includes('<li>') && checkFork(3, 0)) {
+          mutatedText = mutatedText.replace(/<ul>([\s\S]*?)<\/ul>/g, (match, inner) => {
+            let items = inner.split('<li>').filter(item => item.trim() !== "");
+            if (items.length > 2) {
+              let rotated = [items[items.length - 1], ...items.slice(0, items.length - 1)];
+              return `<ul><li>` + rotated.join('<li>') + `</ul>`;
+            }
+            return match;
+          });
+        }
+      }
+
+      // Inject minor structural signature at DOM node level safely
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(mutatedText, 'text/html');
+      const textNodes = doc.querySelectorAll('p, td');
+      if (textNodes.length > 0) {
+        const targetNode = textNodes[seed % textNodes.length];
+        targetNode.innerHTML += `<span style="display:none !important; font-size:0px;">[v-seed-${seed}]</span>`;
+      }
+
+      return doc.body.innerHTML;
     }
 
-    // 4. Mutation Execution Controller Processing Function Loop 
     async function generateUniqueSolutionVariation() {
       badgeZone.innerHTML = `<div class="status-badge loading">⏳ Formulating Unique Copy Variant...</div>`;
       
@@ -554,7 +576,7 @@
         masterSolutionText = securePayload;
       }
 
-      const uniqueStudentCopy = simulateAIMutationEngine(masterSolutionText);
+      const uniqueStudentCopy = simulateAIMutationEngine(masterSolutionText, loggedInStudent.id, masterExamData.subject);
 
       const { error: insertError } = await supabaseClient
         .from('mutated_solutions')
@@ -574,7 +596,6 @@
       solutionBox.innerHTML = uniqueStudentCopy;
     }
 
-    // Trigger Core Initialization Routine 
     initWorkspace();
   </script>
 </body>
