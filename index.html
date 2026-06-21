@@ -27,12 +27,17 @@
     header { width: 100%; max-width: 1280px; margin: 0 auto; padding: 24px 24px 8px 24px; text-align: center; z-index: 20; }
     .header-flex { display: flex; flex-direction: column; items: center; justify-content: center; margin-bottom: 4px; }
     
-    /* Configured brand-row to wrap into a stacked column alignment for perfect page-middle centering */
-    .brand-row { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; margin-bottom: 4px; }
+    /* Mobile-first: stacked column with small icon sizing, transitions to row spacing on desktop */
+    .brand-row { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; margin-bottom: 4px; }
+    @media (min-width: 640px) { .brand-row { flex-direction: row; gap: 14px; } }
     
-    /* Reduced size, bold text tracking, and set center alignment with precise horizontal margins */
-    h1 { font-size: 18px; font-weight: 900; letter-spacing: 0.12em; text-transform: uppercase; color: #ffffff; text-align: center; padding: 0 12px; }
-    @media (min-width: 640px) { h1 { font-size: 24px; letter-spacing: 0.14em; } }
+    /* Fine-tuned icon scales for ultra-clean mobile aesthetic */
+    .brand-icon { width: 26px; height: 26px; filter: drop-shadow(0 0 12px rgba(239,68,68,0.4)); }
+    @media (min-width: 640px) { .brand-icon { width: 32px; height: 32px; } }
+    
+    /* Reduced size, center aligned bold text with clear breathing boundaries left and right */
+    h1 { font-size: 18px; font-weight: 900; letter-spacing: 0.1em; text-transform: uppercase; color: #ffffff; text-align: center; padding: 0 16px; }
+    @media (min-width: 640px) { h1 { font-size: 24px; letter-spacing: 0.12em; padding: 0; } }
     
     .text-red { color: #ef4444; font-weight: 900; margin: 0 2px; user-select: none; }
     .subtitle { font-size: 9px; font-weight: 800; letter-spacing: 0.35em; color: #94a3b8; text-transform: uppercase; margin-top: 6px; }
@@ -109,7 +114,7 @@
   <header>
     <div class="header-flex">
       <div class="brand-row">
-        <svg style="width:32px; height:32px; filter: drop-shadow(0 0 15px rgba(239,68,68,0.5));" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <svg class="brand-icon" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
           <defs>
             <linearGradient id="headerCrimson" x1="0%" y1="0%" x2="100%" y2="100%">
               <stop offset="0%" stop-color="#f87171" />
@@ -310,7 +315,7 @@
         .eq('exam_pin', pin)
         .maybeSingle();
 
-      setLoading(false, btnPin, "Verify & Initialize Paper");
+      setLoading(false, btnPin, "Verify & View Paper");
 
       if (examErr) {
         statusBox.innerText = `Database Error [${examErr.code}]: ${examErr.message}`;
