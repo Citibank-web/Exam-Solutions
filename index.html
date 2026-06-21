@@ -24,17 +24,19 @@
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; -webkit-font-smoothing: antialiased; }
     body { background-color: #020617; color: #f8fafc; min-height: 100%; display: flex; flex-direction: column; width: 100%; overflow-x: hidden; }
     
-    header { width: 100%; max-width: 1280px; margin: 0 auto; padding: 24px 16px 8px 16px; text-align: center; z-index: 20; }
+    header { width: 100%; max-width: 1280px; margin: 0 auto; padding: 24px 24px 8px 24px; text-align: center; z-index: 20; }
     .header-flex { display: flex; flex-direction: column; items: center; justify-content: center; margin-bottom: 4px; }
-    .brand-row { display: flex; align-items: center; justify-content: center; gap: 12px; }
     
-    /* Reduced heading size from 28px/48px to 22px/36px */
-    h1 { font-size: 22px; font-weight: 900; letter-spacing: 0.08em; text-transform: uppercase; color: #ffffff; }
-    @media (min-width: 640px) { h1 { font-size: 36px; } }
+    /* Configured brand-row to wrap into a stacked column alignment for perfect page-middle centering */
+    .brand-row { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; margin-bottom: 4px; }
+    
+    /* Reduced size, bold text tracking, and set center alignment with precise horizontal margins */
+    h1 { font-size: 18px; font-weight: 900; letter-spacing: 0.12em; text-transform: uppercase; color: #ffffff; text-align: center; padding: 0 12px; }
+    @media (min-width: 640px) { h1 { font-size: 24px; letter-spacing: 0.14em; } }
     
     .text-red { color: #ef4444; font-weight: 900; margin: 0 2px; user-select: none; }
-    .subtitle { font-size: 10px; font-weight: 800; letter-spacing: 0.4em; color: #94a3b8; text-transform: uppercase; margin-top: 8px; }
-    .divider { width: 200px; height: 3px; margin: 12px auto 0 auto; background: linear-gradient(90deg, transparent, #6366f1, transparent); border-radius: 99px; }
+    .subtitle { font-size: 9px; font-weight: 800; letter-spacing: 0.35em; color: #94a3b8; text-transform: uppercase; margin-top: 6px; }
+    .divider { width: 160px; height: 3px; margin: 10px auto 0 auto; background: linear-gradient(90deg, transparent, #6366f1, transparent); border-radius: 99px; }
     
     .badge-row { display: flex; align-items: center; justify-content: center; gap: 8px; max-width: 448px; margin: 12px auto; padding: 0 8px; overflow-x: auto; white-space: nowrap; -ms-overflow-style: none; scrollbar-width: none; }
     .badge-row::-webkit-scrollbar { display: none; }
@@ -107,7 +109,7 @@
   <header>
     <div class="header-flex">
       <div class="brand-row">
-        <svg style="width:36px; height:36px; filter: drop-shadow(0 0 15px rgba(239,68,68,0.5));" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <svg style="width:32px; height:32px; filter: drop-shadow(0 0 15px rgba(239,68,68,0.5));" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
           <defs>
             <linearGradient id="headerCrimson" x1="0%" y1="0%" x2="100%" y2="100%">
               <stop offset="0%" stop-color="#f87171" />
