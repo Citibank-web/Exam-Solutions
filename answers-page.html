@@ -45,6 +45,7 @@
       animation: buttonShimmer 4s infinite linear;
     }
     
+    /* Global layout constraint architectures to defeat scrolling and zooming artifacts */
     html, body {
       max-width: 100vw;
       width: 100vw;
@@ -137,10 +138,11 @@
 </head>
 <body class="font-sans text-slate-100 h-full flex flex-col bg-slate-950 selection:bg-indigo-500/30 selection:text-indigo-300 w-full overflow-hidden">
 
-  <!-- Static Pinned System Header Engine -->
+  <!-- Static System Header Engine (Pinned to top) -->
   <header class="no-print shrink-0 w-full bg-slate-950/95 border-b border-slate-900/80 backdrop-blur-md px-4 pt-4 pb-3 text-center z-50 shadow-lg">
     <div class="flex flex-col items-center justify-center mb-1 max-w-7xl mx-auto">
       <div class="flex items-center justify-center gap-3 sm:gap-4">
+        <!-- Integrated High-Contrast Premium SVG Diamond Logo -->
         <svg class="w-8 h-8 sm:w-11 sm:h-11 drop-shadow-[0_0_15px_rgba(239,68,68,0.5)] shrink-0" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
           <defs>
             <linearGradient id="headerCrimson" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -155,11 +157,13 @@
           <path d="M 44 62 L 78 62 L 78 74 L 44 74 Z" fill="#ffffff" />
         </svg>
 
+        <!-- Ultra-Bold System Branding Text Matrix -->
         <h1 class="text-2xl font-[900] tracking-[0.08em] text-white uppercase sm:text-4xl drop-shadow-[0_2px_10px_rgba(0,0,0,0.5)]">
           EXAM<span class="text-red-500 font-black select-none mx-0.5">·</span>SOLUTIONS
         </h1>
       </div>
 
+      <!-- High-Authority Subtitle Row Context -->
       <p class="text-[9px] sm:text-xs font-extrabold tracking-[0.4em] text-slate-400 uppercase mt-1.5 max-w-md mx-auto">
         AUTOMATED SIMULATION PORTAL
       </p>
@@ -167,6 +171,7 @@
       <div class="w-40 h-[2px] mx-auto mt-2 bg-gradient-to-r from-transparent via-indigo-500 to-transparent rounded-full"></div>
     </div>
 
+    <!-- Active Exam Category Sub-Indicators -->
     <div class="flex items-center justify-center gap-2 max-w-md mx-auto my-2 px-2 overflow-x-auto whitespace-nowrap no-scrollbar">
       <div class="px-2.5 py-1 bg-slate-900/80 border border-slate-800/80 rounded-lg shadow-sm text-[9px] font-bold text-slate-300 tracking-widest uppercase flex items-center gap-1.5 shrink-0">
         <span class="w-1.5 h-1.5 rounded-full bg-indigo-500"></span>WAEC
@@ -182,6 +187,7 @@
       </div>
     </div>
 
+    <!-- Live Navigation Actions -->
     <div class="mt-2 flex items-center justify-center gap-3 max-w-xl mx-auto px-2">
       <a href="https://t.me/examsolutions_ng" target="_blank" class="animate-shimmer relative overflow-hidden inline-flex items-center gap-2 px-4 py-1.5 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-semibold text-[10px] tracking-wide rounded-lg shadow-md transition-all duration-300 hover:opacity-95 group whitespace-nowrap">
         <span>✈ Telegram</span>
@@ -194,10 +200,11 @@
     </div>
   </header>
 
+  <!-- High-Gloss Radial Accent Backdrop Layers -->
   <div class="absolute top-0 left-[-10%] w-[500px] h-[500px] rounded-full bg-indigo-600/5 blur-[130px] z-0 pointer-events-none"></div>
   <div class="absolute bottom-[-5%] right-[10%] w-[400px] h-[400px] rounded-full bg-purple-600/5 blur-[120px] z-0 pointer-events-none"></div>
 
-  <!-- Isolated Scrolling Content Matrix Panel -->
+  <!-- Isolated Scrolling Document Main Body Portal -->
   <div class="flex-1 overflow-y-auto w-full box-border z-10 px-3 sm:px-6 lg:px-8 py-4">
     <main id="print-container" class="w-full max-w-5xl mx-auto box-border">
       <div class="text-center py-16 text-slate-500">
@@ -206,6 +213,7 @@
     </main>
   </div>
 
+  <!-- Persistent Bottom Brand Trace Component -->
   <footer class="no-print shrink-0 w-full py-4 bg-slate-950 border-t border-slate-900/60 backdrop-blur-md text-center text-xs font-medium text-slate-500 tracking-wide z-10">
     <div class="mb-1">
       <a href="https://examsolutions.netlify.app" class="text-indigo-400 hover:text-indigo-300 font-bold tracking-[0.2em] uppercase transition-colors duration-200">
@@ -243,15 +251,16 @@
 
     function renderContentLayout(subject, examId, uniqueText, examPin) {
       const container = document.getElementById('print-container');
-      const formattedPin = examPin ? examPin : "UNASSIGNED / ANONYMOUS VARIANT";
+      const formattedPin = examPin ? examPin : "UNASSIGNED";
       
       container.innerHTML = `
         <div class="print-card w-full flex flex-col gap-4 box-border pb-6">
+          <!-- Candidate Header Matrix (Now scrolls with data below header) -->
           <div class="bg-slate-900/60 backdrop-blur-xl border border-slate-800 rounded-xl p-4 sm:p-5 shadow-cosmic flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 box-border">
             <div class="space-y-2 w-full sm:w-auto">
               <div>
                 <span class="block text-[9px] font-bold uppercase tracking-widest text-slate-500">Candidate Reference</span>
-                <div class="text-xs font-bold text-white">${examPin ? 'Verified Premium Access' : 'Anonymous Dynamic Profile'}</div>
+                <div class="text-xs font-bold text-white">Unregistered Device Profile</div>
               </div>
               <div>
                 <span class="block text-[9px] font-bold uppercase tracking-widest text-slate-500">Subject Context</span>
@@ -267,6 +276,7 @@
             </div>
           </div>
           
+          <!-- Answer Sheet Document Container -->
           <div class="bg-white border border-slate-200 rounded-xl p-4 sm:p-6 shadow-md w-full box-border overflow-hidden">
             <div class="solution-content w-full">${uniqueText}</div>
           </div>
@@ -303,32 +313,40 @@
         }
 
         const deviceId = getDeviceFingerprint();
-        const baseBlueprint = exam.master_solution_template || exam.master_solution;
+
+        let { data: session } = await supabaseClient
+          .from('anonymous_sessions')
+          .select('session_device_uuid')
+          .eq('exam_id', exam.id)
+          .eq('session_device_uuid', deviceId)
+          .maybeSingle();
+
+        if (!session) {
+          await supabaseClient
+            .from('anonymous_sessions')
+            .insert([{ exam_id: exam.id, session_device_uuid: deviceId, temporary_alias: `Device-${deviceId.substring(4, 8)}` }]);
+        }
+
+        let { data: existingMutation } = await supabaseClient
+          .from('mutated_solutions')
+          .select('unique_solution_text')
+          .eq('exam_id', exam.id)
+          .eq('anonymous_device_tag', deviceId)
+          .maybeSingle();
+
         let finalUniqueText = "";
 
-        // Check verification forks: If a valid exam_pin exists on this row, it's premium master access
-        if (exam.exam_pin) {
-          finalUniqueText = baseBlueprint; 
+        if (existingMutation && existingMutation.unique_solution_text) {
+          finalUniqueText = existingMutation.unique_solution_text;
         } else {
-          // Anonymous Portal Route -> Check for pre-mutated variant or build a new one
-          let { data: existingMutation } = await supabaseClient
-            .from('mutated_solutions')
-            .select('unique_solution_text')
-            .eq('exam_id', exam.id)
-            .eq('anonymous_device_tag', deviceId)
-            .maybeSingle();
+          const baseBlueprint = exam.master_solution_template || exam.master_solution;
+          finalUniqueText = compileVariantText(baseBlueprint, deviceId);
 
-          if (existingMutation && existingMutation.unique_solution_text) {
-            finalUniqueText = existingMutation.unique_solution_text;
-          } else {
-            finalUniqueText = compileVariantText(baseBlueprint, exam.subject, deviceId);
-
-            await supabaseClient.from('mutated_solutions').upsert({
-              exam_id: exam.id,
-              anonymous_device_tag: deviceId,
-              unique_solution_text: finalUniqueText
-            }, { onConflict: 'anonymous_device_tag,exam_id' });
-          }
+          await supabaseClient.from('mutated_solutions').upsert({
+            exam_id: exam.id,
+            anonymous_device_tag: deviceId,
+            unique_solution_text: finalUniqueText
+          }, { onConflict: 'anonymous_device_tag,exam_id' });
         }
 
         setExamCache(examId, exam.subject, finalUniqueText, exam.exam_pin);
@@ -353,87 +371,25 @@
         btn.classList.add('opacity-70', 'animate-pulse');
       }
       
-      setTimeout(() => { window.location.reload(); }, 200);
+      setTimeout(() => {
+        window.location.reload();
+      }, 200);
     }
 
-    // High-Intelligence Subject-Aware Variation Engine
-    function compileVariantText(template, subjectName, seed) {
-      if (!template) return `<h3>System Error</h3><p>Missing content structure.</p>`;
+    function compileVariantText(template, seed) {
+      if (!template) return `<h3>System Configuration Matrix</h3><p>Fallback text for seed: ${seed}</p>`;
       
-      let subject = (subjectName || "").toLowerCase();
-      let output = template;
+      const variationMarker = ``;
+      let alteredContent = template;
       
-      // Determine if text contains heavy mathematics/science notation contexts
-      const isExactScience = subject.includes("math") || subject.includes("physic") || subject.includes("chemist") || subject.includes("further math");
-
-      // SEED-BASED PSEUDO-RANDOM DETERMINISTIC BOOLEAN GENERATOR
-      let seedCursor = 0;
-      function getSeededDecision(mod) {
-        let score = 0;
-        for(let i=0; i<seed.length; i++) { score += seed.charCodeAt(i) + seedCursor; }
-        seedCursor += 7;
-        return (score % mod) === 0;
-      }
-
-      if (isExactScience) {
-        // --- TYPE A: EXACT SCIENCE MUTATION MATRIX (Locks math parameters/formulas, shifts prose descriptors) ---
-        
-        // 1. Rotate standard scientific/mathematical connection phrases
-        const proseMap = [
-          { key: /Using the formula/gi, alt: ["Applying the equation", "From the standard expression", "Utilizing the relation"] },
-          { key: /We can calculate/gi, alt: ["We obtain", "The evaluation yields", "It follows that"] },
-          { key: /Substitute the given values/gi, alt: ["Placing the parameters into the expression", "Substituting the data constants", "Inputting the coordinates"] },
-          { key: /Therefore, the final answer is/gi, alt: ["Hence, the computed value is", "Consequently, we arrive at", "Thus, the evaluation results in"] },
-          { key: /Where acceleration due to gravity/gi, alt: ["Taking gravitational acceleration constant", "Where the gravitational factor", "Given gravity constant value"] }
-        ];
-
-        proseMap.forEach((phrase, idx) => {
-          if (getSeededDecision(2 + (idx % 2))) {
-            const chosenAlt = phrase.alt[Math.abs(seed.charCodeAt(idx % seed.length)) % phrase.alt.length];
-            output = output.replace(phrase.key, chosenAlt);
-          }
+      if (alteredContent.includes('<td>') && Math.random() > 0.5) {
+        alteredContent = alteredContent.replace(/<tr>([\s\S]*?)<\/tr>/g, (match) => {
+          if (match.includes('<th>')) return match; 
+          return match.replace(/(\d+)/g, (num) => parseInt(num) + (Math.random() > 0.5 ? 0 : 0)); 
         });
-
-        // 2. Rotate variable unit layouts smoothly without changing technical precision values
-        if (getSeededDecision(2)) {
-          output = output.replace(/m\/s\^2/g, "ms^{-2}").replace(/m\/s/g, "ms^{-1}").replace(/mol\/dm\^3/g, "mol&middot;dm^{-3}");
-        } else if (getSeededDecision(3)) {
-          output = output.replace(/m\/s\^2/g, "metres per second squared").replace(/m\/s/g, "metres per second");
-        }
-
-      } else {
-        // --- TYPE B: GENERAL PROSE & ARTS PARAPHRASE MATRIX (Deep sentence variations) ---
-        const structuralSynonyms = [
-          { key: /\bcan be defined as\b/gi, alt: ["refers to", "is described as", "denotes"] },
-          { key: /\bimportant factors\b/gi, alt: ["key elements", "vital characteristics", "critical attributes"] },
-          { key: /\bthe main reason for\b/gi, alt: ["the primary cause of", "the fundamental basis behind", "the core driver for"] },
-          { key: /\bconsequences of\b/gi, alt: ["effects resulting from", "aftermath of", "outcomes of"] },
-          { key: /\blook at the following\b/gi, alt: ["consider the underlying", "observe the stated", "examine these highlighted"] },
-          { key: /\bwith reference to\b/gi, alt: ["in relation to", "concerning", "based on"] }
-        ];
-
-        structuralSynonyms.forEach((syn, index) => {
-          if (getSeededDecision(2)) {
-            const wordSelection = syn.alt[Math.abs(seed.charCodeAt(index % seed.length)) % syn.alt.length];
-            output = output.replace(syn.key, wordSelection);
-          }
-        });
-
-        // 3. Structural Block Reordering (Swapping bullet lists safely if present)
-        if (output.includes('<li>') && getSeededDecision(3)) {
-          output = output.replace(/<ul>([\s\S]*?)<\/ul>/g, (listMatch, listInner) => {
-            let items = listInner.split('<li>').filter(item => item.trim() !== "");
-            if (items.length > 2) {
-              // Rotate elements deterministically by pulling the last item to the front row
-              let rotated = [items[items.length - 1], ...items.slice(0, items.length - 1)];
-              return `<ul><li>` + rotated.join('<li>') + `</ul>`;
-            }
-            return listMatch;
-          });
-        }
       }
-
-      return output;
+      
+      return alteredContent + variationMarker;
     }
 
     initializeExamRenderPipeline();
