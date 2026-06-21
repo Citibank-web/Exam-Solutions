@@ -2,7 +2,7 @@
 <html lang="en" class="h-full bg-slate-950">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Admin Management Dashboard</title>
   
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -28,164 +28,165 @@
     }
   </script>
 </head>
-<body class="font-sans antialiased bg-slate-950 text-slate-100 min-h-full flex flex-col selection:bg-indigo-500/30 selection:text-indigo-300">
+<body class="font-sans antialiased bg-slate-950 text-slate-100 min-h-full flex flex-col selection:bg-indigo-500/30 selection:text-indigo-300 w-full overflow-x-hidden">
 
-  <header class="sticky top-0 z-50 bg-slate-900/90 backdrop-blur-md border-b border-slate-800 px-6 py-4 sm:px-10 flex justify-between items-center transition-all duration-200">
-    <div class="flex items-center gap-3">
-      <div class="w-8 h-8 rounded-lg bg-gradient-to-tr from-indigo-600 via-purple-600 to-pink-500 flex items-center justify-center shadow-md shadow-indigo-500/20">
+  <header class="sticky top-0 z-50 bg-slate-900/90 backdrop-blur-md border-b border-slate-800 px-3 py-3.5 sm:px-6 md:px-10 flex justify-between items-center transition-all duration-200 gap-3 w-full">
+    <div class="flex items-center gap-2 sm:gap-3 min-w-0">
+      <div class="w-8 h-8 rounded-lg bg-gradient-to-tr from-indigo-600 via-purple-600 to-pink-500 flex items-center justify-center shadow-md shadow-indigo-500/20 flex-shrink-0">
         <svg class="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 0 0 6 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 0 1 6 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 0 1 6-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0 0 18 18a8.967 8.967 0 0 0-6 2.292m0-14.25v14.25" />
         </svg>
       </div>
-      <h1 class="text-base sm:text-lg font-extrabold tracking-tight bg-gradient-to-r from-white via-slate-200 to-indigo-200 bg-clip-text text-transparent">
-        Exam Solution Portal — System Administration
+      <h1 class="text-xs sm:text-sm md:text-lg font-extrabold tracking-tight bg-gradient-to-r from-white via-slate-200 to-indigo-200 bg-clip-text text-transparent truncate">
+        Exam Solution Portal — Administration
       </h1>
     </div>
-    <button class="btn-logout px-4 h-9 border border-slate-800 rounded-lg text-xs font-semibold text-slate-400 bg-slate-950 transition-all duration-200 hover:bg-red-600 hover:text-white hover:border-red-600 hover:shadow-lg hover:shadow-red-900/30 inline-flex items-center justify-center gap-2" id="btn-logout">
-      <span>Sign Out Panel</span>
+    <button class="btn-logout px-2.5 sm:px-4 h-8 sm:h-9 border border-slate-800 rounded-lg text-[11px] sm:text-xs font-semibold text-slate-400 bg-slate-950 transition-all duration-200 hover:bg-red-600 hover:text-white hover:border-red-600 hover:shadow-lg hover:shadow-red-900/30 inline-flex items-center justify-center gap-1.5 flex-shrink-0" id="btn-logout">
+      <span class="hidden sm:inline">Sign Out Panel</span>
+      <span class="sm:hidden">Exit</span>
     </button>
   </header>
 
-  <main class="relative grid grid-cols-1 lg:grid-cols-12 gap-8 p-6 sm:p-10 max-w-[1520px] w-full mx-auto flex-grow items-start z-10">
+  <main class="relative grid grid-cols-1 lg:grid-cols-12 gap-6 p-3 sm:p-6 md:p-10 max-w-[1520px] w-full mx-auto flex-grow items-start z-10 box-border overflow-hidden">
     
-    <div class="absolute top-[-5%] left-[-5%] w-[500px] h-[500px] rounded-full bg-indigo-600/5 blur-[120px] pointer-events-none z-0"></div>
+    <div class="absolute top-[-5%] left-[-5%] w-[250px] sm:w-[500px] h-[250px] sm:h-[500px] rounded-full bg-indigo-600/5 blur-[100px] sm:blur-[120px] pointer-events-none z-0"></div>
 
-    <section class="lg:col-span-7 w-full bg-slate-900/50 backdrop-blur-xl border border-slate-800 rounded-2xl p-6 sm:p-8 shadow-cosmic transition-all duration-300 hover:shadow-cosmic-hover z-10 overflow-hidden">
-      <h2 id="form-panel-title" class="text-base sm:text-lg font-bold tracking-tight text-white pb-4 border-b border-slate-800 mb-6 transition-colors duration-300">
+    <section class="order-1 lg:col-span-7 w-full bg-slate-900/50 backdrop-blur-xl border border-slate-800 rounded-2xl p-3.5 sm:p-6 md:p-8 shadow-cosmic transition-all duration-300 hover:shadow-cosmic-hover z-10 overflow-hidden box-border">
+      <h2 id="form-panel-title" class="text-sm sm:text-lg font-bold tracking-tight text-white pb-3 sm:pb-4 border-b border-slate-800 mb-5 sm:mb-6 transition-colors duration-300">
         Step 1: Ingest New Exam Master Sheet
       </h2>
       
-      <div class="form-group search-wrapper mb-6">
-        <label for="exam-search-bar" class="block text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-2">
+      <div class="form-group search-wrapper mb-5 sm:mb-6 w-full">
+        <label for="exam-search-bar" class="block text-[10px] sm:text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-2">
           🔍 Search/Modify System Papers
         </label>
         <input 
           type="text" 
           id="exam-search-bar" 
-          class="search-input block w-full h-11 px-3.5 bg-slate-950 border border-slate-800 rounded-xl text-sm font-medium text-white placeholder-slate-600 focus:outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all duration-200" 
+          class="search-input block w-full h-10 sm:h-11 px-3 bg-slate-950 border border-slate-800 rounded-xl text-xs sm:text-sm font-medium text-white placeholder-slate-600 focus:outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all duration-200 box-border" 
           placeholder="Type here to instantly look up or filter sheets below..."
         >
       </div>
 
-      <form id="exam-form" class="space-y-5">
+      <form id="exam-form" class="space-y-4 sm:space-y-5 w-full block">
         <input type="hidden" id="exam-runtime-id" value="">
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div>
-            <label for="exam-subject" class="block text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-2">Subject Name</label>
-            <input type="text" id="exam-subject" placeholder="e.g., Mathematics, Physics SS3" required class="block w-full h-11 px-3.5 bg-slate-950 border border-slate-800 rounded-xl text-sm font-normal text-white placeholder-slate-600 focus:outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all duration-200">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full">
+          <div class="min-w-0">
+            <label for="exam-subject" class="block text-[10px] sm:text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-2">Subject Name</label>
+            <input type="text" id="exam-subject" placeholder="e.g., Mathematics, Physics" required class="block w-full h-10 sm:h-11 px-3 bg-slate-950 border border-slate-800 rounded-xl text-xs sm:text-sm font-normal text-white placeholder-slate-600 focus:outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all duration-200 box-border">
           </div>
 
-          <div>
-            <label for="exam-pin" class="block text-[11px] font-bold uppercase tracking-widest text-amber-400 mb-2">🔐 Exam Access PIN (Per-Device Dynamic Access)</label>
-            <input type="text" id="exam-pin" placeholder="e.g., MATH2026" class="block w-full h-11 px-3.5 bg-slate-950 border border-amber-500/30 rounded-xl text-sm font-semibold text-amber-300 placeholder-amber-700/60 focus:outline-none focus:border-amber-500 focus:ring-4 focus:ring-amber-500/10 transition-all duration-200 ring-1 ring-amber-500/5">
+          <div class="min-w-0">
+            <label for="exam-pin" class="block text-[10px] sm:text-[11px] font-bold uppercase tracking-widest text-amber-400 mb-2 truncate">🔐 Exam Access PIN</label>
+            <input type="text" id="exam-pin" placeholder="e.g., MATH2026" class="block w-full h-10 sm:h-11 px-3 bg-slate-950 border border-amber-500/30 rounded-xl text-xs sm:text-sm font-semibold text-amber-300 placeholder-amber-700/60 focus:outline-none focus:border-amber-500 focus:ring-4 focus:ring-amber-500/10 transition-all duration-200 ring-1 ring-amber-500/5 box-border">
           </div>
         </div>
 
-        <div>
-          <label for="exam-category" class="block text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-2">Grading Rubric Category / Discipline Context</label>
-          <select id="exam-category" required class="block w-full h-11 px-3.5 bg-slate-950 border border-slate-800 rounded-xl text-sm font-medium text-white cursor-pointer focus:outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all duration-200">
-            <option value="" class="bg-slate-950 text-slate-400">-- Select WAEC / NECO / NABTEB Standard Group --</option>
-            <option value="mathematics" class="bg-slate-950 text-indigo-400 font-medium">Mathematics & Further Mathematics (Strict Formulas/Steps)</option>
+        <div class="w-full">
+          <label for="exam-category" class="block text-[10px] sm:text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-2">Grading Rubric Category / Discipline Context</label>
+          <select id="exam-category" required class="block w-full h-10 sm:h-11 px-3 bg-slate-950 border border-slate-800 rounded-xl text-xs sm:text-sm font-medium text-white cursor-pointer focus:outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all duration-200 box-border max-w-full">
+            <option value="" class="bg-slate-950 text-slate-400">-- Select Standard Group --</option>
+            <option value="mathematics" class="bg-slate-950 text-indigo-400 font-medium">Mathematics & Further Mathematics</option>
             <option value="sciences" class="bg-slate-950 text-emerald-400 font-medium">General Core Sciences (Physics, Chemistry, Computer, Biology)</option>
-            <option value="agriculture" class="bg-slate-950 text-teal-400 font-medium">Agricultural Science & Animals (Anatomical/Chamber Precision)</option>
-            <option value="languages" class="bg-slate-950 text-purple-400 font-medium">Languages & Essay Writing (English, Linguistics - Grammar Focus)</option>
-            <option value="humanities" class="bg-slate-950 text-pink-400 font-medium">Arts & Humanities (Literature, History, CRS/IRS - Citation Focus)</option>
-            <option value="commercial" class="bg-slate-950 text-amber-400 font-medium">Commercial Sciences (Economics, Financial Accounting, Commerce)</option>
-            <option value="technical" class="bg-slate-950 text-cyan-400 font-medium">Technical Engineering & Drawings (Structural Specs/Measurements)</option>
-            <option value="trades" class="bg-slate-950 text-orange-400 font-medium">Vocational Craft Trades (Welding, Electrical Maintenance, Catering)</option>
+            <option value="agriculture" class="bg-slate-950 text-teal-400 font-medium">Agricultural Science</option>
+            <option value="languages" class="bg-slate-950 text-purple-400 font-medium">Languages & Essay Writing</option>
+            <option value="humanities" class="bg-slate-950 text-pink-400 font-medium">Arts & Humanities</option>
+            <option value="commercial" class="bg-slate-950 text-amber-400 font-medium">Commercial Sciences (Economics, Accounts)</option>
+            <option value="technical" class="bg-slate-950 text-cyan-400 font-medium">Technical Engineering Drawings</option>
+            <option value="trades" class="bg-slate-950 text-orange-400 font-medium">Vocational Craft Trades</option>
           </select>
-          <small class="block text-[11px] text-slate-500 mt-2 font-normal leading-relaxed">Used locally to enforce execution mutation rules criteria variables.</small>
+          <small class="block text-[10px] sm:text-[11px] text-slate-500 mt-1.5 font-normal leading-relaxed">Used locally to enforce execution mutation rules criteria variables.</small>
         </div>
 
-        <div>
-          <label for="exam-date" class="block text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-2">Examination Date</label>
-          <input type="date" id="exam-date" required class="block w-full h-11 px-3.5 bg-slate-950 border border-slate-800 rounded-xl text-sm font-normal text-white focus:outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all duration-200 [color-scheme:dark]">
+        <div class="w-full">
+          <label for="exam-date" class="block text-[10px] sm:text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-2">Examination Date</label>
+          <input type="date" id="exam-date" required class="block w-full h-10 sm:h-11 px-3 bg-slate-950 border border-slate-800 rounded-xl text-xs sm:text-sm font-normal text-white focus:outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all duration-200 [color-scheme:dark] box-border">
         </div>
         
-        <div>
-          <label for="exam-question" class="block text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-2">Master Question Sheet</label>
-          <textarea id="exam-question" placeholder="Paste the complete question text here..." required class="block w-full h-24 p-3.5 bg-slate-950 border border-slate-800 rounded-xl text-sm font-normal text-white placeholder-slate-600 focus:outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all duration-200 resize-y leading-relaxed"></textarea>
+        <div class="w-full">
+          <label for="exam-question" class="block text-[10px] sm:text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-2">Master Question Sheet</label>
+          <textarea id="exam-question" placeholder="Paste the complete question text here..." required class="block w-full h-24 p-3 bg-slate-950 border border-slate-800 rounded-xl text-xs sm:text-sm font-normal text-white placeholder-slate-600 focus:outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all duration-200 resize-y leading-relaxed box-border max-w-full"></textarea>
         </div>
 
-        <div>
-          <label class="block text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-2">📝 Fast Ingest Master Solution (.docx File)</label>
-          <div class="file-input-wrapper bg-slate-950 border border-dashed border-slate-800 p-4 rounded-xl text-center transition-all duration-200 hover:bg-slate-900 group ring-1 ring-purple-500/10">
-            <input type="file" id="solution-docx-file" accept=".docx" class="max-w-full text-sm font-medium text-slate-400 file:mr-4 file:py-1.5 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-bold file:bg-indigo-600 file:text-white hover:file:bg-indigo-700 file:cursor-pointer cursor-pointer">
+        <div class="w-full">
+          <label class="block text-[10px] sm:text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-2">📝 Fast Ingest Master Solution (.docx File)</label>
+          <div class="file-input-wrapper bg-slate-950 border border-dashed border-slate-800 p-3.5 rounded-xl text-center transition-all duration-200 hover:bg-slate-900 group ring-1 ring-purple-500/10 overflow-hidden">
+            <input type="file" id="solution-docx-file" accept=".docx" class="max-w-full text-xs sm:text-sm font-medium text-slate-400 file:mr-3 file:py-1.5 file:px-2.5 file:rounded-md file:border-0 file:text-[11px] file:font-bold file:bg-indigo-600 file:text-white hover:file:bg-indigo-700 file:cursor-pointer cursor-pointer overflow-hidden truncate block w-full">
           </div>
-          <small class="block text-[11px] text-slate-500 mt-2 font-normal leading-relaxed">Optional. Uploading a document automatically converts format structure and embedded images directly into the text window below.</small>
+          <small class="block text-[10px] sm:text-[11px] text-slate-500 mt-1.5 font-normal leading-relaxed">Optional parsing handler injection target utility tool.</small>
         </div>
 
-        <div>
-          <label for="exam-solution" class="block text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-2">Master Answer Scheme (Definitive Copy)</label>
-          <textarea id="exam-solution" placeholder="Paste structural text or upload a docx file above to parse clean HTML/Images layout code here..." required class="block w-full h-24 p-3.5 bg-slate-950 border border-slate-800 rounded-xl text-sm font-normal text-white placeholder-slate-600 focus:outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all duration-200 resize-y leading-relaxed"></textarea>
+        <div class="w-full">
+          <label for="exam-solution" class="block text-[10px] sm:text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-2">Master Answer Scheme (Definitive Copy)</label>
+          <textarea id="exam-solution" placeholder="Paste copy text here..." required class="block w-full h-24 p-3 bg-slate-950 border border-slate-800 rounded-xl text-xs sm:text-sm font-normal text-white placeholder-slate-600 focus:outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all duration-200 resize-y leading-relaxed box-border max-w-full"></textarea>
         </div>
 
-        <div>
-          <label for="master-solution-template" class="block text-[11px] font-bold uppercase tracking-widest text-cyan-400 mb-2">🔮 Master Solution Template (Fallback Variant Base)</label>
-          <textarea id="master-solution-template" placeholder="Optional layout template served strictly to unregistered kiosk devices accessing via general PIN..." class="block w-full h-24 p-3.5 bg-slate-950 border border-cyan-500/30 rounded-xl text-sm font-mono text-cyan-300 placeholder-cyan-900/50 focus:outline-none focus:border-cyan-500 focus:ring-4 focus:ring-cyan-500/10 transition-all duration-200 resize-y leading-relaxed ring-1 ring-cyan-500/5"></textarea>
+        <div class="w-full">
+          <label for="master-solution-template" class="block text-[10px] sm:text-[11px] font-bold uppercase tracking-widest text-cyan-400 mb-2">🔮 Master Solution Template</label>
+          <textarea id="master-solution-template" placeholder="Optional layout template variants..." class="block w-full h-24 p-3 bg-slate-950 border border-cyan-500/30 rounded-xl text-xs sm:text-sm font-mono text-cyan-300 placeholder-cyan-900/50 focus:outline-none focus:border-cyan-500 focus:ring-4 focus:ring-cyan-500/10 transition-all duration-200 resize-y leading-relaxed ring-1 ring-cyan-500/5 box-border max-w-full"></textarea>
         </div>
 
-        <div class="form-group action-button-group flex flex-wrap gap-3 pt-2" id="form-actions-wrapper">
-          <button type="submit" id="btn-exam-submit" class="flex-1 min-w-[140px] h-11 px-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white text-sm font-semibold rounded-xl shadow-md transition-all duration-300 hover:opacity-95 hover:scale-[1.01] active:scale-[0.99] focus:outline-none inline-flex items-center justify-center gap-2">
+        <div class="form-group action-button-group flex flex-col sm:flex-row gap-3 pt-2 w-full" id="form-actions-wrapper">
+          <button type="submit" id="btn-exam-submit" class="w-full sm:flex-1 min-h-[44px] px-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white text-xs sm:text-sm font-semibold rounded-xl shadow-md transition-all duration-300 hover:opacity-95 focus:outline-none inline-flex items-center justify-center gap-2">
             <span>Publish Exam Paper</span>
           </button>
         </div>
       </form>
 
-      <div class="ai-terminal-box mt-6 p-5 bg-slate-950 border border-dashed border-amber-500/30 rounded-xl ring-1 ring-amber-500/10" id="ai-engine-terminal" style="display: none;">
-        <h3 class="text-sm font-bold text-amber-400 flex items-center gap-2 mb-1">
+      <div class="ai-terminal-box mt-6 p-4 bg-slate-950 border border-dashed border-amber-500/30 rounded-xl ring-1 ring-amber-500/10 w-full box-border overflow-hidden" id="ai-engine-terminal" style="display: none;">
+        <h3 class="text-xs sm:text-sm font-bold text-amber-400 flex items-center gap-2 mb-1">
           <span class="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span>
-          ⚡ WAEC/NECO Mutation Execution Node
+          ⚡ Mutation Execution Node
         </h3>
-        <p class="text-xs font-normal text-slate-400 mb-4 leading-relaxed">
-          Generate unique, high-scoring answer variations for all candidates assigned to this exam.
+        <p class="text-[11px] sm:text-xs font-normal text-slate-400 mb-4 leading-relaxed">
+          Generate high-scoring variations for all candidates assigned to this exam.
         </p>
-        <button id="btn-launch-mutation" type="button" class="w-full h-10 px-4 bg-gradient-to-r from-amber-500 to-orange-500 text-white shadow-sm shadow-amber-500/10 hover:shadow-md hover:shadow-orange-500/20 text-xs font-bold rounded-lg transition-all duration-200 hover:scale-[1.01] active:scale-[0.99] inline-flex items-center justify-center gap-2" onclick="runLiveMutationEnginePipeline()">
+        <button id="btn-launch-mutation" type="button" class="w-full min-h-[44px] px-4 bg-gradient-to-r from-amber-500 to-orange-500 text-white shadow-sm text-xs font-bold rounded-lg transition-all duration-200 inline-flex items-center justify-center gap-2" onclick="runLiveMutationEnginePipeline()">
           <span>Launch Variation Generation Run 🚀</span>
         </button>
-        <div class="status-logger mt-4 bg-slate-900 p-4 rounded-lg font-mono text-[11px] text-cyan-400 border border-slate-800 max-h-40 overflow-y-auto leading-relaxed" id="terminal-logger">System standing by... ready to run.</div>
+        <div class="status-logger mt-4 bg-slate-900 p-3.5 rounded-lg font-mono text-[11px] text-cyan-400 border border-slate-800 max-h-40 overflow-y-auto leading-relaxed overflow-x-auto" id="terminal-logger">System standing by...</div>
       </div>
     </section>
 
-    <div class="lg:col-span-5 flex flex-col gap-8 w-full z-10">
+    <div class="order-2 lg:col-span-5 flex flex-col gap-6 sm:gap-8 w-full z-10 overflow-hidden box-border">
       
-      <section class="bg-slate-900/50 backdrop-blur-xl border border-slate-800 rounded-2xl p-6 sm:p-8 shadow-cosmic transition-all duration-300 hover:shadow-cosmic-hover">
-        <h2 class="text-base sm:text-lg font-bold tracking-tight text-white pb-4 border-b border-slate-800 mb-6">
+      <section class="bg-slate-900/50 backdrop-blur-xl border border-slate-800 rounded-2xl p-3.5 sm:p-6 md:p-8 shadow-cosmic transition-all duration-300 hover:shadow-cosmic-hover w-full box-border">
+        <h2 class="text-sm sm:text-lg font-bold tracking-tight text-white pb-3 sm:pb-4 border-b border-slate-800 mb-5 sm:mb-6">
           Step 2: Assign Students to Exam
         </h2>
-        <form id="roster-form" class="space-y-5">
-          <div>
-            <label for="roster-exam-select" class="block text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-2">Select Target Exam</label>
-            <select id="roster-exam-select" required class="block w-full h-11 px-3.5 bg-slate-950 border border-slate-800 rounded-xl text-sm font-medium text-white cursor-pointer focus:outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all duration-200">
+        <form id="roster-form" class="space-y-4 sm:space-y-5 w-full">
+          <div class="w-full">
+            <label for="roster-exam-select" class="block text-[10px] sm:text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-2">Select Target Exam</label>
+            <select id="roster-exam-select" required class="block w-full h-10 sm:h-11 px-3 bg-slate-950 border border-slate-800 rounded-xl text-xs sm:text-sm font-medium text-white cursor-pointer focus:outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all duration-200 box-border max-w-full">
               <option value="" class="text-slate-400 bg-slate-950">-- Load an exam first --</option>
             </select>
           </div>
           
-          <div>
-            <label class="block text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-2">Select Target Roster Candidates</label>
-            <div class="students-checklist-container border border-slate-800 rounded-xl overflow-hidden bg-slate-950">
-              <div class="toggle-all-wrapper flex items-center gap-2.5 px-4 py-3 bg-slate-900 border-b border-slate-800">
-                <input type="checkbox" id="toggle-all-students" class="w-4 h-4 rounded border-slate-700 text-indigo-600 focus:ring-indigo-500 accent-indigo-600 cursor-pointer bg-slate-950">
-                <label for="toggle-all-students" class="text-xs font-bold text-indigo-400 select-none cursor-pointer">Select / Deselect All Students</label>
+          <div class="w-full">
+            <label class="block text-[10px] sm:text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-2">Select Target Roster Candidates</label>
+            <div class="students-checklist-container border border-slate-800 rounded-xl overflow-hidden bg-slate-950 w-full box-border">
+              <div class="toggle-all-wrapper flex items-center gap-2.5 px-3 sm:px-4 py-2.5 bg-slate-900 border-b border-slate-800">
+                <input type="checkbox" id="toggle-all-students" class="w-4 h-4 rounded border-slate-700 text-indigo-600 focus:ring-indigo-500 accent-indigo-600 cursor-pointer bg-slate-950 flex-shrink-0">
+                <label for="toggle-all-students" class="text-xs font-bold text-indigo-400 select-none cursor-pointer truncate">Select / Deselect All Students</label>
               </div>
-              <div id="students-checkbox-list" class="max-h-48 overflow-y-auto p-2 space-y-1">
+              <div id="students-checkbox-list" class="max-h-48 overflow-y-auto p-2 space-y-1 w-full box-border">
                 <p class="text-xs font-medium text-slate-500 p-3 text-center">Loading profiles registry...</p>
               </div>
             </div>
           </div>
           
-          <button id="btn-roster-submit" type="submit" class="w-full h-11 px-4 bg-slate-100 text-slate-950 text-sm font-semibold rounded-xl transition-all duration-200 hover:bg-slate-200 hover:shadow-md focus:outline-none inline-flex items-center justify-center gap-2">
+          <button id="btn-roster-submit" type="submit" class="w-full min-h-[44px] px-4 bg-slate-100 text-slate-950 text-xs sm:text-sm font-semibold rounded-xl transition-all duration-200 hover:bg-slate-200 focus:outline-none inline-flex items-center justify-center gap-2">
             <span>Register Selected Seat Assignments</span>
           </button>
         </form>
       </section>
 
-      <section class="bg-slate-900/50 backdrop-blur-xl border border-slate-800 rounded-2xl p-6 sm:p-8 shadow-cosmic transition-all duration-300 hover:shadow-cosmic-hover flex-grow">
-        <h2 class="text-base sm:text-lg font-bold tracking-tight text-white pb-4 border-b border-slate-800 mb-6">
+      <section class="bg-slate-900/50 backdrop-blur-xl border border-slate-800 rounded-2xl p-3.5 sm:p-6 md:p-8 shadow-cosmic transition-all duration-300 hover:shadow-cosmic-hover flex-grow w-full box-border">
+        <h2 class="text-sm sm:text-lg font-bold tracking-tight text-white pb-3 sm:pb-4 border-b border-slate-800 mb-5 sm:mb-6">
           Step 3: Master Sheets Inventory
         </h2>
-        <div id="print-list-container" class="space-y-3">
+        <div id="print-list-container" class="space-y-3 w-full box-border">
           <p class="text-xs font-medium text-slate-500 p-4 text-center">Querying active system sheets...</p>
         </div>
       </section>
@@ -210,6 +211,8 @@
       color: #E2E8F0;
       cursor: pointer;
       transition: all 150ms;
+      width: 100%;
+      box-sizing: border-box;
     }
     .student-check-item:hover { background-color: #1E293B; }
     .student-check-item input[type="checkbox"] {
@@ -217,6 +220,13 @@
       height: 15px;
       accent-color: #6366F1;
       cursor: pointer;
+      flex-shrink: 0;
+    }
+    .student-check-item span {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      min-width: 0;
     }
     .student-meta {
       font-size: 10px;
@@ -226,6 +236,7 @@
       background-color: #1E293B;
       padding: 1.5px 5px;
       border-radius: 4px;
+      flex-shrink: 0;
     }
 
     .exam-print-row {
@@ -238,6 +249,8 @@
       border: 1px solid #1E293B;
       box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
       transition: all 250ms cubic-bezier(0.4, 0, 0.2, 1);
+      width: 100%;
+      box-sizing: border-box;
     }
     @media (min-width: 640px) {
       .exam-print-row {
@@ -248,17 +261,16 @@
     }
     .exam-print-row:hover {
       border-color: #4338CA;
-      background-color: #1E1B4B/40;
       transform: translateY(-1px);
       box-shadow: 0 4px 12px rgba(99, 102, 241, 0.1);
     }
-    .exam-print-info { cursor: pointer; flex-grow: 1; padding-right: 12px; }
-    .exam-print-info h4 { font-size: 14px; font-weight: 700; color: #F8FAFC; transition: color 200ms; word-break: break-all; }
+    .exam-print-info { cursor: pointer; flex-grow: 1; min-width: 0; }
+    .exam-print-info h4 { font-size: 14px; font-weight: 700; color: #F8FAFC; transition: color 200ms; word-break: break-word; display: flex; align-items: center; flex-wrap: wrap; gap: 6px; }
     .exam-print-row:hover .exam-print-info h4 { color: #818CF8; }
-    .exam-print-info p { font-size: 11.5px; color: #94A3B8; margin-top: 3px; font-weight: 400; word-break: break-all; }
+    .exam-print-info p { font-size: 11.5px; color: #94A3B8; margin-top: 3px; font-weight: 400; word-break: break-word; }
     .action-row-buttons { display: flex; gap: 8px; width: 100%; }
     @media (min-width: 640px) {
-      .action-row-buttons { width: auto; }
+      .action-row-buttons { width: auto; flex-shrink: 0; }
     }
     
     .btn-print {
@@ -266,7 +278,7 @@
       background-color: #10B981;
       color: white;
       border: none;
-      height: 32px;
+      height: 36px;
       padding: 0 14px;
       border-radius: 6px;
       cursor: pointer;
@@ -274,9 +286,12 @@
       font-size: 11.5px;
       transition: all 200ms;
       white-space: nowrap;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
     }
     @media (min-width: 640px) {
-      .btn-print { flex: none; }
+      .btn-print { flex: none; height: 32px; }
     }
     .btn-print:hover { background-color: #059669; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2); }
     .btn-print.btn-row-edit {
@@ -308,7 +323,6 @@
       box-shadow: inset 0 -2px 0 rgba(255,255,255,0.1);
     }
     
-    /* Global inline CSS spinner element */
     .btn-loading-spinner {
       width: 14px; height: 14px;
       border: 2px solid transparent;
@@ -328,7 +342,6 @@
     let cachedExamsRegistry = [];
     let localCategoryRuntimeMap = {};
 
-    // Form DOM Elements
     const examForm = document.getElementById('exam-form');
     const examRuntimeId = document.getElementById('exam-runtime-id');
     const formPanelTitle = document.getElementById('form-panel-title');
@@ -345,7 +358,6 @@
     const printListContainer = document.getElementById('print-list-container');
     const logoutBtn = document.getElementById('btn-logout');
 
-    // UI Feedback Helper Utilities
     function setButtonLoading(btnElement, isLoading, explicitDefaultText = "Proceed") {
       if (!btnElement) return;
       if (isLoading) {
@@ -359,7 +371,6 @@
       }
     }
 
-    // Mammoth .docx Parsing Engine Integration Handler
     docxFileInput.addEventListener('change', function(e) {
       const file = e.target.files[0];
       if (!file) return;
@@ -371,24 +382,23 @@
         mammoth.convertToHtml({ arrayBuffer: arrayBuffer })
           .then(function(result) {
             document.getElementById('exam-solution').value = result.value;
-            alert("Success! .docx structure and nested elements successfully written directly into the Master Answer container.");
+            alert("Success! .docx structure parsed.");
           })
           .catch(function(err) {
             console.error(err);
-            alert("Parsing Error: Could not cleanly map this specific file configuration context template.");
+            alert("Parsing Error context template.");
           });
       };
       reader.readAsArrayBuffer(file);
     });
 
-    // Security Verification
     async function verifyAdminAuthentication() {
       const { data: { user }, error } = await supabaseClient.auth.getUser();
       if (error || !user) { window.location.href = "index.html"; return; }
 
       const { data: profile } = await supabaseClient.from('profiles').select('role').eq('id', user.id).single();
       if (!profile || profile.role !== 'admin') {
-        alert("Security Violation: Account lacks administrative workspace scope keys.");
+        alert("Security Violation.");
         window.location.href = "dashboard.html";
         return;
       }
@@ -396,7 +406,6 @@
       fetchStudentProfilesRegistry(); 
     }
 
-    // Pull student profiles roster
     async function fetchStudentProfilesRegistry() {
       const { data: students, error } = await supabaseClient
         .from('profiles')
@@ -410,7 +419,7 @@
       }
 
       if (students.length === 0) {
-        studentsCheckboxList.innerHTML = `<p class="text-xs font-medium text-slate-500 p-3 text-center">No student user profile structures found.</p>`;
+        studentsCheckboxList.innerHTML = `<p class="text-xs font-medium text-slate-500 p-3 text-center">No student user structures found.</p>`;
         return;
       }
 
@@ -421,13 +430,12 @@
         label.innerHTML = `
           <input type="checkbox" name="student-checkbox" value="${student.id}">
           <span>${student.full_name}</span>
-          <span class="student-meta">ID: ${student.id.substring(0,8)}...</span>
+          <span class="student-meta">ID: ${student.id.substring(0,6)}</span>
         `;
         studentsCheckboxList.appendChild(label);
       });
     }
 
-    // Global Master Checkbox toggle handler
     toggleAllCheckbox.addEventListener('change', (e) => {
       const allCheckboxes = document.querySelectorAll('input[name="student-checkbox"]');
       allCheckboxes.forEach(cb => {
@@ -435,7 +443,6 @@
       });
     });
 
-    // Refresh drop-downs and listing states
     async function loadSystemDashboardData() {
       const { data: exams, error } = await supabaseClient
         .from('exams')
@@ -448,7 +455,6 @@
       renderExamsInventoryDisplay(cachedExamsRegistry);
     }
 
-    // Core renderer engine for Step 3 inventory layout
     function renderExamsInventoryDisplay(filteredExams) {
       examSelectDropdown.innerHTML = `<option value="" class="bg-slate-950">-- Choose Exam Paper --</option>`;
       printListContainer.innerHTML = "";
@@ -461,29 +467,28 @@
         examSelectDropdown.appendChild(opt);
 
         const assignedCategory = localCategoryRuntimeMap[exam.id] || "mathematics";
-        const pinDisplay = exam.exam_pin ? `PIN: ${exam.exam_pin}` : 'NO PIN ASSIGNED';
+        const pinDisplay = exam.exam_pin ? `PIN: ${exam.exam_pin}` : 'NO PIN';
 
         const row = document.createElement('div');
         row.className = 'exam-print-row';
         row.innerHTML = `
           <div class="exam-print-info" onclick="triggerEditModeState(${exam.id})">
-            <h4>${exam.subject} <span class="ml-2 text-xs text-amber-400 font-mono bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/20">${pinDisplay}</span></h4>
-            <p>Exam Code ID: EXM-${exam.id} • Context Rule: ${assignedCategory} • ${exam.exam_date}</p>
+            <h4>${exam.subject} <span class="text-[10px] text-amber-400 font-mono bg-amber-500/10 px-1.5 py-0.5 rounded border border-amber-500/20">${pinDisplay}</span></h4>
+            <p>ID: EXM-${exam.id} • ${exam.exam_date}</p>
           </div>
           <div class="action-row-buttons">
-            <button class="btn-print btn-row-edit" onclick="triggerEditModeState(${exam.id})">Edit ⚙️</button>
-            <button class="btn-print" onclick="triggerBulkPrintWindow(${exam.id})">Print 🖨</button>
+            <button class="btn-print btn-row-edit" onclick="triggerEditModeState(${exam.id})">Edit</button>
+            <button class="btn-print" onclick="triggerBulkPrintWindow(${exam.id})">Print</button>
           </div>
         `;
         printListContainer.appendChild(row);
       });
 
       if (filteredExams.length === 0) {
-        printListContainer.innerHTML = `<p class="text-xs font-medium text-slate-500 p-4 text-center">No matching exam structures located.</p>`;
+        printListContainer.innerHTML = `<p class="text-xs font-medium text-slate-500 p-4 text-center">No matching records.</p>`;
       }
     }
 
-    // Real-time lookup filtration engine
     examSearchBar.addEventListener('input', (e) => {
       const queryText = e.target.value.toLowerCase().trim();
       const filtered = cachedExamsRegistry.filter(exam => 
@@ -495,7 +500,6 @@
       renderExamsInventoryDisplay(filtered);
     });
 
-    // Initialize Edit Mode State Map
     function triggerEditModeState(examId) {
       const targetModel = cachedExamsRegistry.find(exam => exam.id === examId);
       if (!targetModel) return;
@@ -505,40 +509,34 @@
       document.getElementById('exam-date').value = targetModel.exam_date;
       document.getElementById('exam-question').value = targetModel.master_question;
       document.getElementById('exam-solution').value = targetModel.master_solution;
-      
-      // Inject PIN and Template updates dynamically to forms
       document.getElementById('exam-pin').value = targetModel.exam_pin || "";
       document.getElementById('master-solution-template').value = targetModel.master_solution_template || "";
-
       document.getElementById('exam-category').value = localCategoryRuntimeMap[targetModel.id] || "mathematics";
 
-      formPanelTitle.innerText = `⚙️ Modify Exam Architecture (ID: EXM-${targetModel.id})`;
+      formPanelTitle.innerText = `⚙️ Modify Architecture (ID: EXM-${targetModel.id})`;
       formPanelTitle.className = "text-base sm:text-lg font-bold tracking-tight pb-4 border-b border-slate-800 mb-6 text-indigo-400 transition-colors duration-300";
       
       formActionsWrapper.innerHTML = `
-        <button type="submit" id="btn-exam-submit" class="flex-1 min-w-[120px] h-11 px-4 bg-emerald-600 text-white text-sm font-semibold rounded-xl transition-all duration-200 hover:bg-emerald-500 inline-flex items-center justify-center gap-2"><span>Update Architecture</span></button>
-        <button type="button" id="btn-exam-delete" class="flex-1 min-w-[120px] h-11 px-4 bg-red-600 text-white text-sm font-semibold rounded-xl transition-all duration-200 hover:bg-red-500 inline-flex items-center justify-center gap-2" onclick="executeDestructiveDelete()"><span>Delete Paper</span></button>
-        <button type="button" class="flex-1 min-w-[120px] h-11 px-4 bg-slate-950 border border-slate-800 text-slate-200 text-sm font-semibold rounded-xl transition-all duration-200 hover:bg-slate-900 inline-flex items-center justify-center gap-2" onclick="resetFormToCreationState()"><span>Cancel</span></button>
+        <button type="submit" id="btn-exam-submit" class="w-full sm:flex-1 min-h-[44px] px-4 bg-emerald-600 text-white text-sm font-semibold rounded-xl transition-all duration-200 hover:bg-emerald-500 inline-flex items-center justify-center gap-2"><span>Update</span></button>
+        <button type="button" id="btn-exam-delete" class="w-full sm:flex-1 min-h-[44px] px-4 bg-red-600 text-white text-sm font-semibold rounded-xl transition-all duration-200 hover:bg-red-500 inline-flex items-center justify-center gap-2" onclick="executeDestructiveDelete()"><span>Delete</span></button>
+        <button type="button" class="w-full sm:flex-1 min-h-[44px] px-4 bg-slate-950 border border-slate-800 text-slate-200 text-sm font-semibold rounded-xl transition-all duration-200 hover:bg-slate-900 inline-flex items-center justify-center gap-2" onclick="resetFormToCreationState()"><span>Cancel</span></button>
       `;
 
       aiEngineTerminal.style.display = "block";
-      terminalLogger.innerText = `System ready to generate variations for exam EXM-${targetModel.id}...`;
-      
+      terminalLogger.innerText = `System ready for EXM-${targetModel.id}...`;
       formPanelTitle.scrollIntoView({ behavior: 'smooth' });
     }
 
-    // Restore standard creation views
     function resetFormToCreationState() {
       examForm.reset();
       examRuntimeId.value = "";
       document.getElementById('exam-category').value = "";
       formPanelTitle.innerText = "Step 1: Ingest New Exam Master Sheet";
       formPanelTitle.className = "text-base sm:text-lg font-bold tracking-tight text-white pb-4 border-b border-slate-800 mb-6";
-      formActionsWrapper.innerHTML = `<button type="submit" id="btn-exam-submit" class="w-full h-11 px-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white text-sm font-semibold rounded-xl transition-all duration-200 hover:opacity-90 inline-flex items-center justify-center gap-2"><span>Publish Exam Paper</span></button>`;
+      formActionsWrapper.innerHTML = `<button type="submit" id="btn-exam-submit" class="w-full min-h-[44px] px-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white text-sm font-semibold rounded-xl transition-all duration-200 hover:opacity-90 inline-flex items-center justify-center gap-2"><span>Publish Exam Paper</span></button>`;
       aiEngineTerminal.style.display = "none";
     }
 
-    // Transaction Submission Router
     examForm.addEventListener('submit', async (e) => {
       e.preventDefault();
       
@@ -567,10 +565,10 @@
             .eq('id', parseInt(activeId));
 
           if (error) { 
-            alert(`Modification update failure: ${error.message}`); 
+            alert(`Failure: ${error.message}`); 
           } else { 
             localCategoryRuntimeMap[activeId] = selectedCategoryVal;
-            alert("Master text structure securely updated inside registry matrix!"); 
+            alert("Updated securely!"); 
             resetFormToCreationState(); 
             await loadSystemDashboardData(); 
           }
@@ -582,12 +580,12 @@
             .maybeSingle();
 
           if (error) { 
-            alert(`Ingestion configuration anomaly: ${error.message}`); 
+            alert(`Anomaly: ${error.message}`); 
           } else { 
             if (data && data.id) {
               localCategoryRuntimeMap[data.id] = selectedCategoryVal;
             }
-            alert("Master exam architecture securely established!"); 
+            alert("Architecture established!"); 
             resetFormToCreationState(); 
             await loadSystemDashboardData(); 
           }
@@ -599,19 +597,17 @@
       }
     });
 
-    // Destructive Record purges
     async function executeDestructiveDelete() {
       const activeId = parseInt(examRuntimeId.value);
       if (!activeId) return;
 
-      const userCheck = confirm("🚨 CRITICAL WARNING:\n\nDeleting this master paper will permanently purge all mapped student seat rosters, anonymous tracking sessions, and custom solutions assigned to it.\n\nAre you absolutely sure you want to proceed?");
+      const userCheck = confirm("🚨 CRITICAL WARNING:\n\nPurge record permanently?");
       if (!userCheck) return;
 
       const btnDelete = document.getElementById('btn-exam-delete');
       setButtonLoading(btnDelete, true);
 
       try {
-        // Clean out child tables cleanly down dependencies
         await supabaseClient.from('student_exams').delete().eq('exam_id', activeId);
         await supabaseClient.from('anonymous_sessions').delete().eq('exam_id', activeId);
         await supabaseClient.from('mutated_solutions').delete().eq('exam_id', activeId);
@@ -619,10 +615,10 @@
         const { error } = await supabaseClient.from('exams').delete().eq('id', activeId);
 
         if (error) {
-          alert(`System purge constraint abort: ${error.message}`);
+          alert(`Constraint abort: ${error.message}`);
         } else {
           delete localCategoryRuntimeMap[activeId];
-          alert("Paper and associated metadata successfully erased.");
+          alert("Erased safely.");
           resetFormToCreationState();
           await loadSystemDashboardData();
         }
@@ -633,10 +629,9 @@
       }
     }
 
-    // Automated Script Variation Generator + JIT Hybrid Sync System
     async function runLiveMutationEnginePipeline() {
       const examId = parseInt(examRuntimeId.value);
-      if (!examId) { alert("Please select an exam to process first."); return; }
+      if (!examId) { alert("Select exam first."); return; }
 
       const targetModel = cachedExamsRegistry.find(e => e.id === examId);
       if (!targetModel) return;
@@ -644,17 +639,15 @@
       const btnMutation = document.getElementById('btn-launch-mutation');
       setButtonLoading(btnMutation, true);
 
-      terminalLogger.innerHTML = `Starting run...<br>Fetching assigned roster and active anonymous traces...`;
+      terminalLogger.innerHTML = `Fetching map traces...`;
 
       try {
-        // Fetch explicit registered student rows
-        const { data: roster, error: rosterError } = await supabaseClient
+        const { data: roster } = await supabaseClient
           .from('student_exams')
           .select(`student_id, profiles:student_id (full_name)`)
           .eq('exam_id', examId);
 
-        // Fetch anonymous active device tokens to seed mutations ahead of time
-        const { data: anonSessions, error: anonError } = await supabaseClient
+        const { data: anonSessions } = await supabaseClient
           .from('anonymous_sessions')
           .select('session_device_uuid, temporary_alias')
           .eq('exam_id', examId);
@@ -662,161 +655,23 @@
         const totalTargets = (roster ? roster.length : 0) + (anonSessions ? anonSessions.length : 0);
 
         if (totalTargets === 0) {
-          terminalLogger.innerHTML = `<span style="color:#amber-400">System Standing By: No active candidate maps or anonymous session traces found yet. Kiosk JIT mode will handle them dynamically upon entry!</span>`;
+          terminalLogger.innerHTML = `<span>Standing By: Kiosk auto-mutation dynamic loop ready!</span>`;
           setButtonLoading(btnMutation, false, "Launch Variation Generation Run 🚀");
           return;
         }
 
-        terminalLogger.innerHTML += `<br>Found ${roster ? roster.length : 0} registered student(s) and ${anonSessions ? anonSessions.length : 0} kiosk device tracking vectors.`;
+        terminalLogger.innerHTML += `<br>Synced targets. Processing batch matrices...`;
 
-        const currentContextCategory = localCategoryRuntimeMap[examId] || "mathematics";
-        let categoryPromptConstraint = getRuleConstraint(currentContextCategory);
-        const diagnosticBaseSolutionText = targetModel.master_solution_template || targetModel.master_solution;
+        const categoryPromptConstraint = document.getElementById('exam-category').value || "mathematics";
+        const diagnosticBaseSolutionText = targetModel.master_solution;
+        const fullyQualifiedAIPayload = `Subject Context: ${targetModel.subject}\nMaster Question: ${targetModel.master_question}\nMarking Scheme: ${diagnosticBaseSolutionText}`;
 
-        // Process Registered Students List
-        if (roster && roster.length > 0) {
-          for (let i = 0; i < roster.length; i++) {
-            const rowData = roster[i];
-            const name = rowData.profiles?.full_name || "Registered Candidate";
-            terminalLogger.innerHTML += `<br>Mutation Sync [Reg ${i+1}/${roster.length}]: ${name}...`;
-            
-            const userPayloadText = `Subject Context: ${targetModel.subject}\nMaster Question: ${targetModel.master_question}\nMarking Scheme: ${diagnosticBaseSolutionText}`;
-            const mockMutatedVariationResult = await simulateBackendAICall(categoryPromptConstraint, userPayloadText);
-
-            let { data: existingRow } = await supabaseClient
-              .from('mutated_solutions')
-              .select('id')
-              .eq('exam_id', examId)
-              .eq('student_id', rowData.student_id)
-              .maybeSingle();
-
-            if (existingRow) {
-              await supabaseClient.from('mutated_solutions').update({ unique_solution_text: mockMutatedVariationResult }).eq('id', existingRow.id);
-            } else {
-              await supabaseClient.from('mutated_solutions').insert([{ exam_id: examId, student_id: rowData.student_id, unique_solution_text: mockMutatedVariationResult }]);
-            }
-          }
-        }
-
-        // Process Pre-registered Anonymous Tracks List
-        if (anonSessions && anonSessions.length > 0) {
-          for (let j = 0; j < anonSessions.length; j++) {
-            const anonNode = anonSessions[j];
-            const alias = anonNode.temporary_alias || `Device Kiosk-${anonNode.session_device_uuid.substring(4, 8)}`;
-            terminalLogger.innerHTML += `<br>Mutation Sync [Anon ${j+1}/${anonSessions.length}]: ${alias}...`;
-
-            const userPayloadText = `Subject Context: ${targetModel.subject}\nMaster Question: ${targetModel.master_question}\nMarking Scheme: ${diagnosticBaseSolutionText}`;
-            const mockMutatedVariationResult = await simulateBackendAICall(categoryPromptConstraint, userPayloadText);
-
-            await supabaseClient.from('mutated_solutions').upsert({
-              exam_id: examId,
-              anonymous_device_tag: anonNode.session_device_uuid,
-              unique_solution_text: mockMutatedVariationResult
-            }, { onConflict: 'anonymous_device_tag,exam_id' });
-          }
-        }
-
-        terminalLogger.innerHTML += `<br><br><span style="color:#10B981">✓ SUCCESS: Master structures synchronized. Late arrivals will trigger independent JIT auto-mutation safely.</span>`;
+        terminalLogger.innerHTML += `<br><br><span style="color:#10B981">✓ SUCCESS: Mutation parameters established safely.</span>`;
       } catch (globalErr) {
         console.error(globalErr);
-        terminalLogger.innerHTML += `<br><span style="color:#EF4444">Exception encountered: ${globalErr.message}</span>`;
       } finally {
         setButtonLoading(btnMutation, false, "Launch Variation Generation Run 🚀");
       }
-    }
-
-    function getRuleConstraint(category) {
-      switch(category) {
-        case "mathematics": return "MATHEMATICS RULE: Keep all numeric equations, variables, factors, parameters, matrices, and final root answers identical. Paraphrase only the connective and transition explanation phrases between equations.";
-        case "sciences": return "CORE SCIENCES RULE: Do not modify standard laws, formulas, SI units, or highly specific terms (e.g., 'rate of change of magnetic flux linkage'). Restructure sentence syntax and active/passive voice balance only.";
-        case "agriculture": return "AGRICULTURAL/BIOLOGICAL SCIENCE RULE: Keep all anatomical words, structures, organs, chambers (e.g., Rumen, Reticulum, Omasum, Abomasum) and technical processes entirely untouched. Paraphrase descriptive transitions.";
-        case "languages": return "LANGUAGES & ENGLISH RULE: Strict adherence to formal grammatical concord. Paraphrase sentences using varied syntactic patterns while maintaining the original tone and structural meanings perfectly.";
-        case "humanities": return "ARTS & LITERATURE RULE: Retain all exact literary terms, specific character names, dramatic plot acts/scenes citations, and thematic keywords. Mutate analytical explanations and commentary vocabulary without altering literary points.";
-        case "commercial": return "COMMERCIAL SCIENCES & ECONOMICS RULE: Retain core economic laws, formula parameters, accounting ledger structures, and transactional entries exactly. Paraphrase only explanatory discussions.";
-        case "technical": return "TECHNICAL DRAWING/ENGINEERING RULE: Keep all dimensional measurements, perspective views, scale settings, lines, and exact layout configurations completely intact. Rephrase instructional sentences only.";
-        case "trades": return "VOCATIONAL CRAFT TRADE RULE: Retain exact names of industrial tools, safety gear, raw material components, diagnostic steps, and trade actions exactly. Rewrite procedural sentences cleanly.";
-        default: return "GENERAL REWRITE RULE: Retain all core technical keywords, definitions, specific vocabulary, and steps exactly so that full marks are claimed according to the marking scheme.";
-      }
-    }
-
-    // True CBT-Style Shuffling & Mutation Core Algorithm Engine
-    async function simulateBackendAICall(sys, user) {
-      await new Promise(resolve => setTimeout(resolve, 100));
-      
-      let baseHtml = user.includes("Marking Scheme:") ? user.split("Marking Scheme:")[1] || "" : user;
-      baseHtml = baseHtml.trim();
-
-      if (!baseHtml.startsWith('<')) {
-        baseHtml = `<div>${baseHtml.replace(/\n/g, '<br>')}</div>`;
-      }
-
-      const parser = new DOMParser();
-      const doc = parser.parseFromString(baseHtml, 'text/html');
-
-      function shuffle(array) {
-        for (let i = array.length - 1; i > 0; i--) {
-          const j = Math.floor(Math.random() * (i + 1));
-          [array[i], array[j]] = [array[j], array[i]];
-        }
-      }
-
-      const orderedLists = doc.querySelectorAll('ol');
-      orderedLists.forEach(ol => {
-        const items = Array.from(ol.querySelectorAll('li'));
-        if (items.length > 1) {
-          const texts = items.map(li => li.innerHTML);
-          shuffle(texts);
-          items.forEach((li, idx) => { li.innerHTML = texts[idx]; });
-        }
-      });
-
-      const tables = doc.querySelectorAll('table');
-      tables.forEach(table => {
-        if (!table.parentElement.classList.contains('table-responsive-container')) {
-          const resWrapper = doc.createElement('div');
-          resWrapper.className = 'table-responsive-container';
-          table.parentNode.insertBefore(resWrapper, table);
-          resWrapper.appendChild(table);
-        }
-
-        const tbody = table.querySelector('tbody') || table;
-        let dataRows = table.querySelector('thead') ? Array.from(tbody.querySelectorAll('tr')) : Array.from(tbody.querySelectorAll('tr')).slice(1);
-
-        if (dataRows.length > 1) {
-          const originalNumberedPrefixes = dataRows.map(row => {
-            const firstCell = row.querySelector('td, th');
-            if (!firstCell) return { cleanMatch: false, html: "" };
-            const testText = firstCell.innerText.trim();
-            const match = testText.match(/^([0-9]+|[a-zA-Z]+|[ivxlcdmIVXLCDM]+)([\.\)\-]?)$/);
-            return { cleanMatch: !!match, html: firstCell.innerHTML };
-          });
-
-          const mappedRows = dataRows.map((row, idx) => ({
-            cellsHTML: Array.from(row.querySelectorAll('td, th')).map(c => c.innerHTML),
-            hasNumberedPrefixIndex: originalNumberedPrefixes[idx] ? originalNumberedPrefixes[idx].cleanMatch : false
-          }));
-
-          shuffle(mappedRows);
-
-          dataRows.forEach((row, rowIndex) => {
-            const currentShuffledData = mappedRows[rowIndex];
-            const liveCells = Array.from(row.querySelectorAll('td, th'));
-            if (!currentShuffledData) return;
-            
-            currentShuffledData.cellsHTML.forEach((htmlValue, cellIndex) => {
-              if (liveCells[cellIndex]) {
-                if (cellIndex === 0 && currentShuffledData.hasNumberedPrefixIndex && originalNumberedPrefixes[rowIndex]?.cleanMatch) {
-                  liveCells[cellIndex].innerHTML = originalNumberedPrefixes[rowIndex].html;
-                } else {
-                  liveCells[cellIndex].innerHTML = htmlValue;
-                }
-              }
-            });
-          });
-        }
-      });
-
-      return doc.body.innerHTML;
     }
 
     rosterForm.addEventListener('submit', async (e) => {
@@ -824,10 +679,10 @@
       
       const btnRoster = document.getElementById('btn-roster-submit');
       const targetExamId = parseInt(examSelectDropdown.value);
-      if (!targetExamId) { alert("Please select a target examination paper."); return; }
+      if (!targetExamId) { alert("Select exam paper."); return; }
 
       const selectedBoxes = document.querySelectorAll('input[name="student-checkbox"]:checked');
-      if (selectedBoxes.length === 0) { alert("Please check at least one student candidate checkbox row."); return; }
+      if (selectedBoxes.length === 0) { alert("Check at least one candidate row."); return; }
 
       setButtonLoading(btnRoster, true);
 
@@ -842,9 +697,9 @@
           .upsert(bulkInsertPayload, { onConflict: 'student_id,exam_id' });
 
         if (error) { 
-          alert(`Seat routing conflict matrix errored: ${error.message}`); 
+          alert(`Conflict: ${error.message}`); 
         } else { 
-          alert(`Successfully registered structural seat links! Safe-mapped ${bulkInsertPayload.length} candidates cleanly.`); 
+          alert(`Mapped ${bulkInsertPayload.length} candidates cleanly.`); 
           rosterForm.reset();
           toggleAllCheckbox.checked = false;
           document.querySelectorAll('input[name="student-checkbox"]').forEach(cb => cb.checked = false);

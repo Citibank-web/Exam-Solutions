@@ -9,7 +9,7 @@
       font-family: 'Courier New', Courier, monospace;
       background-color: #f4f4f6;
       margin: 0;
-      padding: 16px;
+      padding: 12px;
       color: #1e293b;
       display: flex;
       flex-direction: column;
@@ -18,28 +18,28 @@
     
     .portal-main-header {
       text-align: center;
-      margin: 20px auto 32px auto;
+      margin: 12px auto 20px auto;
       max-width: 1200px;
       width: 100%;
     }
     .portal-title {
       font-family: system-ui, -apple-system, sans-serif;
-      font-size: 28px;
+      font-size: 24px;
       font-weight: 800;
       color: #0f172a;
       letter-spacing: 1px;
-      margin: 0 0 8px 0;
+      margin: 0 0 4px 0;
       display: inline-block;
       border-bottom: 3px solid #ef4444;
-      padding-bottom: 4px;
+      padding-bottom: 2px;
     }
     .portal-subtitle {
       font-family: system-ui, -apple-system, sans-serif;
-      font-size: 13px;
+      font-size: 11px;
       font-weight: 600;
       color: #64748b;
       letter-spacing: 2px;
-      margin: 0 0 16px 0;
+      margin: 0 0 12px 0;
       text-transform: uppercase;
     }
     .telegram-link {
@@ -50,9 +50,9 @@
       color: #ffffff;
       text-decoration: none;
       font-family: system-ui, -apple-system, sans-serif;
-      font-size: 13px;
+      font-size: 12px;
       font-weight: 700;
-      padding: 8px 18px;
+      padding: 6px 14px;
       border-radius: 20px;
       box-shadow: 0 4px 12px rgba(36, 161, 222, 0.3);
       transition: all 0.2s ease;
@@ -64,11 +64,11 @@
 
     .student-sheet {
       background: #ffffff;
-      padding: 32px;
-      margin-bottom: 32px;
+      padding: 20px;
+      margin-bottom: 20px;
       border: 1px solid #e2e8f0;
-      border-radius: 8px;
-      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+      border-radius: 6px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.02);
       max-width: 1200px;
       margin-left: auto;
       margin-right: auto;
@@ -81,43 +81,43 @@
       background-color: #f8fafc;
       border: 1px solid #e2e8f0;
       border-left: 5px solid #3b82f6;
-      border-radius: 6px;
-      padding: 16px 20px;
-      margin-bottom: 24px;
+      border-radius: 4px;
+      padding: 10px 16px;
+      margin-bottom: 16px;
       display: flex;
       flex-direction: row;
       justify-content: space-between;
       align-items: center;
-      gap: 16px;
-      line-height: 1.5;
+      gap: 12px;
+      line-height: 1.4;
     }
     .header-info .meta-left strong {
       color: #475569;
-      font-size: 11px;
+      font-size: 10px;
       text-transform: uppercase;
       letter-spacing: 0.5px;
     }
     .header-info .meta-left .val-text {
       color: #0f172a;
-      font-size: 15px;
+      font-size: 14px;
       font-weight: 700;
     }
     .header-info .meta-right {
       text-align: right;
     }
     .header-info .meta-right .status-tag {
-      font-size: 10px;
+      font-size: 9px;
       font-weight: 800;
       background: #e0f2fe;
       color: #0369a1;
-      padding: 4px 8px;
+      padding: 3px 6px;
       border-radius: 4px;
       letter-spacing: 0.5px;
       display: inline-block;
-      margin-bottom: 4px;
+      margin-bottom: 2px;
     }
     .header-info .meta-right .sys-code {
-      font-size: 11px;
+      font-size: 10px;
       color: #64748b;
       font-weight: 500;
       display: block;
@@ -126,10 +126,10 @@
     .solution-content {
       font-family: 'Courier New', Courier, monospace;
       font-size: 10pt;
-      line-height: 1.4;
+      line-height: 1.3;
       text-align: left;
       column-count: 2;
-      column-gap: 40px;
+      column-gap: 30px;
       column-rule: 1px solid #cbd5e1;
     }
 
@@ -139,7 +139,8 @@
     .solution-content img {
       break-inside: avoid;
       page-break-inside: avoid;
-      margin-bottom: 12px;
+      margin-top: 0;
+      margin-bottom: 8px;
     }
 
     .solution-content img {
@@ -151,7 +152,7 @@
     .solution-content table {
       width: 100%;
       border-collapse: collapse;
-      margin: 16px 0;
+      margin: 12px 0;
       break-inside: avoid;
       page-break-inside: avoid;
     }
@@ -159,8 +160,9 @@
     .solution-content th, 
     .solution-content td {
       border: 1px solid #cbd5e1;
-      padding: 8px 12px;
+      padding: 6px 10px;
       text-align: left;
+      word-break: break-word;
     }
 
     .solution-content th {
@@ -173,19 +175,19 @@
     }
 
     .action-header {
-      margin-bottom: 24px;
+      margin-bottom: 20px;
       display: none; 
       flex-wrap: wrap;
       justify-content: space-between;
       align-items: center;
-      gap: 16px;
+      gap: 12px;
       max-width: 1200px;
       margin-left: auto;
       margin-right: auto;
       width: 100%;
       background: #ffffff;
-      padding: 16px;
-      border-radius: 8px;
+      padding: 12px;
+      border-radius: 6px;
       border: 1px solid #e2e8f0;
       box-sizing: border-box;
     }
@@ -198,70 +200,61 @@
     }
 
     .ict-input {
-      width: 80px;
-      padding: 10px;
+      width: 70px;
+      padding: 8px;
       border: 1px solid #cbd5e1;
-      border-radius: 6px;
+      border-radius: 4px;
       font-weight: bold;
       text-align: center;
-      font-size: 14px;
+      font-size: 13px;
     }
 
     .btn-group {
       display: flex;
-      gap: 12px;
+      gap: 10px;
     }
 
     .action-btn {
-      padding: 12px 24px; 
+      padding: 10px 20px; 
       color: white; 
       border: none; 
-      border-radius: 6px; 
+      border-radius: 4px; 
       cursor: pointer; 
       font-weight: bold; 
       font-family: system-ui, -apple-system, sans-serif;
-      font-size: 14px;
+      font-size: 13px;
       transition: all 0.2s ease;
     }
 
-    .btn-docx {
-      background: #10b981; 
-      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
-    }
+    .btn-docx { background: #10b981; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.15); }
     .btn-docx:hover { background: #059669; }
 
-    .btn-pdf {
-      background: #ef4444; 
-      box-shadow: 0 4px 12px rgba(239, 68, 68, 0.2);
-    }
+    .btn-pdf { background: #ef4444; box-shadow: 0 4px 12px rgba(239, 68, 68, 0.15); }
     .btn-pdf:hover { background: #dc2626; }
 
-    .btn-ict {
-      background: #f59e0b;
-      box-shadow: 0 4px 12px rgba(245, 158, 11, 0.2);
-    }
+    .btn-ict { background: #f59e0b; box-shadow: 0 4px 12px rgba(245, 158, 11, 0.15); }
     .btn-ict:hover { background: #d97706; }
 
     .portal-main-footer {
       margin-top: auto;
-      padding: 24px 16px;
+      padding: 16px;
       text-align: center;
       font-family: system-ui, -apple-system, sans-serif;
-      font-size: 13px;
+      font-size: 11px;
       font-weight: 600;
       color: #94a3b8;
       letter-spacing: 1px;
     }
 
     @media (max-width: 768px) {
-      body { padding: 12px; }
-      .action-header { flex-direction: column; text-align: center; margin-bottom: 16px; }
+      body { padding: 8px; }
+      .action-header { flex-direction: column; text-align: center; margin-bottom: 12px; }
       .ict-generator-box { width: 100%; flex-direction: column; }
       .ict-input { width: 100%; box-sizing: border-box; }
       .btn-group { width: 100%; flex-direction: column; }
       .action-btn { width: 100%; }
-      .student-sheet { padding: 20px; margin-bottom: 16px; }
-      .header-info { flex-direction: column; align-items: flex-start; gap: 12px; padding: 14px; }
+      .student-sheet { padding: 16px; margin-bottom: 12px; }
+      .header-info { flex-direction: column; align-items: flex-start; gap: 8px; padding: 10px; }
       .header-info .meta-right { text-align: left !important; }
       .solution-content { column-count: 1; column-rule: none; }
       .solution-content table { display: block; width: 100%; overflow-x: auto; white-space: nowrap; }
@@ -270,7 +263,7 @@
     @media print {
       @page {
         size: A4 portrait;
-        margin: 15mm;
+        margin: 0.3in;
       }
 
       body {
@@ -283,7 +276,7 @@
       .student-sheet {
         border: none;
         padding: 0;
-        margin: 0;
+        margin: 0 0 0.4in 0;
         box-shadow: none;
         page-break-after: always; 
         break-after: page;
@@ -297,8 +290,8 @@
         border: none !important;
         border-bottom: 2px solid #000000 !important;
         border-radius: 0 !important;
-        padding: 0 0 12px 0 !important;
-        margin-bottom: 24px !important;
+        padding: 0 0 6px 0 !important;
+        margin-bottom: 16px !important;
         background-color: transparent !important;
         display: flex !important;
         flex-direction: row !important;
@@ -307,20 +300,20 @@
       }
       .header-info .meta-left strong {
         color: #000000 !important;
-        font-size: 10pt !important;
+        font-size: 9pt !important;
         text-transform: uppercase !important;
         letter-spacing: normal !important;
       }
       .header-info .meta-left .val-text {
         color: #000000 !important;
-        font-size: 10pt !important;
-        font-weight: normal !important;
+        font-size: 11pt !important;
+        font-weight: bold !important;
       }
       .header-info .meta-right {
         text-align: right !important;
       }
       .header-info .meta-right .status-tag {
-        font-size: 10pt !important;
+        font-size: 9pt !important;
         font-weight: bold !important;
         background: transparent !important;
         color: #000000 !important;
@@ -337,11 +330,11 @@
 
       .solution-content {
         font-family: 'Courier New', Courier, monospace;
-        font-size: 10pt;
-        line-height: 1.3;
+        font-size: 9.5pt;
+        line-height: 1.25;
         text-align: left;
         column-count: 2 !important; 
-        column-gap: 40px;
+        column-gap: 30px;
         column-rule: 1px solid #000000; 
       }
 
@@ -349,11 +342,16 @@
         display: table !important;
         overflow-x: visible !important;
         white-space: normal !important;
+        width: 100% !important;
+        border: 1px solid #000000 !important;
+        border-collapse: collapse !important;
       }
 
       .solution-content th, 
       .solution-content td {
         border: 1px solid #000000 !important;
+        padding: 4px 8px !important;
+        font-size: 9pt !important;
       }
 
       .solution-content th {
@@ -426,81 +424,124 @@
       }
     }
 
-    // High-Fidelity Subject-Aware Bulk Center Distributing Mutation Engine
+    // Comprehensive Dynamic Subject Router & Mutation Symmetrical Engine
     function executeClientMutationEngine(baseHtml, index, subjectName) {
       if (!baseHtml) return "<p>Empty Structure Blueprint Context.</p>";
       
+      let output = baseHtml;
       let subject = (subjectName || "").toLowerCase();
-      let alteredContent = baseHtml;
       
-      const isExactScience = subject.includes("math") || subject.includes("physic") || subject.includes("chemist") || subject.includes("further math");
-
-      // Seed decision mapping calculated safely via structural iteration indexes
-      function checkStepFork(modulus, threshold) {
-        return ((index + threshold) % modulus) === 0;
+      // Deterministic Seed Generation Engine Mapping
+      let seedCursor = index * 13;
+      function getDeterministicChoice(salt, totalOptions) {
+        let score = 0;
+        const combinedSeed = "seed_sys_" + index + "_" + salt + seedCursor;
+        for (let i = 0; i < combinedSeed.length; i++) {
+          score += combinedSeed.charCodeAt(i) * (i + 1);
+        }
+        seedCursor += 7;
+        return Math.abs(score) % totalOptions;
       }
 
-      if (isExactScience) {
-        // --- ROUTE A: SCIENTIFIC PROC STRUCTURING (Preserves strict math logic paths, rearranges prose) ---
-        const scienceTransforms = [
-          { key: /Using the formula/gi, alt: "Applying the equation" },
-          { key: /Applying the equation/gi, alt: "From the standard expression" },
-          { key: /We can calculate/gi, alt: "The evaluation yields" },
-          { key: /The evaluation yields/gi, alt: "We obtain" },
-          { key: /Substitute the given values/gi, alt: "Placing the parameters into the expression" },
-          { key: /Placing the parameters into the expression/gi, alt: "Substituting the data constants" },
-          { key: /Therefore, the final answer is/gi, alt: "Consequently, we arrive at" },
-          { key: /Consequently, we arrive at/gi, alt: "Thus, the evaluation results in" }
-        ];
-
-        scienceTransforms.forEach((phrase, stepIdx) => {
-          if (checkStepFork(2, stepIdx)) {
-            alteredContent = alteredContent.replace(phrase.key, phrase.alt);
-          }
-        });
-
-        // Swap unit representations dynamically from page to page
-        if (checkStepFork(3, 1)) {
-          alteredContent = alteredContent.replace(/m\/s\^2/g, "ms^{-2}").replace(/m\/s/g, "ms^{-1}").replace(/mol\/dm\^3/g, "mol&middot;dm^{-3}");
-        } else if (checkStepFork(3, 2)) {
-          alteredContent = alteredContent.replace(/m\/s\^2/g, "metres per second squared").replace(/m\/s/g, "metres per second");
-        }
-
-      } else {
-        // --- ROUTE B: GENERAL PROSE & ARTS STRUCTURING (Rotates linguistic variations deeply) ---
-        const proseTransforms = [
-          { key: /\bcan be defined as\b/gi, alt: "refers to" },
-          { key: /\brefers to\b/gi, alt: "is described as" },
-          { key: /\bimportant factors\b/gi, alt: "key elements" },
-          { key: /\bkey elements\b/gi, alt: "critical attributes" },
-          { key: /\bthe main reason for\b/gi, alt: "the primary cause of" },
-          { key: /\bthe primary cause of\b/gi, alt: "the fundamental basis behind" },
-          { key: /\bconsequences of\b/gi, alt: "effects resulting from" },
-          { key: /\bwith reference to\b/gi, alt: "in relation to" }
-        ];
-
-        proseTransforms.forEach((phrase, stepIdx) => {
-          if (checkStepFork(2, stepIdx)) {
-            alteredContent = alteredContent.replace(phrase.key, phrase.alt);
-          }
-        });
-
-        // Alternating sub-ordered layout listings cleanly
-        if (alteredContent.includes('<li>') && checkStepFork(3, 0)) {
-          alteredContent = alteredContent.replace(/<ul>([\s\S]*?)<\/ul>/g, (listMatch, listInner) => {
-            let items = listInner.split('<li>').filter(item => item.trim() !== "");
-            if (items.length > 2) {
-              let rotated = [items[items.length - 1], ...items.slice(0, items.length - 1)];
-              return `<ul><li>` + rotated.join('<li>') + `</ul>`;
+      // Layer 1: List Order Randomization Shuffler
+      if (output.includes('<li>')) {
+        output = output.replace(/<(ul|ol)>([\s\S]*?)<\/\1>/gi, (listMatch, listType, listInner) => {
+          let items = listInner.split(/<li[^>]*>/i).map(item => item.replace(/<\/li>/i, '').trim()).filter(item => item !== "");
+          if (items.length >= 2) {
+            for (let i = items.length - 1; i > 0; i--) {
+              const j = getDeterministicChoice("list_print_" + i, i + 1);
+              let temp = items[i]; items[i] = items[j]; items[j] = temp;
             }
-            return listMatch;
-          });
-        }
+            return `<${listType}><li>` + items.join('</li><li>') + '</li></' + listType + '>';
+          }
+          return listMatch;
+        });
       }
 
-      // 3. Inject micro layout-signature variants safely
+      // Layer 2: Universal High-Density Phrasing Matrix (Applies to all papers)
+      const universalVoicing = [
+        { key: /\bcan be defined as\b/gi, options: ["simply denotes", "refers explicitly to", "is traditionally described as", "fundamentally represents"] },
+        { key: /\bthe main reason for\b/gi, options: ["the primary catalyst behind", "the core driving force for", "the foundational basis of", "the chief explanation for"] },
+        { key: /\bimportant factors\b/gi, options: ["vital structural parameters", "critical dimensions", "key underlying attributes", "essential pillars"] },
+        { key: /\bconsequences of\b/gi, options: ["downstream implications of", "direct structural outcomes of", "ramifications tied to", "the aftermath of"] },
+        { key: /\bwith reference to\b/gi, options: ["drawing direct context from", "appraising data within", "keeping in perspective", "critically observing"] },
+        { key: /\bIn conclusion\b/gi, options: ["On a final note", "To summarize the structural findings", "In summary", "Bringing these factors together"] },
+        { key: /\brefers to\b/gi, options: ["implies", "points directly to", "signifies", "indicates"] },
+        { key: /\baimed at\b/gi, options: ["designed to", "implemented for", "focused on", "geared towards"] },
+        { key: /\bnegative impact on\b/gi, options: ["adverse effect on", "detrimental consequence for", "harmful disruption to", "downward pressure on"] },
+        { key: /\bpositive impact on\b/gi, options: ["beneficial contribution to", "constructive effect on", "favourable influence on", "progressive layout for"] },
+        { key: /\bDue to\b/gi, options: ["As a consequence of", "Owing directly to", "Spurred by", "Driven by"] },
+        { key: /\bneeded to\b/gi, options: ["required to", "essential to", "vital to", "imperative for"] }
+      ];
+
+      universalVoicing.forEach((voice, idx) => {
+        const choice = getDeterministicChoice("univ_print_" + idx, voice.options.length);
+        output = output.replace(voice.key, voice.options[choice]);
+      });
+
+      // Layer 3: Subject Route Department Engines
+      let activeDomainPhrases = [];
+
+      // A. PURE & APPLIED SCIENCES (Mathematics, Physics, Chemistry, Biology)
+      if (/math|physic|chemist|biolog|science/.test(subject)) {
+        activeDomainPhrases = [
+          { key: /Using the formula/gi, options: ["Applying the standard equation", "From the established relation", "Utilizing the structural expression", "By invoking the formula"] },
+          { key: /We can calculate/gi, options: ["The evaluation directly yields", "We systematically obtain", "Computing the expressions results in", "It follows mathematically that"] },
+          { key: /Substitute the given values/gi, options: ["Placing the verified parameters into the expression", "Substituting our known constants", "Inputting variables directly", "Populating the formula with the data parameters"] },
+          { key: /Therefore, the final answer is/gi, options: ["Consequently, the computed value resolves to", "Hence, we arrive at the terminal value of", "Thus, the final evaluation yields", "As a result, the output is calculated as"] }
+        ];
+        if (getDeterministicChoice("units_print", 2)) {
+          output = output.replace(/m\/s\^2/g, "ms^{-2}").replace(/m\/s/g, "ms^{-1}").replace(/kg\s·\sm\/s/g, "kg m s^{-1}").replace(/mol\/dm\^3/g, "mol&middot;dm^{-3}");
+        }
+      } 
+      // B. COMMERCIAL DEPT (Economics, Commerce, Accounting, Insurance)
+      else if (/econom|commerc|account|insur|bus/.test(subject)) {
+        activeDomainPhrases = [
+          { key: /\bhelps an individual make rational decisions\b/gi, options: ["guides economic actors in executing optimized choices", "enables market participants to execute logical decisions", "serves as an analytical framework for structured choice-making"] },
+          { key: /\bavoiding wasteful expenditure\b/gi, options: ["curbing inefficient or redundant resource outlays", "preventing the misallocation of scarce capital assets", "minimizing loose consumer spending patterns"] },
+          { key: /\bfeatures of\b/gi, options: ["structural characteristics identifying", "identifiable hallmarks of", "defining components attached to", "distinguishing aspects of"] },
+          { key: /\btrade restriction\b/gi, options: ["protectionist barrier", "commercial tariff ceiling", "regulatory trade barrier", "import containment policy"] },
+          { key: /\bprofit maximization\b/gi, options: ["revenue optimization goal", "return optimization matrix", "net earnings yield maximization"] }
+        ];
+      } 
+      // C. HUMANITIES & ARTS (Government, History, CRS/IRS, Civic Education, Geography)
+      else if (/govern|histor|civic|geog|relig|crs|irs/.test(subject)) {
+        activeDomainPhrases = [
+          { key: /\bthe main functions of\b/gi, options: ["the primary institutional roles played by", "the fundamental responsibilities sovereign to", "the core operational mandates of"] },
+          { key: /\bpolitical power\b/gi, options: ["administrative authority", "sovereign state power", "governance jurisdiction", "constitutional executive authority"] },
+          { key: /\bconducive environment\b/gi, options: ["stable socio-political framework", "harmonious regulatory setting", "enabling structural environment"] },
+          { key: /\bcitizens are expected to\b/gi, options: ["the citizenry is civicly obligated to", "individuals retain the civic duty to", "constituents are structurally required to"] }
+        ];
+      } 
+      // D. LANGUAGES & LITERATURE (English Language, Literature, Tiv, Yoruba, Hausa, French)
+      else if (/english|lit|language|french|tiv|yoruba|hausa|igbo/.test(subject)) {
+        activeDomainPhrases = [
+          { key: /\bFrom the passage\b/gi, options: ["Based on the provided text", "Evident from the narrative layout", "As deduced from the excerpt", "According to the author's exposition"] },
+          { key: /\bthe author implies that\b/gi, options: ["the writer subtly suggests that", "the text conveys the underlying premise that", "the author contextualizes the idea that"] },
+          { key: /\bgrammatical function\b/gi, options: ["structural syntactic role", "grammatical assignment", "linguistic function within the clause", "syntactic designation"] },
+          { key: /\bmetaphor\b/gi, options: ["figurative analogical expression", "metaphorical representation", "symbolic literary device"] },
+          { key: /\bshows that\b/gi, options: ["illustrates clearly that", "underscores the fact that", "exemplifies how", "demonstrates explicitly that"] }
+        ];
+      }
+      // E. VOCATIONAL & AGRICULTURAL SCIENCES (Agric Science, Home Econ, Data Processing)
+      else if (/agric|farm|home\s*econ|draw|data|process|comput|tech/.test(subject)) {
+        activeDomainPhrases = [
+          { key: /\bmethods of controlling\b/gi, options: ["mitigation techniques for addressing", "management protocols applied to suppress", "eradication and containment measures for"] },
+          { key: /\bimportant management practices\b/gi, options: ["essential cultural operations", "vital farm husbandry procedures", "critical upkeep metrics"] },
+          { key: /\bmain advantages of\b/gi, options: ["primary structural merits associated with", "paramount benefits delivered by", "leading operational efficiencies gained from"] },
+          { key: /\bsystem configurations\b/gi, options: ["operational processing modules", "architectural setups", "structural node frameworks"] }
+        ];
+      }
+
+      // Execute designated subject variations
+      activeDomainPhrases.forEach((phrase, dIdx) => {
+        const choice = getDeterministicChoice("dept_print_" + dIdx, phrase.options.length);
+        output = output.replace(phrase.key, phrase.options[choice]);
+      });
+
+      // Inject hidden micro layout signatures
       const parser = new DOMParser();
-      const doc = parser.parseFromString(alteredContent, 'text/html');
+      const doc = parser.parseFromString(output, 'text/html');
       const paragraphs = doc.querySelectorAll('p, td');
       if (paragraphs.length > 0) {
         const targetCell = paragraphs[index % paragraphs.length];
@@ -535,7 +576,7 @@
                 <strong>Candidate Name</strong><br>
                 <div class="val-text" style="color: #d97706; font-weight:800;">${mockStudentName}</div>
                 <strong style="margin-top: 4px; display:inline-block;">Subject Context</strong><br>
-                <div class="val-text" style="font-size:14px; font-weight:600; color:#475569;">${backupMasterSubject}</div>
+                <div class="val-text" style="font-size:13px; font-weight:600; color:#475569;">${backupMasterSubject}</div>
               </div>
               <div class="meta-right">
                 <span class="status-tag" style="background:#fef3c7; color:#b45309;">UNASSIGNED ICT BULK VARIANT</span>
@@ -565,7 +606,7 @@
 
       if (baseExam) {
         backupMasterSubject = baseExam.subject || "Examination Paper Copy";
-        backupMasterText = baseExam.master_solution_template || "<p>Base Master Template Empty.</p>";
+        backupMasterText = baseExam.master_solution_template || "<p>No active solution text structure compiled in database.</p>";
       }
 
       const { data, error } = await supabaseClient
@@ -630,7 +671,6 @@
           subjectName = backupMasterSubject;
         }
 
-        // Apply secondary mutation on fetch to differentiate adjacent prints even if pull contains duplicates
         const rawContent = record.unique_solution_text || backupMasterText;
         const solutionText = executeClientMutationEngine(rawContent, index, subjectName);
 
@@ -641,7 +681,7 @@
                 <strong>Candidate Name</strong><br>
                 <div class="val-text">${studentName}</div>
                 <strong style="margin-top: 4px; display:inline-block;">Subject Context</strong><br>
-                <div class="val-text" style="font-size:14px; font-weight:600; color:#475569;">${subjectName}</div>
+                <div class="val-text" style="font-size:13px; font-weight:600; color:#475569;">${subjectName}</div>
               </div>
               <div class="meta-right">
                 <span class="status-tag">EXAMINATION ARCHITECTURE STATUS</span>
@@ -694,17 +734,18 @@
         const parser = new DOMParser();
         const subDoc = parser.parseFromString(solutionContentRaw, 'text/html');
         
+        // Critical Table Inline Layout Hardcoding Layer for Flawless Word Representation
         subDoc.querySelectorAll('table').forEach(table => {
           table.setAttribute('border', '1');
           table.setAttribute('cellspacing', '0');
           table.setAttribute('cellpadding', '6');
-          table.setAttribute('style', 'border-collapse:collapse; width:100%; border:1px solid #000000; margin:14px 0;');
+          table.setAttribute('style', 'border-collapse:collapse; width:100%; border:1px solid #000000; margin:12px 0;');
           
           table.querySelectorAll('th, td').forEach(cell => {
-            cell.setAttribute('style', 'border:1px solid #000000; padding:6px 10px; font-family:"Courier New"; font-size:10pt;');
+            cell.setAttribute('style', 'border:1px solid #000000; padding:5px 8px; font-family:"Courier New"; font-size:10pt; word-break:break-word;');
           });
           table.querySelectorAll('th').forEach(th => {
-            th.setAttribute('style', 'border:1px solid #000000; padding:6px 10px; background-color:#eaeded; font-weight:bold; font-family:"Courier New"; font-size:10pt;');
+            th.setAttribute('style', 'border:1px solid #000000; padding:5px 8px; background-color:#eaeded; font-weight:bold; font-family:"Courier New"; font-size:10pt;');
           });
         });
 
@@ -717,7 +758,7 @@
 
         docHtmlBody += `
           ${pageBreak}
-          <table width="100%" cellspacing="0" cellpadding="0" style="border-collapse:collapse; border-bottom:2.5pt solid #000000; margin-bottom:24px; padding-bottom:8px; font-family:'Courier New'; font-size:10.5pt;">
+          <table width="100%" cellspacing="0" cellpadding="0" style="border-collapse:collapse; border-bottom:2pt solid #000000; margin-bottom:16px; padding-bottom:6px; font-family:'Courier New'; font-size:10.5pt;">
             <tr>
               <td align="left" valign="bottom" style="border:none; padding:0; text-transform:uppercase; font-family:'Courier New';">
                 <strong>Candidate Name:</strong> ${studentName}<br/>
@@ -742,7 +783,7 @@
         <style>
           @page {
             size: 21.0cm 29.7cm; 
-            margin: 1.5cm 1.5cm 1.5cm 1.5cm;
+            margin: 1.0cm 1.0cm 1.0cm 1.0cm;
           }
           body {
             font-family: 'Courier New', Courier, monospace;
@@ -755,14 +796,14 @@
             mso-element:section;
             page-break-before:auto;
             mso-section-break-type:continuous;
-            mso-columns:2 20.0pt; 
+            mso-columns:2 18.0pt; 
           }
           p, li {
             margin:0in;
-            margin-bottom:8pt;
+            margin-bottom:6pt;
             font-family:'Courier New';
             font-size:10pt;
-            line-height:1.3;
+            line-height:1.25;
           }
           img { max-width: 100%; }
         </style>

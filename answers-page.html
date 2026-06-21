@@ -9,131 +9,54 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="manifest" href="/manifest.json">
-<meta name="theme-color" content="#020617">
+  <meta name="theme-color" content="#020617">
   <script src="https://cdn.tailwindcss.com"></script>
   
   <script>
-      if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/sw.js')
-      .then(reg => console.log('Portal Service Worker synchronized safely.', reg.scope))
-      .catch(err => console.error('PWA Pipeline Registration Denied:', err));
-  });
-}
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js')
+          .then(reg => console.log('Portal Service Worker synchronized safely.', reg.scope))
+          .catch(err => console.error('PWA Pipeline Registration Denied:', err));
+      });
+    }
 
     tailwind.config = {
       theme: {
         extend: {
-          fontFamily: {
-            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
-          },
+          fontFamily: { sans: ['"Plus Jakarta Sans"', 'sans-serif'] },
           boxShadow: {
             'cosmic': '0 4px 30px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.1)',
             'cosmic-hover': '0 10px 40px rgba(99, 102, 241, 0.15), 0 4px 30px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.2)',
             'glow': '0 0 15px rgba(99, 102, 241, 0.5)'
           },
-          animation: {
-            'spin-slow': 'spin 120s linear infinite',
-          }
+          animation: { 'spin-slow': 'spin 120s linear infinite' }
         }
       }
     }
   </script>
   <style>
-    @keyframes buttonShimmer {
-      0% { left: -100%; }
-      30%, 100% { left: 150%; }
-    }
+    @keyframes buttonShimmer { 0% { left: -100%; } 30%, 100% { left: 150%; } }
     .animate-shimmer::before {
-      content: '';
-      position: absolute;
-      top: 0; left: -100%;
-      width: 50%; height: 100%;
+      content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%;
       background: linear-gradient(90deg, transparent, rgba(255,255,255,0.25), transparent);
-      transform: skewX(-25deg);
-      animation: buttonShimmer 4s infinite linear;
+      transform: skewX(-25deg); animation: buttonShimmer 4s infinite linear;
     }
     
-    /* Global layout constraint architectures to defeat scrolling and zooming artifacts */
-    html, body {
-      max-width: 100vw;
-      width: 100vw;
-      height: 100%;
-      overflow: hidden;
-      touch-action: manipulation;
-    }
-
-    input, button {
-      font-size: 16px !important;
-      touch-action: manipulation;
-    }
-
+    html, body { max-width: 100vw; width: 100vw; height: 100%; overflow: hidden; touch-action: manipulation; }
+    input, button { font-size: 16px !important; touch-action: manipulation; }
     .no-scrollbar::-webkit-scrollbar { display: none; }
     .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
-    .solution-content {
-      background-color: #ffffff;
-      color: #1e293b;
-      padding: 0.25rem;
-      width: 100%;
-      box-sizing: border-box;
-    }
+    .solution-content { background-color: #ffffff; color: #1e293b; padding: 0.25rem; width: 100%; box-sizing: border-box; }
+    .solution-content h3 { font-size: 0.9rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: #0f172a; margin-bottom: 0.75rem; margin-top: 0.5rem; border-bottom: 2px solid #cbd5e1; padding-bottom: 0.25rem; }
+    .solution-content p { font-size: 0.825rem; color: #334155; line-height: 1.5; margin-bottom: 1rem; }
     
-    .solution-content h3 {
-      font-size: 0.9rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      color: #0f172a;
-      margin-bottom: 0.75rem;
-      margin-top: 0.5rem;
-      border-bottom: 2px solid #cbd5e1;
-      padding-bottom: 0.25rem;
-    }
-    .solution-content p {
-      font-size: 0.825rem;
-      color: #334155;
-      line-height: 1.5;
-      margin-bottom: 1rem;
-    }
-    
-    .solution-content table {
-      width: 100% !important;
-      max-width: 100%;
-      border-collapse: separate;
-      border-spacing: 0;
-      margin: 1rem 0;
-      font-size: 0.75rem;
-      table-layout: fixed;
-      border-radius: 6px;
-      overflow: hidden;
-      border: 1px solid #cbd5e1;
-      box-sizing: border-box;
-    }
-    .solution-content th, .solution-content td {
-      width: 50%;
-      border-bottom: 1px solid #cbd5e1;
-      border-right: 1px solid #cbd5e1;
-      padding: 8px 10px;
-      word-wrap: break-word;
-      word-break: break-word;
-      overflow-wrap: break-word;
-      white-space: normal;
-    }
-    .solution-content th:last-child, .solution-content td:last-child {
-      border-right: none;
-    }
-    .solution-content tr:last-child td {
-      border-bottom: none;
-    }
-    .solution-content th { 
-      background-color: #f1f5f9; 
-      color: #0f172a; 
-      font-weight: 700; 
-      text-align: left;
-      text-transform: uppercase;
-      letter-spacing: 0.02em;
-    }
+    .solution-content table { width: 100% !important; max-width: 100%; border-collapse: separate; border-spacing: 0; margin: 1rem 0; font-size: 0.75rem; table-layout: fixed; border-radius: 6px; overflow: hidden; border: 1px solid #cbd5e1; box-sizing: border-box; }
+    .solution-content th, .solution-content td { width: 50%; border-bottom: 1px solid #cbd5e1; border-right: 1px solid #cbd5e1; padding: 8px 10px; word-wrap: break-word; word-break: break-word; overflow-wrap: break-word; white-space: normal; }
+    .solution-content th:last-child, .solution-content td:last-child { border-right: none; }
+    .solution-content tr:last-child td { border-bottom: none; }
+    .solution-content th { background-color: #f1f5f9; color: #0f172a; font-weight: 700; text-align: left; text-transform: uppercase; letter-spacing: 0.02em; }
     .solution-content td { color: #334155; font-weight: 500; }
     .solution-content tr:nth-child(even) { background-color: #f8fafc; }
 
@@ -147,11 +70,9 @@
 </head>
 <body class="font-sans text-slate-100 h-full flex flex-col bg-slate-950 selection:bg-indigo-500/30 selection:text-indigo-300 w-full overflow-hidden">
 
-  <!-- Static System Header Engine (Pinned to top) -->
   <header class="no-print shrink-0 w-full bg-slate-950/95 border-b border-slate-900/80 backdrop-blur-md px-4 pt-4 pb-3 text-center z-50 shadow-lg">
     <div class="flex flex-col items-center justify-center mb-1 max-w-7xl mx-auto">
       <div class="flex items-center justify-center gap-3 sm:gap-4">
-        <!-- Integrated High-Contrast Premium SVG Diamond Logo -->
         <svg class="w-8 h-8 sm:w-11 sm:h-11 drop-shadow-[0_0_15px_rgba(239,68,68,0.5)] shrink-0" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
           <defs>
             <linearGradient id="headerCrimson" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -165,43 +86,23 @@
           <path d="M 44 44 L 68 44 L 68 56 L 44 56 Z" fill="#ffffff" />
           <path d="M 44 62 L 78 62 L 78 74 L 44 74 Z" fill="#ffffff" />
         </svg>
-
-        <!-- Ultra-Bold System Branding Text Matrix -->
         <h1 class="text-2xl font-[900] tracking-[0.08em] text-white uppercase sm:text-4xl drop-shadow-[0_2px_10px_rgba(0,0,0,0.5)]">
           EXAM<span class="text-red-500 font-black select-none mx-0.5">·</span>SOLUTIONS
         </h1>
       </div>
-
-      <!-- High-Authority Subtitle Row Context -->
-      <p class="text-[9px] sm:text-xs font-extrabold tracking-[0.4em] text-slate-400 uppercase mt-1.5 max-w-md mx-auto">
-        AUTOMATED SIMULATION PORTAL
-      </p>
-
+      <p class="text-[9px] sm:text-xs font-extrabold tracking-[0.4em] text-slate-400 uppercase mt-1.5 max-w-md mx-auto">AUTOMATED SIMULATION PORTAL</p>
       <div class="w-40 h-[2px] mx-auto mt-2 bg-gradient-to-r from-transparent via-indigo-500 to-transparent rounded-full"></div>
     </div>
 
-    <!-- Active Exam Category Sub-Indicators -->
     <div class="flex items-center justify-center gap-2 max-w-md mx-auto my-2 px-2 overflow-x-auto whitespace-nowrap no-scrollbar">
-      <div class="px-2.5 py-1 bg-slate-900/80 border border-slate-800/80 rounded-lg shadow-sm text-[9px] font-bold text-slate-300 tracking-widest uppercase flex items-center gap-1.5 shrink-0">
-        <span class="w-1.5 h-1.5 rounded-full bg-indigo-500"></span>WAEC
-      </div>
-      <div class="px-2.5 py-1 bg-slate-900/80 border border-slate-800/80 rounded-lg shadow-sm text-[9px] font-bold text-slate-300 tracking-widest uppercase flex items-center gap-1.5 shrink-0">
-        <span class="w-1.5 h-1.5 rounded-full bg-purple-500"></span>NECO
-      </div>
-      <div class="px-2.5 py-1 bg-slate-900/80 border border-slate-800/80 rounded-lg shadow-sm text-[9px] font-bold text-slate-300 tracking-widest uppercase flex items-center gap-1.5 shrink-0">
-        <span class="w-1.5 h-1.5 rounded-full bg-pink-500"></span>NABTEB
-      </div>
-      <div class="px-2.5 py-1 bg-slate-900/80 border border-slate-800/80 rounded-lg shadow-sm text-[9px] font-bold text-slate-300 tracking-widest uppercase flex items-center gap-1.5 shrink-0">
-        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>JAMB
-      </div>
+      <div class="px-2.5 py-1 bg-slate-900/80 border border-slate-800/80 rounded-lg shadow-sm text-[9px] font-bold text-slate-300 tracking-widest uppercase flex items-center gap-1.5 shrink-0"><span class="w-1.5 h-1.5 rounded-full bg-indigo-500"></span>WAEC</div>
+      <div class="px-2.5 py-1 bg-slate-900/80 border border-slate-800/80 rounded-lg shadow-sm text-[9px] font-bold text-slate-300 tracking-widest uppercase flex items-center gap-1.5 shrink-0"><span class="w-1.5 h-1.5 rounded-full bg-purple-500"></span>NECO</div>
+      <div class="px-2.5 py-1 bg-slate-900/80 border border-slate-800/80 rounded-lg shadow-sm text-[9px] font-bold text-slate-300 tracking-widest uppercase flex items-center gap-1.5 shrink-0"><span class="w-1.5 h-1.5 rounded-full bg-pink-500"></span>NABTEB</div>
+      <div class="px-2.5 py-1 bg-slate-900/80 border border-slate-800/80 rounded-lg shadow-sm text-[9px] font-bold text-slate-300 tracking-widest uppercase flex items-center gap-1.5 shrink-0"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>JAMB</div>
     </div>
 
-    <!-- Live Navigation Actions -->
     <div class="mt-2 flex items-center justify-center gap-3 max-w-xl mx-auto px-2">
-      <a href="https://t.me/examsolutions_ng" target="_blank" class="animate-shimmer relative overflow-hidden inline-flex items-center gap-2 px-4 py-1.5 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-semibold text-[10px] tracking-wide rounded-lg shadow-md transition-all duration-300 hover:opacity-95 group whitespace-nowrap">
-        <span>✈ Telegram</span>
-      </a>
-      
+      <a href="https://t.me/examsolutions_ng" target="_blank" class="animate-shimmer relative overflow-hidden inline-flex items-center gap-2 px-4 py-1.5 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-semibold text-[10px] tracking-wide rounded-lg shadow-md transition-all duration-300 hover:opacity-95 group whitespace-nowrap"><span>✈ Telegram</span></a>
       <button onclick="forceRefreshSolutions()" id="refresh-btn" class="relative overflow-hidden inline-flex items-center gap-1.5 px-3 py-1.5 bg-slate-900 border border-indigo-500/40 text-indigo-300 hover:text-white font-bold text-[9px] tracking-widest uppercase rounded-lg shadow-glow transition-all duration-300">
         <svg class="w-2.5 h-2.5 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 4v5h.582m15.356 2A8.001 8.001 0 1121.253 8H18"></path></svg>
         <span>Refresh</span>
@@ -209,11 +110,9 @@
     </div>
   </header>
 
-  <!-- High-Gloss Radial Accent Backdrop Layers -->
   <div class="absolute top-0 left-[-10%] w-[500px] h-[500px] rounded-full bg-indigo-600/5 blur-[130px] z-0 pointer-events-none"></div>
   <div class="absolute bottom-[-5%] right-[10%] w-[400px] h-[400px] rounded-full bg-purple-600/5 blur-[120px] z-0 pointer-events-none"></div>
 
-  <!-- Isolated Scrolling Document Main Body Portal -->
   <div class="flex-1 overflow-y-auto w-full box-border z-10 px-3 sm:px-6 lg:px-8 py-4">
     <main id="print-container" class="w-full max-w-5xl mx-auto box-border">
       <div class="text-center py-16 text-slate-500">
@@ -222,13 +121,8 @@
     </main>
   </div>
 
-  <!-- Persistent Bottom Brand Trace Component -->
   <footer class="no-print shrink-0 w-full py-4 bg-slate-950 border-t border-slate-900/60 backdrop-blur-md text-center text-xs font-medium text-slate-500 tracking-wide z-10">
-    <div class="mb-1">
-      <a href="https://examsolutions.netlify.app" class="text-indigo-400 hover:text-indigo-300 font-bold tracking-[0.2em] uppercase transition-colors duration-200">
-        https://examsolutions.netlify.app
-      </a>
-    </div>
+    <div class="mb-1"><a href="https://examsolutions.netlify.app" class="text-indigo-400 hover:text-indigo-300 font-bold tracking-[0.2em] uppercase transition-colors duration-200">https://examsolutions.netlify.app</a></div>
     <div class="text-[9px] tracking-widest text-slate-600 uppercase">WAEC | NECO | NABTEB | JAMB</div>
   </footer>
 
@@ -264,12 +158,11 @@
       
       container.innerHTML = `
         <div class="print-card w-full flex flex-col gap-4 box-border pb-6">
-          <!-- Candidate Header Matrix (Now scrolls with data below header) -->
           <div class="bg-slate-900/60 backdrop-blur-xl border border-slate-800 rounded-xl p-4 sm:p-5 shadow-cosmic flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 box-border">
             <div class="space-y-2 w-full sm:w-auto">
               <div>
                 <span class="block text-[9px] font-bold uppercase tracking-widest text-slate-500">Candidate Reference</span>
-                <div class="text-xs font-bold text-white">Unregistered Device Profile</div>
+                <div class="text-xs font-bold text-white">Device Mutation Instance Profile</div>
               </div>
               <div>
                 <span class="block text-[9px] font-bold uppercase tracking-widest text-slate-500">Subject Context</span>
@@ -285,7 +178,6 @@
             </div>
           </div>
           
-          <!-- Answer Sheet Document Container -->
           <div class="bg-white border border-slate-200 rounded-xl p-4 sm:p-6 shadow-md w-full box-border overflow-hidden">
             <div class="solution-content w-full">${uniqueText}</div>
           </div>
@@ -349,7 +241,7 @@
           finalUniqueText = existingMutation.unique_solution_text;
         } else {
           const baseBlueprint = exam.master_solution_template || exam.master_solution;
-          finalUniqueText = compileVariantText(baseBlueprint, deviceId);
+          finalUniqueText = compileVariantText(baseBlueprint, exam.subject, deviceId);
 
           await supabaseClient.from('mutated_solutions').upsert({
             exam_id: exam.id,
@@ -371,35 +263,128 @@
       const examId = urlParams.get('examId');
       const btn = document.getElementById('refresh-btn');
       
-      if (examId) {
-        localStorage.removeItem(`exam_cache_${examId}`);
-      }
-      
-      if (btn) {
-        btn.innerHTML = `<span>Refreshing...</span>`;
-        btn.classList.add('opacity-70', 'animate-pulse');
-      }
-      
-      setTimeout(() => {
-        window.location.reload();
-      }, 200);
+      if (examId) { localStorage.removeItem(`exam_cache_${examId}`); }
+      if (btn) { btn.innerHTML = `<span>Refreshing...</span>`; btn.classList.add('opacity-70', 'animate-pulse'); }
+      setTimeout(() => { window.location.reload(); }, 200);
     }
 
-    function compileVariantText(template, seed) {
-      if (!template) return `<h3>System Configuration Matrix</h3><p>Fallback text for seed: ${seed}</p>`;
-      
-      const variationMarker = ``;
-      let alteredContent = template;
-      
-      if (alteredContent.includes('<td>') && Math.random() > 0.5) {
-        alteredContent = alteredContent.replace(/<tr>([\s\S]*?)<\/tr>/g, (match) => {
-          if (match.includes('<th>')) return match; 
-          return match.replace(/(\d+)/g, (num) => parseInt(num) + (Math.random() > 0.5 ? 0 : 0)); 
-        });
-      }
-      
-      return alteredContent + variationMarker;
+    function compileVariantText(template, subjectName, seed) {
+  if (!template) return `<h3>System Configuration Matrix</h3><p>Fallback text missing base context details.</p>`;
+  
+  let output = template;
+  let subject = (subjectName || "").toLowerCase();
+  
+  let seedCursor = 17;
+  function getDeterministicChoice(salt, totalOptions) {
+    let score = 0;
+    const combinedSeed = seed + salt + seedCursor;
+    for (let i = 0; i < combinedSeed.length; i++) {
+      score += combinedSeed.charCodeAt(i) * (i + 1);
     }
+    seedCursor += 11;
+    return Math.abs(score) % totalOptions;
+  }
+
+  // 1. DYNAMIC BULLET & NUMBERED LIST SHUFFLER
+  if (output.includes('<li>')) {
+    output = output.replace(/<(ul|ol)>([\s\S]*?)<\/\1>/gi, (listMatch, listType, listInner) => {
+      let items = listInner.split(/<li[^>]*>/i).map(item => item.replace(/<\/li>/i, '').trim()).filter(item => item !== "");
+      if (items.length >= 2) {
+        for (let i = items.length - 1; i > 0; i--) {
+          const j = getDeterministicChoice("list_shuffle_" + i, i + 1);
+          let temp = items[i]; items[i] = items[j]; items[j] = temp;
+        }
+        return `<${listType}><li>` + items.join('</li><li>') + '</li></' + listType + '>';
+      }
+      return listMatch;
+    });
+  }
+
+  // 2. UNIVERSAL HIGH-DENSITY LINGUISTIC MATRIX (Fires on all subjects globally)
+  const universalVoicing = [
+    { key: /<p>(\d+)\.\s+/g, options: ["<p><strong>Item $1:</strong> ", "<p>Focusing on point $1, ", "<p>Regarding $1, ", "<p>Considering factor $1, "] },
+    { key: /\bcan be defined as\b/gi, options: ["simply denotes", "refers explicitly to", "is traditionally described as", "fundamentally represents"] },
+    { key: /\bthe main reason for\b/gi, options: ["the primary catalyst behind", "the core driving force for", "the foundational basis of", "the chief explanation for"] },
+    { key: /\bimportant factors\b/gi, options: ["vital structural parameters", "critical dimensions", "key underlying attributes", "essential pillars"] },
+    { key: /\bconsequences of\b/gi, options: ["downstream implications of", "direct structural outcomes of", "ramifications tied to", "the aftermath of"] },
+    { key: /\bwith reference to\b/gi, options: ["drawing direct context from", "appraising data within", "keeping in perspective", "critically observing"] },
+    { key: /\bIn conclusion\b/gi, options: ["On a final note", "To summarize the structural findings", "In summary", "Bringing these factors together"] },
+    { key: /\brefers to\b/gi, options: ["implies", "points directly to", "signifies", "indicates"] },
+    { key: /\baimed at\b/gi, options: ["designed to", "implemented for", "focused on", "geared towards"] },
+    { key: /\bnegative impact on\b/gi, options: ["adverse effect on", "detrimental consequence for", "harmful disruption to", "downward pressure on"] },
+    { key: /\bpositive impact on\b/gi, options: ["beneficial contribution to", "constructive effect on", "favourable influence on", "progressive layout for"] },
+    { key: /\bDue to\b/gi, options: ["As a consequence of", "Owing directly to", "Spurred by", "Driven by"] },
+    { key: /\bneeded to\b/gi, options: ["required to", "essential to", "vital to", "imperative for"] }
+  ];
+
+  universalVoicing.forEach((voice, idx) => {
+    const choice = getDeterministicChoice("univ_" + idx, voice.options.length);
+    output = output.replace(voice.key, voice.options[choice]);
+  });
+
+  // 3. MASTER DEPARTMENT ROUTER MATRIX
+  let activeDomainPhrases = [];
+
+  // A. PURE & APPLIED SCIENCES (Mathematics, Further Maths, Physics, Chemistry, Biology)
+  if (/math|physic|chemist|biolog|science/.test(subject)) {
+    activeDomainPhrases = [
+      { key: /Using the formula/gi, options: ["Applying the standard equation", "From the established relation", "Utilizing the structural expression", "By invoking the formula"] },
+      { key: /We can calculate/gi, options: ["The evaluation directly yields", "We systematically obtain", "Computing the expressions results in", "It follows mathematically that"] },
+      { key: /Substitute the given values/gi, options: ["Placing the verified parameters into the expression", "Substituting our known constants", "Inputting variables directly", "Populating the formula with the data parameters"] },
+      { key: /Therefore, the final answer is/gi, options: ["Consequently, the computed value resolves to", "Hence, we arrive at the terminal value of", "Thus, the final evaluation yields", "As a result, the output is calculated as"] }
+    ];
+    if (getDeterministicChoice("units", 2)) {
+      output = output.replace(/m\/s\^2/g, "ms^{-2}").replace(/m\/s/g, "ms^{-1}").replace(/kg\s·\sm\/s/g, "kg m s^{-1}");
+    }
+  } 
+  // B. COMMERCIAL DEPT (Economics, Commerce, Financial Accounting, Insurance)
+  else if (/econom|commerc|account|insur|bus/.test(subject)) {
+    activeDomainPhrases = [
+      { key: /\bhelps an individual make rational decisions\b/gi, options: ["guides economic actors in executing optimized choices", "enables market participants to execute logical decisions", "serves as an analytical framework for structured choice-making"] },
+      { key: /\bavoiding wasteful expenditure\b/gi, options: ["curbing inefficient or redundant resource outlays", "preventing the misallocation of scarce capital assets", "minimizing loose consumer spending patterns"] },
+      { key: /\bfeatures of\b/gi, options: ["structural characteristics identifying", "identifiable hallmarks of", "defining components attached to", "distinguishing aspects of"] },
+      { key: /\btrade restriction\b/gi, options: ["protectionist barrier", "commercial tariff ceiling", "regulatory trade barrier", "import containment policy"] },
+      { key: /\bprofit maximization\b/gi, options: ["revenue optimization goal", "return optimization matrix", "net earnings yield maximization"] }
+    ];
+  } 
+  // C. HUMANITIES & SOCIAL SCIENCES (Government, History, CRS/IRS, Civic Education, Geography)
+  else if (/govern|histor|civic|geog|relig|crs|irs/.test(subject)) {
+    activeDomainPhrases = [
+      { key: /\bthe main functions of\b/gi, options: ["the primary institutional roles played by", "the fundamental responsibilities sovereign to", "the core operational mandates of"] },
+      { key: /\bpolitical power\b/gi, options: ["administrative authority", "sovereign state power", "governance jurisdiction", "constitutional executive authority"] },
+      { key: /\bconducive environment\b/gi, options: ["stable socio-political framework", "harmonious regulatory setting", "enabling structural environment"] },
+      { key: /\bcitizens are expected to\b/gi, options: ["the citizenry is civicly obligated to", "individuals retain the civic duty to", "constituents are structurally required to"] }
+    ];
+  } 
+  // D. LANGUAGES & LITERATURE (English Language, Literature-in-English, French, Tiv, Yoruba, Hausa, Igbo)
+  else if (/english|lit|language|french|tiv|yoruba|hausa|igbo/.test(subject)) {
+    activeDomainPhrases = [
+      { key: /\bFrom the passage\b/gi, options: ["Based on the provided text", "Evident from the narrative layout", "As deduced from the excerpt", "According to the author's exposition"] },
+      { key: /\bthe author implies that\b/gi, options: ["the writer subtly suggests that", "the text conveys the underlying premise that", "the author contextualizes the idea that"] },
+      { key: /\bgrammatical function\b/gi, options: ["structural syntactic role", "grammatical assignment", "linguistic function within the clause", "syntactic designation"] },
+      { key: /\bmetaphor\b/gi, options: ["figurative analogical expression", "metaphorical representation", "symbolic literary device"] },
+      { key: /\bshows that\b/gi, options: ["illustrates clearly that", "underscores the fact that", "exemplifies how", "demonstrates explicitly that"] }
+    ];
+  }
+  // E. VOCATIONAL & AGRICULTURAL SCIENCES (Agricultural Science, Home Economics, Technical Drawing, Data Processing)
+  else if (/agric|farm|home\s*econ|draw|data|process|comput|tech/.test(subject)) {
+    activeDomainPhrases = [
+      { key: /\bmethods of controlling\b/gi, options: ["mitigation techniques for addressing", "management protocols applied to suppress", "eradication and containment measures for"] },
+      { key: /\bimportant management practices\b/gi, options: ["essential cultural operations", "vital farm husbandry procedures", "critical upkeep metrics"] },
+      { key: /\bmain advantages of\b/gi, options: ["primary structural merits associated with", "paramount benefits delivered by", "leading operational efficiencies gained from"] },
+      { key: /\bsystem configurations\b/gi, options: ["operational processing modules", "architectural setups", "structural node frameworks"] }
+    ];
+  }
+
+  // Execute the selected department-specific variations dynamically
+  activeDomainPhrases.forEach((phrase, idx) => {
+    const choice = getDeterministicChoice("dept_" + idx, phrase.options.length);
+    output = output.replace(phrase.key, phrase.options[choice]);
+  });
+
+  return output;
+}
+
 
     initializeExamRenderPipeline();
   </script>
