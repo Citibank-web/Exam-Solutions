@@ -7,57 +7,59 @@
   
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght=400;600;700;800;900&display=swap" rel="stylesheet">
   <link rel="manifest" href="/manifest.json">
-<meta name="theme-color" content="#020617">
+  <meta name="theme-color" content="#020617">
 
   <style>
     if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/sw.js')
-      .then(reg => console.log('Portal Service Worker synchronized safely.', reg.scope))
-      .catch(err => console.error('PWA Pipeline Registration Denied:', err));
-  });
-}
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js')
+          .then(reg => console.log('Portal Service Worker synchronized safely.', reg.scope))
+          .catch(err => console.error('PWA Pipeline Registration Denied:', err));
+      });
+    }
  
     /* High Performance Vanilla CSS Layout Grid Matrix */
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; -webkit-font-smoothing: antialiased; }
     body { background-color: #020617; color: #f8fafc; min-height: 100%; display: flex; flex-direction: column; width: 100%; overflow-x: hidden; }
     
-    header { w-full; max-width: 1280px; margin: 0 auto; padding: 32px 16px 8px 16px; text-align: center; z-index: 20; }
+    header { width: 100%; max-width: 1280px; margin: 0 auto; padding: 24px 16px 8px 16px; text-align: center; z-index: 20; }
     .header-flex { display: flex; flex-direction: column; items: center; justify-content: center; margin-bottom: 4px; }
     .brand-row { display: flex; align-items: center; justify-content: center; gap: 12px; }
     
-    h1 { font-size: 28px; font-weight: 900; letter-spacing: 0.08em; text-transform: uppercase; color: #ffffff; }
-    @media (min-width: 640px) { h1 { font-size: 48px; } }
-    .text-red { color: #ef4444; font-weight: 900; margin: 0 2px; user-select: none; }
-    .subtitle { font-size: 10px; font-weight: 800; letter-spacing: 0.4em; color: #94a3b8; text-transform: uppercase; margin-top: 10px; }
-    .divider { width: 224px; height: 3px; margin: 14px auto 0 auto; background: linear-gradient(90deg, transparent, #6366f1, transparent); border-radius: 99px; }
+    /* Reduced heading size from 28px/48px to 22px/36px */
+    h1 { font-size: 22px; font-weight: 900; letter-spacing: 0.08em; text-transform: uppercase; color: #ffffff; }
+    @media (min-width: 640px) { h1 { font-size: 36px; } }
     
-    .badge-row { display: flex; align-items: center; justify-content: center; gap: 8px; max-width: 448px; margin: 16px auto; padding: 0 8px; overflow-x: auto; white-space: nowrap; -ms-overflow-style: none; scrollbar-width: none; }
+    .text-red { color: #ef4444; font-weight: 900; margin: 0 2px; user-select: none; }
+    .subtitle { font-size: 10px; font-weight: 800; letter-spacing: 0.4em; color: #94a3b8; text-transform: uppercase; margin-top: 8px; }
+    .divider { width: 200px; height: 3px; margin: 12px auto 0 auto; background: linear-gradient(90deg, transparent, #6366f1, transparent); border-radius: 99px; }
+    
+    .badge-row { display: flex; align-items: center; justify-content: center; gap: 8px; max-width: 448px; margin: 12px auto; padding: 0 8px; overflow-x: auto; white-space: nowrap; -ms-overflow-style: none; scrollbar-width: none; }
     .badge-row::-webkit-scrollbar { display: none; }
-    .badge { padding: 6px 12px; background: rgba(15, 23, 42, 0.8); border: 1px solid rgba(51, 65, 85, 0.8); border-radius: 8px; font-size: 10px; font-weight: 700; color: #cbd5e1; tracking: 0.1em; display: inline-flex; align-items: center; gap: 6px; }
+    .badge { padding: 6px 12px; background: rgba(15, 23, 42, 0.8); border: 1px solid rgba(51, 65, 85, 0.8); border-radius: 8px; font-size: 10px; font-weight: 700; color: #cbd5e1; letter-spacing: 0.1em; display: inline-flex; align-items: center; gap: 6px; }
     .dot { width: 6px; height: 6px; border-radius: 50%; }
     
-    .tg-btn { position: relative; overflow: hidden; inline-flex; align-items: center; gap: 8px; padding: 10px 24px; background: linear-gradient(90deg, #4f46e5, #7c3aed); color: #ffffff; font-weight: 600; font-size: 12px; text-decoration: none; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); transition: all 0.2s; }
+    .tg-btn { position: relative; overflow: hidden; display: inline-flex; align-items: center; gap: 8px; padding: 10px 24px; background: linear-gradient(90deg, #4f46e5, #7c3aed); color: #ffffff; font-weight: 600; font-size: 12px; text-decoration: none; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); transition: all 0.2s; }
     .tg-btn:hover { opacity: 0.95; transform: scale(1.01); }
     @keyframes buttonShimmer { 0% { left: -100%; } 30%, 100% { left: 150%; } }
     .tg-btn::before { content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.25), transparent); transform: skewX(-25deg); animation: buttonShimmer 4s infinite linear; }
     
-    .main-layout { display: flex; flex: 1; position: relative; w-full; max-width: 1280px; margin: 0 auto; items: center; justify-content: center; padding: 0 16px; }
+    .main-layout { display: flex; flex: 1; position: relative; width: 100%; max-width: 1280px; margin: 0 auto; items: center; justify-content: center; padding: 0 16px; }
     @media (min-width: 1024px) { .main-layout { justify-content: space-between; padding: 0 32px; } }
     
     .blur-1 { position: absolute; top: -10%; left: -10%; width: 500px; height: 500px; border-radius: 50%; background: rgba(99, 102, 241, 0.08); filter: blur(130px); pointer-events: none; z-index: 0; }
     .blur-2 { position: absolute; bottom: -5%; left: 30%; width: 400px; height: 400px; border-radius: 50%; background: rgba(124, 58, 237, 0.08); filter: blur(120px); pointer-events: none; z-index: 0; }
     
-    .form-pane { w-full; max-width: 448px; padding: 24px 0; z-index: 10; display: flex; flex-direction: column; justify-content: center; margin: 0 auto; }
+    .form-pane { width: 100%; max-width: 448px; padding: 16px 0; z-index: 10; display: flex; flex-direction: column; justify-content: center; margin: 0 auto; }
     @media (min-width: 1024px) { .form-pane { margin: 0; max-width: 384px; } }
     
     .icon-badge { display: inline-flex; align-items: center; justify-content: center; width: 44px; height: 44px; border-radius: 12px; background: linear-gradient(135deg, #4f46e5, #ec4899); box-shadow: 0 10px 15px -3px rgba(79, 70, 229, 0.2); margin-bottom: 20px; color: #ffffff; }
     .pane-title { font-size: 24px; font-weight: 800; color: #ffffff; letter-spacing: -0.02em; }
     .pane-desc { margin-top: 6px; font-size: 13px; color: #94a3b8; line-height: 1.6; }
     
-    .tab-container { mt-6; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; padding: 4px; background: rgba(2, 6, 23, 0.6); border: 1px solid rgba(30, 41, 59, 0.6); border-radius: 12px; margin: 24px 0 16px 0; }
+    .tab-container { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; padding: 4px; background: rgba(2, 6, 23, 0.6); border: 1px solid rgba(30, 41, 59, 0.6); border-radius: 12px; margin: 24px 0 16px 0; }
     .tab-btn { padding: 8px 0; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; text-align: center; border-radius: 8px; cursor: pointer; border: none; transition: all 0.2s; }
     .tab-active { color: #ffffff; background: #0f172a; border: 1px solid #1e293b; }
     .tab-inactive { color: #94a3b8; background: transparent; }
@@ -67,38 +69,37 @@
     .form-group { margin-bottom: 16px; }
     label { display: block; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: #94a3b8; margin-bottom: 8px; }
     
-    input { display: block; w-full; width: 100%; h-11; height: 44px; padding: 0 14px; background: rgba(2, 6, 23, 0.8); border: 1px solid #1e293b; border-radius: 12px; font-size: 16px !important; color: #ffffff; outline: none; transition: all 0.2s; touch-action: manipulation; }
+    input { display: block; width: 100%; height: 44px; padding: 0 14px; background: rgba(2, 6, 23, 0.8); border: 1px solid #1e293b; border-radius: 12px; font-size: 16px !important; color: #ffffff; outline: none; transition: all 0.2s; touch-action: manipulation; }
     input:focus { border-color: #6366f1; box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1); }
     input::placeholder { color: #475569; }
-    .input-hint { mt-2; font-size: 10px; color: #64748b; line-height: 1.4; margin-top: 8px; }
+    .input-hint { font-size: 10px; color: #64748b; line-height: 1.4; margin-top: 8px; }
     
-    .submit-btn { w-full; width: 100%; display: flex; justify-content: center; align-items: center; height: 44px; padding: 0 16px; background: linear-gradient(90deg, #4f46e5, #7c3aed); color: #ffffff; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; border-radius: 12px; border: none; cursor: pointer; transition: all 0.2s; margin-top: 4px; touch-action: manipulation; }
+    .submit-btn { width: 100%; display: flex; justify-content: center; align-items: center; height: 44px; padding: 0 16px; background: linear-gradient(90deg, #4f46e5, #7c3aed); color: #ffffff; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; border-radius: 12px; border: none; cursor: pointer; transition: all 0.2s; margin-top: 4px; touch-action: manipulation; }
     .submit-btn:hover { opacity: 0.95; transform: scale(1.01); }
     .submit-btn:active { transform: scale(0.99); }
     
-    .side-panel { position: relative; hidden; display: none; width: 480px; height: 520px; background: rgba(15, 23, 42, 0.3); border: 1px solid #0f172a; border-radius: 16px; overflow: hidden; user-select: none; box-shadow: 0 4px 30px rgba(0, 0, 0, 0.4); flex-shrink: 0; }
+    .side-panel { position: relative; display: none; width: 480px; height: 520px; background: rgba(15, 23, 42, 0.3); border: 1px solid #0f172a; border-radius: 16px; overflow: hidden; user-select: none; box-shadow: 0 4px 30px rgba(0, 0, 0, 0.4); flex-shrink: 0; }
     @media (min-width: 1024px) { .side-panel { display: block; } }
     @media (min-width: 1280px) { .side-panel { width: 560px; } }
     
     .side-content { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: space-between; padding: 40px; z-index: 10; }
     .status-row { display: flex; align-items: center; justify-content: space-between; width: 100%; }
-    .status-indicator { display: flex; align-items: center; gap: 8px; font-size: 10px; font-weight: 700; tracking: 0.05em; color: #818cf8; text-transform: uppercase; }
+    .status-indicator { display: flex; align-items: center; gap: 8px; font-size: 10px; font-weight: 700; letter-spacing: 0.05em; color: #818cf8; text-transform: uppercase; }
     .pulse-dot { width: 6px; height: 6px; border-radius: 50%; background: #34d399; animation: pulse 2s infinite; }
     @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .5; } }
     
-    .clock { font-size: 10px; font-family: monospace; color: #64748b; font-weight: 600; text-transform: uppercase; tracking: 0.05em; background: rgba(2, 6, 23, 0.6); padding: 4px 10px; border-radius: 6px; border: 1px solid #1e293b; }
-    .side-footer { font-size: 11px; font-weight: 500; color: #94a3b8; leading: 1.6; border-top: 1px solid rgba(15,23,42,0.6); pt-4; margin-top: auto; padding-top: 16px; }
+    .clock { font-size: 10px; font-family: monospace; color: #64748b; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; background: rgba(2, 6, 23, 0.6); padding: 4px 10px; border-radius: 6px; border: 1px solid #1e293b; }
+    .side-footer { font-size: 11px; font-weight: 500; color: #94a3b8; line-height: 1.6; border-top: 1px solid rgba(15,23,42,0.6); padding-top: 16px; margin-top: auto; }
     
     footer { width: 100%; margin-top: auto; padding: 24px 0; background: rgba(2, 6, 23, 0.8); border-top: 1px solid rgba(30, 41, 59, 0.6); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); text-align: center; font-size: 12px; font-weight: 500; color: #64748b; z-index: 10; }
     .footer-link { color: #818cf8; text-decoration: none; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; transition: color 0.2s; }
     .footer-link:hover { color: #6366f1; }
     .footer-sub { font-size: 10px; letter-spacing: 0.1em; color: #475569; text-transform: uppercase; margin-top: 6px; }
     
-    .status-msg { display: none; margin-bottom: 20px; padding: 14px; border-radius: 12px; font-size: 12px; font-weight: 600; tracking: 0.02em; text-align: center; }
+    .status-msg { display: none; margin-bottom: 20px; padding: 14px; border-radius: 12px; font-size: 12px; font-weight: 600; letter-spacing: 0.02em; text-align: center; }
     .status-msg.error { background-color: rgba(239, 68, 68, 0.08); border: 1px solid rgba(239, 68, 68, 0.4); color: #f87171; display: block; }
     .status-msg.success { background-color: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.4); color: #34d399; display: block; }
     .hidden { display: none !important; }
-    
   </style>
 </head>
 <body>
@@ -106,7 +107,7 @@
   <header>
     <div class="header-flex">
       <div class="brand-row">
-        <svg style="width:44px; height:44px; filter: drop-shadow(0 0 15px rgba(239,68,68,0.5));" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <svg style="width:36px; height:36px; filter: drop-shadow(0 0 15px rgba(239,68,68,0.5));" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
           <defs>
             <linearGradient id="headerCrimson" x1="0%" y1="0%" x2="100%" y2="100%">
               <stop offset="0%" stop-color="#f87171" />
@@ -213,7 +214,6 @@
     const SUPABASE_ANON_KEY = "sb_publishable_kILpb-WHjdkpeRXVpeQ2dA_MAMqf5m7";
     const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    // Static DOM references to minimize lookup latency
     const clockEl = document.getElementById('runtime-clock');
     const loginForm = document.getElementById('login-form');
     const pinForm = document.getElementById('pin-form');
@@ -302,7 +302,6 @@
 
       setLoading(true, btnPin);
 
-      // Performance Tuning: Selecting only the single tracking key required for routing
       const { data: exam, error: examErr } = await supabaseClient
         .from('exams')
         .select('id') 
