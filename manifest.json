@@ -10,9 +10,15 @@
   "categories": ["education", "utilities"],
   "icons": [
     {
-      "src": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIiB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIj48ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9InB3YUxvZ29HcmFkaWVudCIgeDE9IjAlIiB5MT0iMCUiIHgyPSIxMDAlIiB5Mj0iMTAwJSI+PHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iI2Y4NzE3MSIvPjxzdG9wIG9mZnNldD0iMzAlIiBzdG9wLWNvbG9yPSIjZWY0NDQ0Ii8+PHN0b3Agb2Zmc2V0PSIxMDAlIiBzdG9wLWNvbG9yPSIjYjkxYzFjIi8+PC9saW5lYXJHcmFkaWVudD48ZmlsdGVyIGlkPSJjb3JlR2xvdyIgeD0iLTIwJSIgeT0iLTIwJSIgd2lkdGg9IjE0MCUiIGhlaWdodD0iMTQwJSI+PGRyb3Atc2hhZG93IGR4PSIwIiBkeT0iMTIiIHN0ZERldmlhdGlvbj0iMTYiIGZsb29kLWNvbG9yPSIjZWY0NDQ0IiBmbG9vZC1vcGFjaXR5PSIwLjIiLz48L2ZpbHRlcj48L2RlZnM+PHJlY3Qgd2lkdGg9IjUxMiIgaGVpZ2h0PSI1MTIiIGZpbGw9IiMwMjA2MTciLz48ZyBmaWx0ZXI9InVybCgjY29yZUdsb3cpIj48cGF0aCBkPSJNIDI1NiA3MCBMIDQ0MiAyNTYgTCAyNTYgNDQyIEwgNzAgMjU2IFoiIGZpbGw9InVybCgjcHdhTG9nb0dyYWRpZW50KSIgc3Ryb2tlPSIjZmZmZmZmIiBzdHJva2Utd2lkdGg9IjEyIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+PHBhdGggZD0iTSAyMjQgMTY2IEwgMzYwIDE2NiBMIDM2MCAyMDggTCAyMjQgMjA4IFoiIGZpbGw9IiNmZmZmZmYiLz48cGF0aCBkPSJNIDIyNCAyMzUgTCAzMjIgMjE3IEwgMzIyIDI3NyBMIDIyNCAyNzcgWiIgZmlsbD0iI2ZmZmZmZiIvPjxwYXRoIGQ9Ik0gMjI0IDMwNCBMIDM2MCAzMDQgTCAzNjAgMzQ2IEwgMjI0IDM0NiBaIiBmaWxsPSIjZmZmZmZmIi8+PHBhdGggZD0iTSAyMjQgMTY2IEwgMjQ2IDE2NiBMIDI0NiAzNDYgTCAyMjQgMzQ2IFoiIGZpbGw9IiNmZmZmZmYiLz48L2c+PC9zdmc+",
-      "sizes": "192x192 512x512",
-      "type": "image/svg+xml",
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
       "purpose": "any maskable"
     }
   ]
