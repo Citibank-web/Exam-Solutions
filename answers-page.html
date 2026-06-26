@@ -214,25 +214,35 @@
         }
 
         const deviceId = getDeviceFingerprint();
+        let targetSessionId = null;
 
+        // 🛠️ FIX 1: Map search filters to use your actual layout schema field: 'device_fingerprint'
         let { data: session } = await supabaseClient
           .from('anonymous_sessions')
-          .select('session_device_uuid')
+          .select('session_id')
           .eq('exam_id', exam.id)
-          .eq('session_device_uuid', deviceId)
+          .eq('device_fingerprint', deviceId)
           .maybeSingle();
 
         if (!session) {
-          await supabaseClient
+          const { data: newSession, error: insErr } = await supabaseClient
             .from('anonymous_sessions')
-            .insert([{ exam_id: exam.id, session_device_uuid: deviceId, temporary_alias: `Device-${deviceId.substring(4, 8)}` }]);
+            .insert([{ exam_id: exam.id, device_fingerprint: deviceId }])
+            .select('session_id')
+            .single();
+
+          if (insErr) throw insErr;
+          targetSessionId = newSession.session_id;
+        } else {
+          targetSessionId = session.session_id;
         }
 
+        // 🛠️ FIX 2: Map mutations evaluation criteria to use your true field: 'session_id'
         let { data: existingMutation } = await supabaseClient
           .from('mutated_solutions')
           .select('unique_solution_text')
           .eq('exam_id', exam.id)
-          .eq('anonymous_device_tag', deviceId)
+          .eq('session_id', targetSessionId)
           .maybeSingle();
 
         let finalUniqueText = "";
@@ -243,17 +253,19 @@
           const baseBlueprint = exam.master_solution_template || exam.master_solution;
           finalUniqueText = compileVariantText(baseBlueprint, exam.subject, deviceId);
 
+          // 🛠️ FIX 3: Push payload parameters inside 'mutated_solutions' using valid schema parameters
           await supabaseClient.from('mutated_solutions').upsert({
             exam_id: exam.id,
-            anonymous_device_tag: deviceId,
+            session_id: targetSessionId,
             unique_solution_text: finalUniqueText
-          }, { onConflict: 'anonymous_device_tag,exam_id' });
+          }, { onConflict: 'session_id,exam_id' });
         }
 
         setExamCache(examId, exam.subject, finalUniqueText, exam.exam_pin);
         renderContentLayout(exam.subject, examId, finalUniqueText, exam.exam_pin);
 
       } catch (err) {
+        console.error(err);
         container.innerHTML = `<p class="text-red-400 text-center font-semibold py-4">Structural Generation Exception Detected.</p>`;
       }
     }
@@ -269,122 +281,121 @@
     }
 
     function compileVariantText(template, subjectName, seed) {
-  if (!template) return `<h3>System Configuration Matrix</h3><p>Fallback text missing base context details.</p>`;
-  
-  let output = template;
-  let subject = (subjectName || "").toLowerCase();
-  
-  let seedCursor = 17;
-  function getDeterministicChoice(salt, totalOptions) {
-    let score = 0;
-    const combinedSeed = seed + salt + seedCursor;
-    for (let i = 0; i < combinedSeed.length; i++) {
-      score += combinedSeed.charCodeAt(i) * (i + 1);
-    }
-    seedCursor += 11;
-    return Math.abs(score) % totalOptions;
-  }
-
-  // 1. DYNAMIC BULLET & NUMBERED LIST SHUFFLER
-  if (output.includes('<li>')) {
-    output = output.replace(/<(ul|ol)>([\s\S]*?)<\/\1>/gi, (listMatch, listType, listInner) => {
-      let items = listInner.split(/<li[^>]*>/i).map(item => item.replace(/<\/li>/i, '').trim()).filter(item => item !== "");
-      if (items.length >= 2) {
-        for (let i = items.length - 1; i > 0; i--) {
-          const j = getDeterministicChoice("list_shuffle_" + i, i + 1);
-          let temp = items[i]; items[i] = items[j]; items[j] = temp;
+      if (!template) return `<h3>System Configuration Matrix</h3><p>Fallback text missing base context details.</p>`;
+      
+      let output = template;
+      let subject = (subjectName || "").toLowerCase();
+      
+      let seedCursor = 17;
+      function getDeterministicChoice(salt, totalOptions) {
+        let score = 0;
+        const combinedSeed = seed + salt + seedCursor;
+        for (let i = 0; i < combinedSeed.length; i++) {
+          score += combinedSeed.charCodeAt(i) * (i + 1);
         }
-        return `<${listType}><li>` + items.join('</li><li>') + '</li></' + listType + '>';
+        seedCursor += 11;
+        return Math.abs(score) % totalOptions;
       }
-      return listMatch;
-    });
-  }
 
-  // 2. UNIVERSAL HIGH-DENSITY LINGUISTIC MATRIX (Fires on all subjects globally)
-  const universalVoicing = [
-    { key: /<p>(\d+)\.\s+/g, options: ["<p><strong>Item $1:</strong> ", "<p>Focusing on point $1, ", "<p>Regarding $1, ", "<p>Considering factor $1, "] },
-    { key: /\bcan be defined as\b/gi, options: ["simply denotes", "refers explicitly to", "is traditionally described as", "fundamentally represents"] },
-    { key: /\bthe main reason for\b/gi, options: ["the primary catalyst behind", "the core driving force for", "the foundational basis of", "the chief explanation for"] },
-    { key: /\bimportant factors\b/gi, options: ["vital structural parameters", "critical dimensions", "key underlying attributes", "essential pillars"] },
-    { key: /\bconsequences of\b/gi, options: ["downstream implications of", "direct structural outcomes of", "ramifications tied to", "the aftermath of"] },
-    { key: /\bwith reference to\b/gi, options: ["drawing direct context from", "appraising data within", "keeping in perspective", "critically observing"] },
-    { key: /\bIn conclusion\b/gi, options: ["On a final note", "To summarize the structural findings", "In summary", "Bringing these factors together"] },
-    { key: /\brefers to\b/gi, options: ["implies", "points directly to", "signifies", "indicates"] },
-    { key: /\baimed at\b/gi, options: ["designed to", "implemented for", "focused on", "geared towards"] },
-    { key: /\bnegative impact on\b/gi, options: ["adverse effect on", "detrimental consequence for", "harmful disruption to", "downward pressure on"] },
-    { key: /\bpositive impact on\b/gi, options: ["beneficial contribution to", "constructive effect on", "favourable influence on", "progressive layout for"] },
-    { key: /\bDue to\b/gi, options: ["As a consequence of", "Owing directly to", "Spurred by", "Driven by"] },
-    { key: /\bneeded to\b/gi, options: ["required to", "essential to", "vital to", "imperative for"] }
-  ];
+      // 1. DYNAMIC BULLET & NUMBERED LIST SHUFFLER
+      if (output.includes('<li>')) {
+        output = output.replace(/<(ul|ol)>([\s\S]*?)<\/\1>/gi, (listMatch, listType, listInner) => {
+          let items = listInner.split(/<li[^>]*>/i).map(item => item.replace(/<\/li>/i, '').trim()).filter(item => item !== "");
+          if (items.length >= 2) {
+            for (let i = items.length - 1; i > 0; i--) {
+              const j = getDeterministicChoice("list_shuffle_" + i, i + 1);
+              let temp = items[i]; items[i] = items[j]; items[j] = temp;
+            }
+            return `<${listType}><li>` + items.join('</li><li>') + '</li></' + listType + '>';
+          }
+          return listMatch;
+        });
+      }
 
-  universalVoicing.forEach((voice, idx) => {
-    const choice = getDeterministicChoice("univ_" + idx, voice.options.length);
-    output = output.replace(voice.key, voice.options[choice]);
-  });
+      // 2. UNIVERSAL HIGH-DENSITY LINGUISTIC MATRIX (Fires on all subjects globally)
+      const universalVoicing = [
+        { key: /<p>(\d+)\.\s+/g, options: ["<p><strong>Item $1:</strong> ", "<p>Focusing on point $1, ", "<p>Regarding $1, ", "<p>Considering factor $1, "] },
+        { key: /\bcan be defined as\b/gi, options: ["simply denotes", "refers explicitly to", "is traditionally described as", "fundamentally represents"] },
+        { key: /\bthe main reason for\b/gi, options: ["the primary catalyst behind", "the core driving force for", "the foundational basis of", "the chief explanation for"] },
+        { key: /\bimportant factors\b/gi, options: ["vital structural parameters", "critical dimensions", "key underlying attributes", "essential pillars"] },
+        { key: /\bconsequences of\b/gi, options: ["downstream implications of", "direct structural outcomes of", "ramifications tied to", "the aftermath of"] },
+        { key: /\bwith reference to\b/gi, options: ["drawing direct context from", "appraising data within", "keeping in perspective", "critically observing"] },
+        { key: /\bIn conclusion\b/gi, options: ["On a final note", "To summarize the structural findings", "In summary", "Bringing these factors together"] },
+        { key: /\brefers to\b/gi, options: ["implies", "points directly to", "signifies", "indicates"] },
+        { key: /\baimed at\b/gi, options: ["designed to", "implemented for", "focused on", "geared towards"] },
+        { key: /\bnegative impact on\b/gi, options: ["adverse effect on", "detrimental consequence for", "harmful disruption to", "downward pressure on"] },
+        { key: /\bpositive impact on\b/gi, options: ["beneficial contribution to", "constructive effect on", "favourable influence on", "progressive layout for"] },
+        { key: /\bDue to\b/gi, options: ["As a consequence of", "Owing directly to", "Spurred by", "Driven by"] },
+        { key: /\bneeded to\b/gi, options: ["required to", "essential to", "vital to", "imperative for"] }
+      ];
 
-  // 3. MASTER DEPARTMENT ROUTER MATRIX
-  let activeDomainPhrases = [];
+      universalVoicing.forEach((voice, idx) => {
+        const choice = getDeterministicChoice("univ_" + idx, voice.options.length);
+        output = output.replace(voice.key, voice.options[choice]);
+      });
 
-  // A. PURE & APPLIED SCIENCES (Mathematics, Further Maths, Physics, Chemistry, Biology)
-  if (/math|physic|chemist|biolog|science/.test(subject)) {
-    activeDomainPhrases = [
-      { key: /Using the formula/gi, options: ["Applying the standard equation", "From the established relation", "Utilizing the structural expression", "By invoking the formula"] },
-      { key: /We can calculate/gi, options: ["The evaluation directly yields", "We systematically obtain", "Computing the expressions results in", "It follows mathematically that"] },
-      { key: /Substitute the given values/gi, options: ["Placing the verified parameters into the expression", "Substituting our known constants", "Inputting variables directly", "Populating the formula with the data parameters"] },
-      { key: /Therefore, the final answer is/gi, options: ["Consequently, the computed value resolves to", "Hence, we arrive at the terminal value of", "Thus, the final evaluation yields", "As a result, the output is calculated as"] }
-    ];
-    if (getDeterministicChoice("units", 2)) {
-      output = output.replace(/m\/s\^2/g, "ms^{-2}").replace(/m\/s/g, "ms^{-1}").replace(/kg\s·\sm\/s/g, "kg m s^{-1}");
+      // 3. MASTER DEPARTMENT ROUTER MATRIX
+      let activeDomainPhrases = [];
+
+      // A. PURE & APPLIED SCIENCES (Mathematics, Further Maths, Physics, Chemistry, Biology)
+      if (/math|physic|chemist|biolog|science/.test(subject)) {
+        activeDomainPhrases = [
+          { key: /Using the formula/gi, options: ["Applying the standard equation", "From the established relation", "Utilizing the structural expression", "By invoking the formula"] },
+          { key: /We can calculate/gi, options: ["The evaluation directly yields", "We systematically obtain", "Computing the expressions results in", "It follows mathematically that"] },
+          { key: /Substitute the given values/gi, options: ["Placing the verified parameters into the expression", "Substituting our known constants", "Inputting variables directly", "Populating the formula with the data parameters"] },
+          { key: /Therefore, the final answer is/gi, options: ["Consequently, the computed value resolves to", "Hence, we arrive at the terminal value of", "Thus, the final evaluation yields", "As a result, the output is calculated as"] }
+        ];
+        if (getDeterministicChoice("units", 2)) {
+          output = output.replace(/m\/s\^2/g, "ms^{-2}").replace(/m\/s/g, "ms^{-1}").replace(/kg\s·\sm\/s/g, "kg m s^{-1}");
+        }
+      } 
+      // B. COMMERCIAL DEPT (Economics, Commerce, Financial Accounting, Insurance)
+      else if (/econom|commerc|account|insur|bus/.test(subject)) {
+        activeDomainPhrases = [
+          { key: /\bhelps an individual make rational decisions\b/gi, options: ["guides economic actors in executing optimized choices", "enables market participants to execute logical decisions", "serves as an analytical framework for structured choice-making"] },
+          { key: /\bavoiding wasteful expenditure\b/gi, options: ["curbing inefficient or redundant resource outlays", "preventing the misallocation of scarce capital assets", "minimizing loose consumer spending patterns"] },
+          { key: /\bfeatures of\b/gi, options: ["structural characteristics identifying", "identifiable hallmarks of", "defining components attached to", "distinguishing aspects of"] },
+          { key: /\btrade restriction\b/gi, options: ["protectionist barrier", "commercial tariff ceiling", "regulatory trade barrier", "import containment policy"] },
+          { key: /\bprofit maximization\b/gi, options: ["revenue optimization goal", "return optimization matrix", "net earnings yield maximization"] }
+        ];
+      } 
+      // C. HUMANITIES & SOCIAL SCIENCES (Government, History, CRS/IRS, Civic Education, Geography)
+      else if (/govern|histor|civic|geog|relig|crs|irs/.test(subject)) {
+        activeDomainPhrases = [
+          { key: /\bthe main functions of\b/gi, options: ["the primary institutional roles played by", "the fundamental responsibilities sovereign to", "the core operational mandates of"] },
+          { key: /\bpolitical power\b/gi, options: ["administrative authority", "sovereign state power", "governance jurisdiction", "constitutional executive authority"] },
+          { key: /\bconducive environment\b/gi, options: ["stable socio-political framework", "harmonious regulatory setting", "enabling structural environment"] },
+          { key: /\bcitizens are expected to\b/gi, options: ["the citizenry is civicly obligated to", "individuals retain the civic duty to", "constituents are structurally required to"] }
+        ];
+      } 
+      // D. LANGUAGES & LITERATURE (English Language, Literature-in-English, French, Tiv, Yoruba, Hausa, Igbo)
+      else if (/english|lit|language|french|tiv|yoruba|hausa|igbo/.test(subject)) {
+        activeDomainPhrases = [
+          { key: /\bFrom the passage\b/gi, options: ["Based on the provided text", "Evident from the narrative layout", "As deduced from the excerpt", "According to the author's exposition"] },
+          { key: /\bthe author implies that\b/gi, options: ["the writer subtly suggests that", "the text conveys the underlying premise that", "the author contextualizes the idea that"] },
+          { key: /\bgrammatical function\b/gi, options: ["structural syntactic role", "grammatical assignment", "linguistic function within the clause", "syntactic designation"] },
+          { key: /\bmetaphor\b/gi, options: ["figurative analogical expression", "metaphorical representation", "symbolic literary device"] },
+          { key: /\bshows that\b/gi, options: ["illustrates clearly that", "underscores the fact that", "exemplifies how", "demonstrates explicitly that"] }
+        ];
+      }
+      // E. VOCATIONAL & AGRICULTURAL SCIENCES (Agricultural Science, Home Economics, Technical Drawing, Data Processing)
+      else if (/agric|farm|home\s*econ|draw|data|process|comput|tech/.test(subject)) {
+        activeDomainPhrases = [
+          { key: /\bmethods of controlling\b/gi, options: ["mitigation techniques for addressing", "management protocols applied to suppress", "eradication and containment measures for"] },
+          { key: /\bimportant management practices\b/gi, options: ["essential cultural operations", "vital farm husbandry procedures", "critical upkeep metrics"] },
+          { key: /\bmain advantages of\b/gi, options: ["primary structural merits associated with", "paramount benefits delivered by", "leading operational efficiencies gained from"] },
+          { key: /\bsystem configurations\b/gi, options: ["operational processing modules", "architectural setups", "structural node frameworks"] }
+        ];
+      }
+
+      // Execute the selected department-specific variations dynamically
+      activeDomainPhrases.forEach((phrase, idx) => {
+        const choice = getDeterministicChoice("dept_" + idx, phrase.options.length);
+        output = output.replace(phrase.key, phrase.options[choice]);
+      });
+
+      return output;
     }
-  } 
-  // B. COMMERCIAL DEPT (Economics, Commerce, Financial Accounting, Insurance)
-  else if (/econom|commerc|account|insur|bus/.test(subject)) {
-    activeDomainPhrases = [
-      { key: /\bhelps an individual make rational decisions\b/gi, options: ["guides economic actors in executing optimized choices", "enables market participants to execute logical decisions", "serves as an analytical framework for structured choice-making"] },
-      { key: /\bavoiding wasteful expenditure\b/gi, options: ["curbing inefficient or redundant resource outlays", "preventing the misallocation of scarce capital assets", "minimizing loose consumer spending patterns"] },
-      { key: /\bfeatures of\b/gi, options: ["structural characteristics identifying", "identifiable hallmarks of", "defining components attached to", "distinguishing aspects of"] },
-      { key: /\btrade restriction\b/gi, options: ["protectionist barrier", "commercial tariff ceiling", "regulatory trade barrier", "import containment policy"] },
-      { key: /\bprofit maximization\b/gi, options: ["revenue optimization goal", "return optimization matrix", "net earnings yield maximization"] }
-    ];
-  } 
-  // C. HUMANITIES & SOCIAL SCIENCES (Government, History, CRS/IRS, Civic Education, Geography)
-  else if (/govern|histor|civic|geog|relig|crs|irs/.test(subject)) {
-    activeDomainPhrases = [
-      { key: /\bthe main functions of\b/gi, options: ["the primary institutional roles played by", "the fundamental responsibilities sovereign to", "the core operational mandates of"] },
-      { key: /\bpolitical power\b/gi, options: ["administrative authority", "sovereign state power", "governance jurisdiction", "constitutional executive authority"] },
-      { key: /\bconducive environment\b/gi, options: ["stable socio-political framework", "harmonious regulatory setting", "enabling structural environment"] },
-      { key: /\bcitizens are expected to\b/gi, options: ["the citizenry is civicly obligated to", "individuals retain the civic duty to", "constituents are structurally required to"] }
-    ];
-  } 
-  // D. LANGUAGES & LITERATURE (English Language, Literature-in-English, French, Tiv, Yoruba, Hausa, Igbo)
-  else if (/english|lit|language|french|tiv|yoruba|hausa|igbo/.test(subject)) {
-    activeDomainPhrases = [
-      { key: /\bFrom the passage\b/gi, options: ["Based on the provided text", "Evident from the narrative layout", "As deduced from the excerpt", "According to the author's exposition"] },
-      { key: /\bthe author implies that\b/gi, options: ["the writer subtly suggests that", "the text conveys the underlying premise that", "the author contextualizes the idea that"] },
-      { key: /\bgrammatical function\b/gi, options: ["structural syntactic role", "grammatical assignment", "linguistic function within the clause", "syntactic designation"] },
-      { key: /\bmetaphor\b/gi, options: ["figurative analogical expression", "metaphorical representation", "symbolic literary device"] },
-      { key: /\bshows that\b/gi, options: ["illustrates clearly that", "underscores the fact that", "exemplifies how", "demonstrates explicitly that"] }
-    ];
-  }
-  // E. VOCATIONAL & AGRICULTURAL SCIENCES (Agricultural Science, Home Economics, Technical Drawing, Data Processing)
-  else if (/agric|farm|home\s*econ|draw|data|process|comput|tech/.test(subject)) {
-    activeDomainPhrases = [
-      { key: /\bmethods of controlling\b/gi, options: ["mitigation techniques for addressing", "management protocols applied to suppress", "eradication and containment measures for"] },
-      { key: /\bimportant management practices\b/gi, options: ["essential cultural operations", "vital farm husbandry procedures", "critical upkeep metrics"] },
-      { key: /\bmain advantages of\b/gi, options: ["primary structural merits associated with", "paramount benefits delivered by", "leading operational efficiencies gained from"] },
-      { key: /\bsystem configurations\b/gi, options: ["operational processing modules", "architectural setups", "structural node frameworks"] }
-    ];
-  }
-
-  // Execute the selected department-specific variations dynamically
-  activeDomainPhrases.forEach((phrase, idx) => {
-    const choice = getDeterministicChoice("dept_" + idx, phrase.options.length);
-    output = output.replace(phrase.key, phrase.options[choice]);
-  });
-
-  return output;
-}
-
 
     initializeExamRenderPipeline();
   </script>
