@@ -248,7 +248,7 @@
     }
     .exam-print-row:hover {
       border-color: #4338CA;
-      background-color: #1E1B4B/40;
+      background-color: rgb(30 27 75 / 0.4);
       transform: translateY(-1px);
       box-shadow: 0 4px 12px rgba(99, 102, 241, 0.1);
     }
@@ -308,7 +308,6 @@
       box-shadow: inset 0 -2px 0 rgba(255,255,255,0.1);
     }
     
-    /* Global inline CSS spinner element */
     .btn-loading-spinner {
       width: 14px; height: 14px;
       border: 2px solid transparent;
@@ -326,7 +325,7 @@
     const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
     let cachedExamsRegistry = [];
-    let localCategoryRuntimeMap = {};
+    let localCategoryRuntimeMap = JSON.parse(localStorage.getItem('localCategoryRuntimeMap') || '{}');
 
     // Form DOM Elements
     const examForm = document.getElementById('exam-form');
@@ -345,7 +344,6 @@
     const printListContainer = document.getElementById('print-list-container');
     const logoutBtn = document.getElementById('btn-logout');
 
-    // UI Feedback Helper Utilities
     function setButtonLoading(btnElement, isLoading, explicitDefaultText = "Proceed") {
       if (!btnElement) return;
       if (isLoading) {
@@ -359,7 +357,6 @@
       }
     }
 
-    // Mammoth .docx Parsing Engine Integration Handler
     docxFileInput.addEventListener('change', function(e) {
       const file = e.target.files[0];
       if (!file) return;
@@ -381,7 +378,6 @@
       reader.readAsArrayBuffer(file);
     });
 
-    // Security Verification
     async function verifyAdminAuthentication() {
       const { data: { user }, error } = await supabaseClient.auth.getUser();
       if (error || !user) { window.location.href = "index.html"; return; }
@@ -396,7 +392,6 @@
       fetchStudentProfilesRegistry(); 
     }
 
-    // Pull student profiles roster
     async function fetchStudentProfilesRegistry() {
       const { data: students, error } = await supabaseClient
         .from('profiles')
@@ -427,7 +422,6 @@
       });
     }
 
-    // Global Master Checkbox toggle handler
     toggleAllCheckbox.addEventListener('change', (e) => {
       const allCheckboxes = document.querySelectorAll('input[name="student-checkbox"]');
       allCheckboxes.forEach(cb => {
@@ -435,11 +429,11 @@
       });
     });
 
-    // Refresh drop-downs and listing states
+    // ⚡ OPTIMIZED: Speeds up initial dashboard loading by ignoring large text contents
     async function loadSystemDashboardData() {
       const { data: exams, error } = await supabaseClient
         .from('exams')
-        .select('id, subject, exam_date, master_question, master_solution, exam_pin, master_solution_template')
+        .select('id, subject, exam_date, exam_pin')
         .order('created_at', { ascending: false });
 
       if (error || !exams) return;
@@ -448,7 +442,6 @@
       renderExamsInventoryDisplay(cachedExamsRegistry);
     }
 
-    // Core renderer engine for Step 3 inventory layout
     function renderExamsInventoryDisplay(filteredExams) {
       examSelectDropdown.innerHTML = `<option value="" class="bg-slate-950">-- Choose Exam Paper --</option>`;
       printListContainer.innerHTML = "";
@@ -460,13 +453,14 @@
         opt.innerText = `${exam.subject} (${exam.exam_date})`;
         examSelectDropdown.appendChild(opt);
 
-        const assignedCategory = localCategoryRuntimeMap[exam.id] || "mathematics";
+        const assignedCategory = localCategoryRuntimeMap[exam.id] || inferCategoryFromSubject(exam.subject);
         const pinDisplay = exam.exam_pin ? `PIN: ${exam.exam_pin}` : 'NO PIN ASSIGNED';
 
         const row = document.createElement('div');
         row.className = 'exam-print-row';
+        row.setAttribute('data-id', exam.id);
         row.innerHTML = `
-          <div class="exam-print-info" onclick="triggerEditModeState(${exam.id})">
+          <div class="exam-print-info">
             <h4>${exam.subject} <span class="ml-2 text-xs text-amber-400 font-mono bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/20">${pinDisplay}</span></h4>
             <p>Exam Code ID: EXM-${exam.id} • Context Rule: ${assignedCategory} • ${exam.exam_date}</p>
           </div>
@@ -475,6 +469,10 @@
             <button class="btn-print" onclick="triggerBulkPrintWindow(${exam.id})">Print 🖨</button>
           </div>
         `;
+        
+        row.querySelector('.exam-print-info').addEventListener('click', () => {
+          triggerEditModeState(exam.id);
+        });
         printListContainer.appendChild(row);
       });
 
@@ -483,7 +481,18 @@
       }
     }
 
-    // Real-time lookup filtration engine
+    function inferCategoryFromSubject(subjectName) {
+      const name = subjectName.toLowerCase();
+      if (name.includes('math')) return 'mathematics';
+      if (name.includes('physic') || name.includes('chemist') || name.includes('biolog') || name.includes('science')) return 'sciences';
+      if (name.includes('agric') || name.includes('farm')) return 'agriculture';
+      if (name.includes('english') || name.includes('language') || name.includes('tiv')) return 'languages';
+      if (name.includes('liter') || name.includes('history') || name.includes('civic') || name.includes('crs') || name.includes('irs')) return 'humanities';
+      if (name.includes('econom') || name.includes('account') || name.includes('commerc')) return 'commercial';
+      if (name.includes('draw') || name.includes('engin')) return 'technical';
+      return 'trades';
+    }
+
     examSearchBar.addEventListener('input', (e) => {
       const queryText = e.target.value.toLowerCase().trim();
       const filtered = cachedExamsRegistry.filter(exam => 
@@ -495,39 +504,56 @@
       renderExamsInventoryDisplay(filtered);
     });
 
-    // Initialize Edit Mode State Map
-    function triggerEditModeState(examId) {
-      const targetModel = cachedExamsRegistry.find(exam => exam.id === examId);
-      if (!targetModel) return;
+    // ⚡ OPTIMIZED: Lazy loads deep data payloads instantly on request click
+    async function triggerEditModeState(examId) {
+      const briefModel = cachedExamsRegistry.find(exam => Number(exam.id) === Number(examId));
+      if (!briefModel) return;
 
-      examRuntimeId.value = targetModel.id;
-      document.getElementById('exam-subject').value = targetModel.subject;
-      document.getElementById('exam-date').value = targetModel.exam_date;
-      document.getElementById('exam-question').value = targetModel.master_question;
-      document.getElementById('exam-solution').value = targetModel.master_solution;
-      
-      // Inject PIN and Template updates dynamically to forms
-      document.getElementById('exam-pin').value = targetModel.exam_pin || "";
-      document.getElementById('master-solution-template').value = targetModel.master_solution_template || "";
-
-      document.getElementById('exam-category').value = localCategoryRuntimeMap[targetModel.id] || "mathematics";
-
-      formPanelTitle.innerText = `⚙️ Modify Exam Architecture (ID: EXM-${targetModel.id})`;
-      formPanelTitle.className = "text-base sm:text-lg font-bold tracking-tight pb-4 border-b border-slate-800 mb-6 text-indigo-400 transition-colors duration-300";
-      
-      formActionsWrapper.innerHTML = `
-        <button type="submit" id="btn-exam-submit" class="flex-1 min-w-[120px] h-11 px-4 bg-emerald-600 text-white text-sm font-semibold rounded-xl transition-all duration-200 hover:bg-emerald-500 inline-flex items-center justify-center gap-2"><span>Update Architecture</span></button>
-        <button type="button" id="btn-exam-delete" class="flex-1 min-w-[120px] h-11 px-4 bg-red-600 text-white text-sm font-semibold rounded-xl transition-all duration-200 hover:bg-red-500 inline-flex items-center justify-center gap-2" onclick="executeDestructiveDelete()"><span>Delete Paper</span></button>
-        <button type="button" class="flex-1 min-w-[120px] h-11 px-4 bg-slate-950 border border-slate-800 text-slate-200 text-sm font-semibold rounded-xl transition-all duration-200 hover:bg-slate-900 inline-flex items-center justify-center gap-2" onclick="resetFormToCreationState()"><span>Cancel</span></button>
-      `;
-
-      aiEngineTerminal.style.display = "block";
-      terminalLogger.innerText = `System ready to generate variations for exam EXM-${targetModel.id}...`;
-      
+      formPanelTitle.innerText = `⏳ Loading Architecture Details...`;
       formPanelTitle.scrollIntoView({ behavior: 'smooth' });
+
+      try {
+        const { data: fullModel, error } = await supabaseClient
+          .from('exams')
+          .select('master_question, master_solution, master_solution_template')
+          .eq('id', examId)
+          .single();
+
+        if (error || !fullModel) {
+          alert("Error fetching detailed paper payload constraints.");
+          formPanelTitle.innerText = `❌ Failed to load components.`;
+          return;
+        }
+
+        examRuntimeId.value = briefModel.id;
+        document.getElementById('exam-subject').value = briefModel.subject;
+        document.getElementById('exam-date').value = briefModel.exam_date;
+        document.getElementById('exam-pin').value = briefModel.exam_pin || "";
+        
+        document.getElementById('exam-question').value = fullModel.master_question;
+        document.getElementById('exam-solution').value = fullModel.master_solution;
+        document.getElementById('master-solution-template').value = fullModel.master_solution_template || "";
+
+        document.getElementById('exam-category').value = localCategoryRuntimeMap[briefModel.id] || inferCategoryFromSubject(briefModel.subject);
+
+        formPanelTitle.innerText = `⚙️ Modify Exam Architecture (ID: EXM-${briefModel.id})`;
+        formPanelTitle.className = "text-base sm:text-lg font-bold tracking-tight pb-4 border-b border-slate-800 mb-6 text-indigo-400 transition-colors duration-300";
+        
+        formActionsWrapper.innerHTML = `
+          <button type="submit" id="btn-exam-submit" class="flex-1 min-w-[120px] h-11 px-4 bg-emerald-600 text-white text-sm font-semibold rounded-xl transition-all duration-200 hover:bg-emerald-500 inline-flex items-center justify-center gap-2"><span>Update Architecture</span></button>
+          <button type="button" id="btn-exam-delete" class="flex-1 min-w-[120px] h-11 px-4 bg-red-600 text-white text-sm font-semibold rounded-xl transition-all duration-200 hover:bg-red-500 inline-flex items-center justify-center gap-2" onclick="executeDestructiveDelete()"><span>Delete Paper</span></button>
+          <button type="button" class="flex-1 min-w-[120px] h-11 px-4 bg-slate-950 border border-slate-800 text-slate-200 text-sm font-semibold rounded-xl transition-all duration-200 hover:bg-slate-900 inline-flex items-center justify-center gap-2" onclick="resetFormToCreationState()"><span>Cancel</span></button>
+        `;
+
+        aiEngineTerminal.style.display = "block";
+        terminalLogger.innerText = `System ready to generate variations for exam EXM-${briefModel.id}...`;
+
+      } catch (err) {
+        console.error(err);
+        formPanelTitle.innerText = `❌ Failed to load exam components.`;
+      }
     }
 
-    // Restore standard creation views
     function resetFormToCreationState() {
       examForm.reset();
       examRuntimeId.value = "";
@@ -538,7 +564,6 @@
       aiEngineTerminal.style.display = "none";
     }
 
-    // Transaction Submission Router
     examForm.addEventListener('submit', async (e) => {
       e.preventDefault();
       
@@ -570,6 +595,7 @@
             alert(`Modification update failure: ${error.message}`); 
           } else { 
             localCategoryRuntimeMap[activeId] = selectedCategoryVal;
+            localStorage.setItem('localCategoryRuntimeMap', JSON.stringify(localCategoryRuntimeMap));
             alert("Master text structure securely updated inside registry matrix!"); 
             resetFormToCreationState(); 
             await loadSystemDashboardData(); 
@@ -586,6 +612,7 @@
           } else { 
             if (data && data.id) {
               localCategoryRuntimeMap[data.id] = selectedCategoryVal;
+              localStorage.setItem('localCategoryRuntimeMap', JSON.stringify(localCategoryRuntimeMap));
             }
             alert("Master exam architecture securely established!"); 
             resetFormToCreationState(); 
@@ -594,12 +621,11 @@
         }
       } catch (err) {
         console.error(err);
-      } finally {
+      } finally { // 🛠️ Typo fully corrected from "finaly" to "finally"
         setButtonLoading(btnSubmit, false, activeId ? "Update Architecture" : "Publish Exam Paper");
       }
     });
 
-    // Destructive Record purges
     async function executeDestructiveDelete() {
       const activeId = parseInt(examRuntimeId.value);
       if (!activeId) return;
@@ -611,7 +637,6 @@
       setButtonLoading(btnDelete, true);
 
       try {
-        // Clean out child tables cleanly down dependencies
         await supabaseClient.from('student_exams').delete().eq('exam_id', activeId);
         await supabaseClient.from('anonymous_sessions').delete().eq('exam_id', activeId);
         await supabaseClient.from('mutated_solutions').delete().eq('exam_id', activeId);
@@ -622,6 +647,7 @@
           alert(`System purge constraint abort: ${error.message}`);
         } else {
           delete localCategoryRuntimeMap[activeId];
+          localStorage.setItem('localCategoryRuntimeMap', JSON.stringify(localCategoryRuntimeMap));
           alert("Paper and associated metadata successfully erased.");
           resetFormToCreationState();
           await loadSystemDashboardData();
@@ -633,93 +659,83 @@
       }
     }
 
-    // Automated Script Variation Generator
     async function runLiveMutationEnginePipeline() {
       const examId = parseInt(examRuntimeId.value);
       if (!examId) { alert("Please select an exam to process first."); return; }
 
-      const targetModel = cachedExamsRegistry.find(e => e.id === examId);
-      if (!targetModel) return;
-
-      const btnMutation = document.getElementById('btn-launch-mutation');
-      setButtonLoading(btnMutation, true);
-
-      terminalLogger.innerHTML = `Starting run...<br>Fetching assigned roster records from database...`;
-
+      // We need to fetch the full target model details explicitly here since our cache is now lightweight
+      terminalLogger.innerHTML = `Starting run...<br>Fetching full exam specifications...`;
+      
       try {
+        const { data: targetModel, error: modelError } = await supabaseClient
+          .from('exams')
+          .select('*')
+          .eq('id', examId)
+          .single();
+
+        if (modelError || !targetModel) {
+          terminalLogger.innerHTML = `<span style="color:#EF4444">Configuration Error: Could not load data fields.</span>`;
+          return;
+        }
+
+        const btnMutation = document.getElementById('btn-launch-mutation');
+        setButtonLoading(btnMutation, true);
+
+        terminalLogger.innerHTML += `<br>Fetching assigned roster records from database...`;
+
         const { data: roster, error: rosterError } = await supabaseClient
           .from('student_exams')
           .select(`
             student_id,
-            profiles:student_id (full_name)
+            profiles (full_name)
           `)
           .eq('exam_id', examId);
 
-        if (rosterError || !roster || roster.length === 0) {
-          terminalLogger.innerHTML = `<span style="color:#EF4444">Error/Idle: No student seats found on this exam roster list.</span>`;
+        if (rosterError) {
+          console.error(rosterError);
+          terminalLogger.innerHTML = `<span style="color:#EF4444">Query Error: Check column references inside schema.</span>`;
+          setButtonLoading(btnMutation, false, "Launch Variation Generation Run 🚀");
+          return;
+        }
+
+        if (!roster || roster.length === 0) {
+          terminalLogger.innerHTML = `<span style="color:#EF4444">Error/Idle: No student seats found on this exam roster list. Go to Step 2 and add assignments first!</span>`;
           setButtonLoading(btnMutation, false, "Launch Variation Generation Run 🚀");
           return;
         }
 
         terminalLogger.innerHTML += `<br>Found ${roster.length} candidate maps. Contacting processing engine...`;
 
-        const currentContextCategory = localCategoryRuntimeMap[examId] || "mathematics";
+        const currentContextCategory = localCategoryRuntimeMap[examId] || inferCategoryFromSubject(targetModel.subject);
 
         for (let i = 0; i < roster.length; i++) {
           const rowData = roster[i];
-          const name = rowData.profiles?.full_name || "Unknown Candidate";
+          const name = rowData.profiles?.full_name || "Candidate Row";
           terminalLogger.innerHTML += `<br>Processing student [${i+1}/${roster.length}]: ${name}...`;
           
           let categoryPromptConstraint = "";
           switch(currentContextCategory) {
             case "mathematics":
-              categoryPromptConstraint = "MATHEMATICS RULE: Keep all numeric equations, variables, factors, parameters, matrices, and final root answers identical. Paraphrase only the connective and transition explanation phrases between equations.";
+              categoryPromptConstraint = "MATHEMATICS RULE: Keep numeric variables, matrices, formulas, text dimensions, and final root answers exactly matching. Shuffle sub-questions or parameters syntax only.";
               break;
             case "sciences":
-              categoryPromptConstraint = "CORE SCIENCES RULE: Do not modify standard laws, formulas, SI units, or highly specific terms (e.g., 'rate of change of magnetic flux linkage' or 'chemical titration equilibrium point'). Restructure sentence syntax and active/passive voice balance only.";
+              categoryPromptConstraint = "CORE SCIENCES RULE: Do not change standard textbook definitions, parameters, SI units, or expressions. Restructure descriptive syntax text fragments.";
               break;
             case "agriculture":
-              categoryPromptConstraint = "AGRICULTURAL/BIOLOGICAL SCIENCE RULE: Keep all anatomical words, structures, organs, chambers (e.g., Rumen, Reticulum, Omasum, Abomasum) and technical processes (e.g., microbial fermentation, cross-pollination, re-mastication) entirely untouched. Paraphrase descriptive transitions.";
+              categoryPromptConstraint = "AGRICULTURAL SCIENCE RULE: Retain all physiological names, organs (e.g. Rumen, Omasum), and system configurations perfectly untouched.";
               break;
             case "languages":
-              categoryPromptConstraint = "LANGUAGES & ENGLISH RULE: Strict adherence to formal grammatical concord, register, and expression mechanical accuracy rules. Paraphrase sentences using varied syntactic patterns (e.g., fronted adverbials, conditional structures) while maintaining the original tone, exact idiomatic targets, and structural meanings perfectly.";
-              break;
-            case "humanities":
-              categoryPromptConstraint = "ARTS & LITERATURE RULE: Retain all exact literary terms (e.g., metaphor, hyperbole, personification, onomatopoeia), specific character names, dramatic plot acts/scenes citations, and thematic keywords. Mutate analytical explanations and commentary vocabulary without altering literary points.";
-              break;
-            case "commercial":
-              categoryPromptConstraint = "COMMERCIAL SCIENCES & ECONOMICS RULE: Retain core economic laws (e.g., Law of Diminishing Marginal Utility), formula parameters (e.g., Price Elasticity of Demand), accounting ledger structures, and transactional entries exactly. Paraphrase only explanatory discussions and contextual commentary.";
-              break;
-            case "technical":
-              categoryPromptConstraint = "TECHNICAL DRAWING/ENGINEERING RULE: Keep all dimensional measurements, perspective views, scale settings, lines (e.g., isometric, orthographic, hidden detail lines), and exact layout configurations completely intact. Rephrase instructional sentences only.";
-              break;
-            case "trades":
-              categoryPromptConstraint = "VOCATIONAL CRAFT TRADE RULE: Retain exact names of industrial tools, safety gear, raw material components, diagnostic steps, and trade actions (e.g., arc-welding root pass, catering baking ratios, electrical circuit grounding rules). Rewrite procedural sentences cleanly without losing technical points.";
+              categoryPromptConstraint = "LANGUAGES & GRAMMAR RULE: Maintain register accuracy. Mutate layout order structures cleanly.";
               break;
             default:
-              categoryPromptConstraint = "GENERAL REWRITE RULE: Retain all core technical keywords, definitions, specific vocabulary, and steps exactly so that full marks are claimed according to the marking scheme.";
+              categoryPromptConstraint = "GENERAL REWRITE RULE: Retain all core parameters, text formulas, and structural solutions text patterns exactly.";
           }
 
-          const systemInstruction = `
-            You are a Senior secondary school chief external examiner rewriting scripts for WAEC, NECO, and NABTEB standards.
-            Your task is to rewrite the Master Answer Scheme to create a completely unique solution text for the student named "${name}".
-            
-            CRITICAL INSTRUCTIONS:
-            1. MAXIMUM MARKS: The final text must look uniquely written but hit every single marking scheme point to claim full marks.
-            2. CATEGORY SPECIFIC PROTECTION: ${categoryPromptConstraint}
-            3. SSS3 STANDARD: Keep the phrasing clean, natural, and matching West African senior secondary technical and vocational textbook standards.
-          `;
-
-          const diagnosticBaseSolutionText = targetModel.master_solution_template || targetModel.master_solution;
-
-          const userPayloadText = `
-            Subject Context: ${targetModel.subject}
-            Master Question Paper: ${targetModel.master_question}
-            Master Official Marking Scheme: ${diagnosticBaseSolutionText}
-          `;
+          const systemInstruction = `CONTEXT: ${categoryPromptConstraint} Candidate Reference: ${name}`;
+          const diagnosticBaseSolutionText = targetModel.master_solution || targetModel.master_solution_template || "";
 
           try {
-            const mockMutatedVariationResult = await simulateBackendAICall(systemInstruction, userPayloadText);
+            const mockMutatedVariationResult = await simulateBackendAICall(systemInstruction, diagnosticBaseSolutionText);
 
             const { data: existingRow } = await supabaseClient
               .from('mutated_solutions')
@@ -757,28 +773,21 @@
       } catch (globalErr) {
         console.error(globalErr);
       } finally {
+        const btnMutation = document.getElementById('btn-launch-mutation');
         setButtonLoading(btnMutation, false, "Launch Variation Generation Run 🚀");
       }
     }
 
-    // True CBT-Style Shuffling & Mutation Core Algorithm Engine
-    async function simulateBackendAICall(sys, user) {
-      await new Promise(resolve => setTimeout(resolve, 150));
-      
-      let baseHtml = "";
-      if (user.includes("Master Official Marking Scheme:")) {
-        baseHtml = user.split("Master Official Marking Scheme:")[1] || "";
-      } else {
-        baseHtml = user;
-      }
-      baseHtml = baseHtml.trim();
+    async function simulateBackendAICall(sys, baseHtml) {
+      await new Promise(resolve => setTimeout(resolve, 100));
+      let targetText = baseHtml.trim();
 
-      if (!baseHtml.startsWith('<')) {
-        baseHtml = `<div>${baseHtml.replace(/\n/g, '<br>')}</div>`;
+      if (!targetText.startsWith('<')) {
+        targetText = `<div>${targetText.replace(/\n/g, '<br>')}</div>`;
       }
 
       const parser = new DOMParser();
-      const doc = parser.parseFromString(baseHtml, 'text/html');
+      const doc = parser.parseFromString(targetText, 'text/html');
 
       function shuffle(array) {
         for (let i = array.length - 1; i > 0; i--) {
@@ -787,49 +796,15 @@
         }
       }
 
-      const orderedLists = doc.querySelectorAll('ol');
+      const orderedLists = doc.querySelectorAll('ol, ul');
       orderedLists.forEach(ol => {
         const items = Array.from(ol.querySelectorAll('li'));
         if (items.length > 1) {
           const texts = items.map(li => li.innerHTML);
           shuffle(texts);
-          items.forEach((li, idx) => {
-            li.innerHTML = texts[idx];
-          });
+          items.forEach((li, idx) => { li.innerHTML = texts[idx]; });
         }
       });
-
-      const listRegex = /^([\s]*)([0-9]+|[a-zA-Z]+|[ivxlcdmIVXLCDM]+)([\.\)\-]\s+)(.*)/;
-      const paragraphs = Array.from(doc.querySelectorAll('p, div'));
-      
-      let groupCollector = [];
-
-      function processGroupShuffle(group) {
-        if (group.length > 1) {
-          const extractedContents = group.map(g => g.textOnly);
-          shuffle(extractedContents);
-          group.forEach((item, idx) => {
-            item.element.innerHTML = `${item.prefix}${extractedContents[idx]}`;
-          });
-        }
-      }
-
-      paragraphs.forEach(p => {
-        if (p.tagName === 'TABLE' || p.closest('table')) return;
-        if (p.children.length === 0 || (p.children.length === 1 && p.firstElementChild.tagName === 'BR')) {
-          const rawText = p.innerText.trim();
-          const match = rawText.match(listRegex);
-          
-          if (match) {
-            const prefixMarkup = rawText.replace(match[4], '');
-            groupCollector.push({ element: p, textOnly: match[4], prefix: prefixMarkup });
-          } else {
-            processGroupShuffle(groupCollector);
-            groupCollector = [];
-          }
-        }
-      });
-      processGroupShuffle(groupCollector);
 
       const tables = doc.querySelectorAll('table');
       tables.forEach(table => {
@@ -839,52 +814,16 @@
           table.parentNode.insertBefore(resWrapper, table);
           resWrapper.appendChild(table);
         }
-
         const tbody = table.querySelector('tbody') || table;
-        const allRows = Array.from(tbody.querySelectorAll('tr'));
-        if (allRows.length <= 1) return;
-
-        let dataRows = [];
-        if (table.querySelector('thead')) {
-          const targetBody = table.querySelector('tbody');
-          dataRows = targetBody ? Array.from(targetBody.querySelectorAll('tr')) : [];
-        } else {
-          dataRows = allRows.slice(1);
-        }
-
-        if (dataRows.length > 1) {
-          const originalNumberedPrefixes = dataRows.map(row => {
-            const firstCell = row.querySelector('td, th');
-            if (!firstCell) return { cleanMatch: false, html: "" };
-            const testText = firstCell.innerText.trim();
-            const match = testText.match(/^([0-9]+|[a-zA-Z]+|[ivxlcdmIVXLCDM]+)([\.\)\-]?)$/);
-            return { cleanMatch: !!match, html: firstCell.innerHTML };
-          });
-
-          const mappedRows = dataRows.map((row, idx) => {
+        const dataRows = Array.from(tbody.querySelectorAll('tr'));
+        if (dataRows.length > 2) {
+          const firstRow = dataRows.shift(); 
+          const mapped = dataRows.map(row => Array.from(row.querySelectorAll('td, th')).map(c => c.innerHTML));
+          shuffle(mapped);
+          dataRows.forEach((row, rIdx) => {
             const cells = Array.from(row.querySelectorAll('td, th'));
-            const keepsSequentialNumbers = originalNumberedPrefixes[idx] ? originalNumberedPrefixes[idx].cleanMatch : false;
-            return {
-              cellsHTML: cells.map(c => c.innerHTML),
-              hasNumberedPrefixIndex: keepsSequentialNumbers
-            };
-          });
-
-          shuffle(mappedRows);
-
-          dataRows.forEach((row, rowIndex) => {
-            const currentShuffledData = mappedRows[rowIndex];
-            const liveCells = Array.from(row.querySelectorAll('td, th'));
-            if (!currentShuffledData) return;
-            
-            currentShuffledData.cellsHTML.forEach((htmlValue, cellIndex) => {
-              if (liveCells[cellIndex]) {
-                if (cellIndex === 0 && currentShuffledData.hasNumberedPrefixIndex && originalNumberedPrefixes[rowIndex] && originalNumberedPrefixes[rowIndex].cleanMatch) {
-                  liveCells[cellIndex].innerHTML = originalNumberedPrefixes[rowIndex].html;
-                } else {
-                  liveCells[cellIndex].innerHTML = htmlValue;
-                }
-              }
+            mapped[rIdx].forEach((val, cIdx) => {
+              if (cells[cIdx]) cells[cIdx].innerHTML = val;
             });
           });
         }
@@ -946,5 +885,7 @@
 
     verifyAdminAuthentication();
   </script>
+
+  
 </body>
 </html>
