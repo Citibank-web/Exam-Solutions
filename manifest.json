@@ -1,6 +1,6 @@
 {
   "name": "Exam Solutions Simulation Portal",
-  "short_name": "ExamSolutions",
+  "short_name": "ExamGenius",
   "description": "Automated examination simulation sheet and portal access pipeline.",
   "start_url": "/index.html",
   "display": "standalone",
